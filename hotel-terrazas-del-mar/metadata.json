@@ -1,0 +1,6 @@
+{
+  "name": "Hotel Terrazas del Mar",
+  "description": "Sitio web de Hotel Mirador Ecológico en Ometepe con reservas directas por WhatsApp, habitaciones, local para eventos, piscina panorámica, horarios de barcos/transporte y panel de administración.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
