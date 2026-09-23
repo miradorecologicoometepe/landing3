@@ -140,10 +140,6 @@ export const Footer: React.FC<FooterProps> = ({
                 <span>{hotelConfig.address}</span>
               </div>
               <div className="flex items-center gap-2 text-stone-300">
-                <Mail className="w-4 h-4 text-brand-mint shrink-0" />
-                <span>{hotelConfig.email}</span>
-              </div>
-              <div className="flex items-center gap-2 text-stone-300">
                 <Phone className="w-4 h-4 text-brand-mint shrink-0" />
                 <span>{hotelConfig.displayPhone}</span>
               </div>
