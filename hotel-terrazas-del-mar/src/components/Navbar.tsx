@@ -72,8 +72,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div 
         className={`rounded-2xl sm:rounded-full px-4 sm:px-7 py-3 sm:py-3.5 transition-all duration-300 flex items-center justify-between border ${
           isScrolled 
-            ? 'bg-[#0b2f33]/95 backdrop-blur-xl border-teal-500/30 shadow-2xl shadow-black/50 text-white' 
-            : 'bg-[#0e3d42]/80 backdrop-blur-lg border-teal-400/25 shadow-xl shadow-black/35 text-white'
+            ? 'bg-[#075c63]/95 backdrop-blur-xl border-teal-500/30 shadow-2xl shadow-black/50 text-white' 
+            : 'bg-[#087f83]/80 backdrop-blur-lg border-teal-400/25 shadow-xl shadow-black/35 text-white'
         }`}
       >
         {/* Brand Logo */}
@@ -112,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-reserve-btn"
             onClick={() => onOpenBookingModal()}
-            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#ffe997] hover:bg-[#fff1b4] active:bg-[#f5d970] text-[#17363b] text-xs font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer border border-teal-300/40"
+            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#b6f2e6] hover:bg-[#d1fff3] active:bg-[#a2e4d9] text-[#075c63] text-xs font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer border border-teal-300/40"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Ver tarifas</span>
@@ -139,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {mobileMenuOpen && (
         <div 
           id="mobile-navigation-island-dropdown" 
-          className="md:hidden mt-2 p-4 rounded-3xl bg-[#0b2f33]/96 backdrop-blur-2xl border border-teal-400/30 shadow-2xl space-y-3 animate-in fade-in slide-in-from-top-3 duration-200"
+          className="md:hidden mt-2 p-4 rounded-3xl bg-[#075c63]/96 backdrop-blur-2xl border border-teal-400/30 shadow-2xl space-y-3 animate-in fade-in slide-in-from-top-3 duration-200"
         >
           <div className="flex flex-col space-y-1 pb-2 border-b border-white/10">
             {navItems.map((item) => {
@@ -182,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onOpenBookingModal();
               }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs uppercase tracking-wider transition-colors shadow-sm"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#079c9d] hover:bg-[#087f83] text-white font-bold text-xs uppercase tracking-wider transition-colors shadow-sm"
             >
               <Calendar className="w-4 h-4" />
               <span>Cotizar con Tarifa Directa</span>
