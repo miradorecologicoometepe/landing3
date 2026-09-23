@@ -73,6 +73,7 @@ export interface ReviewItem {
 }
 
 export interface HotelConfig {
+  logoUrl?: string;
   name: string;
   stars: number;
   ratingScore: number;
