@@ -209,7 +209,7 @@ export const BookingBar: React.FC<BookingBarProps> = ({
                 <div className="flex items-center justify-between border-t border-stone-100 pt-3">
                   <div>
                     <div className="text-xs font-bold text-stone-800">Niños</div>
-                    <div className="text-[11px] text-stone-400">De 0 a 12 años</div>
+                    <div className="text-[11px] text-stone-500">Mayores de 5 años pagan tarifa estándar</div>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
