@@ -28,29 +28,29 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
   onOpenGeneralBookingModal
 }) => {
   return (
-    <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
+    <div className="pt-24 pb-24 bg-[#f5fbfa] min-h-screen">
       {/* Header Banner */}
-      <div className="bg-gradient-to-b from-[#093539] via-[#0f4d52] to-[#125a60] text-white py-14 px-4 sm:px-6 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#075e68] via-[#078b91] to-[#0ca5a0] text-white pt-20 pb-20 sm:pt-24 sm:pb-24 px-5 sm:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#14b8a6_1px,transparent_1px)] [background-size:20px_20px]"></div>
         
-        <div className="max-w-5xl mx-auto relative z-10 text-center">
+        <div className="max-w-6xl mx-auto relative z-10 text-left">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-400/20 text-teal-200 text-xs font-bold uppercase tracking-wider mb-4 border border-teal-300/30">
             <Bed className="w-3.5 h-3.5" />
-            Tarifas Directas Garantizadas
+            Descubre nuestras habitaciones
           </div>
           
-          <h1 className="font-gidole text-3xl sm:text-5xl font-extrabold tracking-tight mb-4 text-white">
+          <h1 className="font-gidole text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-white">
             Nuestras Habitaciones
           </h1>
           
-          <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
             Alojamiento campestre cómodo, fresco y tranquilo en Altagracia, Ometepe. Contamos con 2 tipos de habitaciones diseñadas para parejas, familias y grupos pequeños.
           </p>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-12 sm:pt-16 relative z-10">
         
         {/* Transparent Rates Notice */}
         <div className="bg-white rounded-2xl p-5 border border-teal-100 shadow-md mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -59,16 +59,16 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
               <ShieldCheck className="w-5 h-5 text-teal-600" />
             </div>
             <div>
-              <h4 className="font-bold text-stone-900 text-sm">Reserva Directa sin Comisiones OTA</h4>
+              <h4 className="font-bold text-stone-900 text-sm">Consulta directa de disponibilidad</h4>
               <p className="text-xs text-stone-500">
-                Al reservar por WhatsApp con nosotros obtienes el mejor precio disponible, atención personalizada y asesoría con tu llegada en ferry.
+                Consulta las tarifas y fechas disponibles directamente con nuestro equipo por WhatsApp.
               </p>
             </div>
           </div>
 
           <button
             onClick={onOpenGeneralBookingModal}
-            className="px-5 py-2.5 rounded-full bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer flex items-center gap-2"
+            className="px-5 py-2.5 rounded-full bg-[#089b9c] hover:bg-[#087f83] text-white font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer flex items-center gap-2"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Cotizar Fechas</span>
