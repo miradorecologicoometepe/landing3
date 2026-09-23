@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadPublicSiteData } from './lib/publicContent';
+import { supabase } from './lib/supabase';
 import { Room, PhotoItem, HotelConfig } from './types';
 import { getDefaultDates } from './utils/bookingUtils';
 import { 
@@ -10,8 +11,6 @@ import {
   loadGalleryPhotos, 
   saveGalleryPhotos, 
   resetAllDataToDefault,
-  isAdminAuthenticated,
-  setAdminAuthenticated
 } from './utils/storageUtils';
 import { Navbar, PageId } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
@@ -93,7 +92,25 @@ export default function App() {
   };
 
   const [isAdminRoute, setIsAdminRoute] = useState<boolean>(checkIsAdminUrl);
-  const [isAdminAuth, setIsAdminAuth] = useState<boolean>(isAdminAuthenticated);
+  const [isAdminAuth, setIsAdminAuth] = useState(false);
+  const [adminAuthChecking, setAdminAuthChecking] = useState(true);
+  useEffect(() => {
+    if (!supabase) { setAdminAuthChecking(false); return; }
+    let active = true;
+    let revision = 0;
+    const verify = async () => {
+      const currentRevision = ++revision;
+      const { data: { user } } = await supabase.auth.getUser();
+      const admin = user ? await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle() : null;
+      if (active && currentRevision === revision) {
+        setIsAdminAuth(Boolean(user && admin?.data && !admin.error));
+        setAdminAuthChecking(false);
+      }
+    };
+    void verify();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => { void verify(); });
+    return () => { active = false; subscription.unsubscribe(); };
+  }, []);
   const [activePage, setActivePage] = useState<PageId>(getInitialPage);
 
   // Listen to hash and keyboard shortcuts (Ctrl+Alt+A / Cmd+Alt+A)
@@ -183,9 +200,9 @@ export default function App() {
     }
   };
 
-  const handleLogoutAdmin = () => {
-    setAdminAuthenticated(false);
+  const handleLogoutAdmin = async () => {
     setIsAdminAuth(false);
+    await supabase?.auth.signOut();
   };
 
   // Trigger booking modal with optional pre-selected room
@@ -212,6 +229,7 @@ export default function App() {
   // SCENARIO 1: DEDICATED ADMIN ROUTE (admin.dominio.com / #admin)
   // ==========================================
   if (isAdminRoute) {
+    if (adminAuthChecking) return <div className="min-h-screen bg-[#0d1c1e] text-white flex items-center justify-center">Verificando acceso…</div>;
     if (!isAdminAuth) {
       return (
         <AdminLoginScreen
