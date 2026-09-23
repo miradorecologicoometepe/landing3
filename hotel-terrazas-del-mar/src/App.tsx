@@ -309,6 +309,7 @@ export default function App() {
               onOpenGallery={() => handleNavigate('galeria')}
               onOpenBookingModal={() => handleOpenBookingModal()}
               hotelConfig={hotelConfig}
+              photos={photos}
             />
 
             {/* Floating Search & Booking Bar */}
@@ -435,6 +436,7 @@ export default function App() {
         {/* PAGE 3: EVENTOS & PISCINA DEDICATED */}
         {activePage === 'eventos-piscina' && (
           <EventsAndPoolPage
+            photos={photos}
             hotelConfig={hotelConfig}
             onOpenBookingModal={() => handleOpenBookingModal()}
           />
