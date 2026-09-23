@@ -273,7 +273,7 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
               </div>
 
               {/* Adults & Children */}
-              <div className="grid grid-cols-3 gap-3 pt-1">
+              <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
                     Adultos
@@ -304,20 +304,7 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
                   </select>
                 </div>
 
-                <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-                    Habitaciones
-                  </label>
-                  <select
-                    value={reservation.roomsCount}
-                    onChange={(e) => setReservation({ ...reservation, roomsCount: parseInt(e.target.value) })}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold"
-                  >
-                    {[1, 2, 3, 4].map(n => (
-                      <option key={n} value={n}>{n} {n === 1 ? 'Habitación' : 'Habitaciones'}</option>
-                    ))}
-                  </select>
-                </div>
+
               </div>
 
               {/* Capacity Status & Dynamic Rate Applied */}
@@ -337,13 +324,13 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
                 <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
                   <span>
-                    Has seleccionado <strong>{reservation.adults + reservation.children} personas</strong>. La capacidad máxima de esta habitación es de <strong>{selectedRoom.maxOccupancy} personas</strong>. Por favor ajusta los huéspedes o reserva 2 habitaciones.
+                    Has seleccionado <strong>{reservation.adults + reservation.children} personas</strong>. La capacidad máxima de esta habitación es de <strong>{selectedRoom.maxOccupancy} personas</strong>. Por favor ajusta la cantidad de huéspedes o consulta otras opciones con el hotel.
                   </span>
                 </div>
               )}
             </div>
 
-            {/* 4. Guest Details */}
+            {/* 2. Guest Details */}
             <div className="space-y-3">
               <label className="text-xs font-bold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-brand-teal" />
@@ -401,7 +388,7 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
                     </div>
                   </div>
                   <span className="font-bold text-stone-900">
-                    ${quote.basePricePerNight * quote.nights * reservation.roomsCount} USD
+                    ${quote.basePricePerNight * quote.nights} USD
                   </span>
                 </div>
 
