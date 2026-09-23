@@ -165,7 +165,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=85'
       ],
       description: 'Hermosa habitación recientemente renovada con acabados contemporáneos y vistas privilegiadas.',
-      includedServices: ['Desayuno a la carta incluido', 'Cóctel de bienvenida', 'Camastros reservados en playa']
+      includedServices: []
     };
     setEditingRoomId(newId);
     setRoomFormData(newRoom);
@@ -467,47 +467,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      Categoría (Estrellas)
-                    </label>
-                    <select
-                      value={configForm.stars}
-                      onChange={(e) => handleConfigChange('stars', Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
-                    >
-                      <option value={3}>3 Estrellas ★★★</option>
-                      <option value={4}>4 Estrellas ★★★★</option>
-                      <option value={5}>5 Estrellas Boutique ★★★★★</option>
-                    </select>
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      Puntuación OTA (1 a 10)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="1"
-                      max="10"
-                      value={configForm.ratingScore}
-                      onChange={(e) => handleConfigChange('ratingScore', parseFloat(e.target.value))}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      Total de Reseñas Contabilizadas
-                    </label>
-                    <input
-                      type="number"
-                      value={configForm.totalReviews}
-                      onChange={(e) => handleConfigChange('totalReviews', parseInt(e.target.value))}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
-                    />
-                  </div>
                 </div>
               </div>
 
@@ -979,7 +939,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                               {room.name}
                             </h5>
                             <p className="text-xs text-stone-500 truncate mt-0.5">
-                              {room.view} • {room.bedType} • {room.sizeM2} m²
+                              {room.view} • {room.bedType}{room.sizeM2 > 0 ? ` • ${room.sizeM2} m²` : ""}
                             </p>
                             <div className="mt-2 flex items-baseline gap-2">
                               <span className="text-emerald-700 font-bold text-base">
