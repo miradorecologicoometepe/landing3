@@ -28,7 +28,7 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
   onOpenGeneralBookingModal
 }) => {
   return (
-    <div className="pt-24 pb-24 bg-[#f5fbfa] min-h-screen">
+    <div className="pt-20 sm:pt-24 pb-16 sm:pb-24 bg-[#f5fbfa] min-h-screen">
       {/* Header Banner */}
       <div className="bg-gradient-to-br from-[#075e68] via-[#078b91] to-[#0ca5a0] text-white pt-20 pb-20 sm:pt-24 sm:pb-24 px-5 sm:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#14b8a6_1px,transparent_1px)] [background-size:20px_20px]"></div>
@@ -39,7 +39,7 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
             Descubre nuestras habitaciones
           </div>
           
-          <h1 className="font-gidole text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-white">
+          <h1 className="font-gidole text-3xl min-[375px]:text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-white">
             Nuestras Habitaciones
           </h1>
           
@@ -138,7 +138,7 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
                       {isFamilyRoom ? (
                         <div className="mt-2 pt-2 border-t border-stone-200 space-y-1">
                           <div className="text-[11px] font-bold text-stone-800">Tarifas por número de personas:</div>
-                          <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-xs">
                             <div className="p-2 rounded-lg bg-teal-50 border border-teal-200 text-teal-950">
                               <div className="text-[10px] text-teal-700 font-bold uppercase">1 a 3 personas</div>
                               <div className="font-black text-base">$70 <span className="text-[10px] font-normal">USD / noche</span></div>
