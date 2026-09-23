@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { loadPublicSiteData } from './lib/publicContent';
 import { Room, PhotoItem, HotelConfig } from './types';
 import { getDefaultDates } from './utils/bookingUtils';
 import { 
@@ -49,6 +50,18 @@ export default function App() {
   const [hotelConfig, setHotelConfig] = useState<HotelConfig>(loadHotelConfig);
   const [rooms, setRooms] = useState<Room[]>(loadRooms);
   const [photos, setPhotos] = useState<PhotoItem[]>(loadGalleryPhotos);
+
+  // Load published content for all visitors; preserve existing defaults until content is published.
+  useEffect(() => {
+    let active = true;
+    loadPublicSiteData().then(data => {
+      if (!active) return;
+      if (data.config) setHotelConfig(data.config);
+      if (data.rooms) setRooms(data.rooms);
+      if (data.photos) setPhotos(data.photos);
+    }).catch(error => console.error('Unable to load published site content', error));
+    return () => { active = false; };
+  }, []);
 
   // Dedicated Admin Route & Auth State (tipo admin.dominio.com)
   const checkIsAdminUrl = (): boolean => {
