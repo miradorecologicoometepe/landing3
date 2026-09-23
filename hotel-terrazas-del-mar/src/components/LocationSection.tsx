@@ -23,10 +23,12 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const pointsOfInterest = [
-    { name: 'Puerto Moyogalpa / Ferry San Jorge', distance: '30 minutos en vehículo', icon: Ship, detail: 'Llegada de ferries diarios desde San Jorge, Rivas' },
-    { name: 'Ojo de Agua (Manantial Natural)', distance: '12 minutos', icon: Compass, detail: 'Aguas cristalinas volcánicas rodeadas de naturaleza' },
-    { name: 'Reserva Ecológica Charco Verde', distance: '15 minutos', icon: MapPin, detail: 'Senderismo, mariposario y playas tranquilas' },
-    { name: 'Volcanes Concepción & Maderas', distance: 'Vistas panorámicas directas', icon: Compass, detail: 'Tours de ascenso y canopy en las faldas volcánicas' },
+    { name: 'Puerto Moyogalpa / Ferry San Jorge', distance: '40 minutos en vehículo', icon: Ship, detail: 'Llegada de ferries desde San Jorge, Rivas' },
+    { name: 'Ojo de Agua (Manantial Natural)', distance: '7 minutos', icon: Compass, detail: 'Manantial natural de Ometepe' },
+    { name: 'Reserva Ecológica Charco Verde', distance: '15 minutos', icon: MapPin, detail: 'Reserva natural y senderos' },
+    { name: 'Puerto Las Brisas, San José del Sur', distance: '20 minutos', icon: Ship, detail: 'Puerto de San José del Sur, Isla de Ometepe' },
+    { name: 'Playa Mangos', distance: '25 minutos', icon: MapPin, detail: 'Playa en la Isla de Ometepe' },
+    { name: 'Volcanes Concepción & Maderas', distance: 'Vistas panorámicas directas', icon: Compass, detail: 'Paisajes volcánicos de Ometepe' },
   ];
 
   const faqs = [
