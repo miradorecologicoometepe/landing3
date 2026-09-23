@@ -44,7 +44,7 @@ export interface QuoteBreakdown {
   basePricePerNight: number;
   originalPricePerNight: number;
   subtotal: number;
-  directBookingDiscount: number; // 15% discount
+  directBookingDiscount: number; // Legacy field retained for compatibility; no promotion applies
   addonsCost: number;
   addonsList: { name: string; cost: number }[];
   total: number;
@@ -99,9 +99,9 @@ export function calculateQuote(
     rateLabel = rateInfo.rateLabel;
   }
 
-  const standardSubtotal = originalPrice * nights * (reservation.roomsCount || 1);
-  const discountedSubtotal = pricePerNight * nights * (reservation.roomsCount || 1);
-  const directBookingDiscount = standardSubtotal - discountedSubtotal;
+  const standardSubtotal = pricePerNight * nights * (reservation.roomsCount || 1);
+  const discountedSubtotal = standardSubtotal;
+  const directBookingDiscount = 0;
 
   let addonsCost = 0;
   const addonsList: { name: string; cost: number }[] = [];
@@ -177,11 +177,10 @@ export function generateWhatsAppMessage(
 
   msg += `💰 *DESGLOSE DE TARIFA DIRECTA:*\n`;
   msg += ` • Tarifa base (${quote.nights} noche(s) × $${quote.basePricePerNight} USD): $${quote.basePricePerNight * quote.nights * (reservation.roomsCount || 1)} USD\n`;
-  msg += ` • Ahorro vs OTAs: -$${quote.directBookingDiscount} USD\n`;
   if (quote.addonsCost > 0) {
     msg += ` • Adicionales: +$${quote.addonsCost} USD\n`;
   }
-  msg += ` • *TOTAL ESTIMADO: $${quote.total} USD* (Impuestos incluidos)\n\n`;
+  msg += ` • *TOTAL ESTIMADO: $${quote.total} USD* (sujeto a confirmación)\n\n`;
 
   if (reservation.guestName.trim()) {
     msg += `👤 *Titular:* ${reservation.guestName.trim()}\n`;
