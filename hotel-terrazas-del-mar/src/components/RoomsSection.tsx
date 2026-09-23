@@ -198,9 +198,6 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
                   {/* Compact Pricing & Action Row */}
                   <div className="pt-3 border-t border-stone-100 flex items-center justify-between gap-3">
                     <div>
-                      <div className="text-[10px] text-stone-400 line-through">
-                        OTA: ${room.originalPrice} USD
-                      </div>
                       <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-black text-[#142d30]">
                           ${room.pricePerNight}
