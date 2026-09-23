@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Room, PhotoItem, PhotoCategory } from '../types';
 
@@ -13,6 +13,8 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
   const [progress, setProgress] = useState(0);
+  const [previews, setPreviews] = useState<string[]>([]);
+  useEffect(() => { const urls = files.map(file => URL.createObjectURL(file)); setPreviews(urls); return () => urls.forEach(url => URL.revokeObjectURL(url)); }, [files]);
 
   const publish = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -40,7 +42,7 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
         const url = supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl;
         const photo: PhotoItem = replacePhoto
           ? { ...replacePhoto, url }
-          : { id, title: (files.length === 1 && title.trim()) || file.name.replace(/\\.[^.]+$/, ''), category, url, caption: '', roomTypeId: category === 'rooms' ? selectedRoomId : undefined, aspectRatio: 'landscape' };
+          : { id, title: (files.length === 1 && title.trim()) || file.name.replace(/\.[^.]+$/, ''), category, url, caption: '', roomTypeId: category === 'rooms' ? selectedRoomId : undefined, aspectRatio: 'landscape' };
         if (replacePhoto) {
           const saved = await supabase.from('gallery_photos').update({ image_path: url }).eq('id', id).select('id').maybeSingle();
           if (saved.error || !saved.data) {
@@ -93,8 +95,10 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
       <input value={title} onChange={e=>setTitle(e.target.value)} className="block w-full mt-1 border rounded-xl p-3" placeholder="Ej. Piscina al atardecer" />
     </label>}
     <label className="block text-sm font-semibold text-stone-800">Fotografías JPG, PNG, WebP o AVIF (máximo 10 MB por foto)
-      <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple={!replacePhoto} onChange={e=>setFiles(Array.from(e.target.files || []))} className="block w-full mt-2 text-sm" />
+      <span className="block mt-2 rounded-xl bg-teal-700 text-white text-center px-5 py-4 cursor-pointer">{replacePhoto ? "Seleccionar foto de reemplazo" : "Seleccionar fotografías desde mi dispositivo"}</span>
+      <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple={!replacePhoto} onChange={e=>setFiles(Array.from(e.target.files || []))} className="sr-only" />
     </label>
+    {previews.length > 0 && <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">{previews.map((url, index) => <img key={url} src={url} alt={`Vista previa ${index + 1}`} className="h-28 w-full rounded-xl object-cover border" />)}</div>}
     {files.length > 0 && <p className="text-sm text-stone-600">{files.length} archivo(s) seleccionado(s)</p>}
     <button type="submit" disabled={busy || !supabase || !files.length} className="rounded-xl bg-teal-700 text-white font-bold px-5 py-3 disabled:opacity-50">{busy ? `Publicando ${progress}/${files.length}…` : replacePhoto ? 'Reemplazar fotografía' : 'Subir y publicar fotos'}</button>
     {replacePhoto && <button type="button" onClick={onCancelReplace} className="ml-3 rounded-xl border px-4 py-3 text-sm">Cancelar reemplazo</button>}
