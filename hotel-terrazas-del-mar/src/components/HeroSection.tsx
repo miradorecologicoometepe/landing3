@@ -1,14 +1,6 @@
 import React from 'react';
 import { HotelConfig } from '../types';
-import { 
-  Sparkles, 
-  MapPin, 
-  Star, 
-  Compass, 
-  CheckCircle2,
-  ChevronDown
-} from 'lucide-react';
-import { HotelLogo } from './HotelLogo';
+import { ArrowRight, BedDouble, ChevronDown, Leaf, MapPin, Users } from 'lucide-react';
 
 interface HeroSectionProps {
   onExploreRooms: () => void;
@@ -17,119 +9,28 @@ interface HeroSectionProps {
   hotelConfig: HotelConfig;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({
-  onExploreRooms,
-  onOpenGallery,
-  onOpenBookingModal,
-  hotelConfig,
-}) => {
-  return (
-    <div className="relative">
-      {/* Visual Canvas with Panoramic View of the Eco-lodge & Volcano/Lake */}
-      <div className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#122426]">
-        
-        {/* Background Image matching brand board photo: lush nature, pool, panoramic lake & volcano */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=90"
-            alt={`${hotelConfig.name} - Vista Panorámica al Lago Cocibolca y Volcanes`}
-            className="w-full h-full object-cover object-center scale-105"
-          />
-          {/* Subtle gradient vignette tailored to brand teal & deep forest */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0e1e20] via-[#152e31]/75 to-[#0b1719]/50" />
+export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpenGallery, onOpenBookingModal, hotelConfig }) => (
+  <section className="relative isolate min-h-[88svh] lg:min-h-screen overflow-hidden bg-[#12363d] text-white flex items-center">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85" alt="Imagen ilustrativa de un paisaje junto al agua; fotografía real del hotel pendiente" className="absolute inset-0 -z-20 h-full w-full object-cover" />
+    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#092d36]/95 via-[#123940]/75 to-[#123940]/25" />
+    <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#092d36]/65 via-transparent to-[#092d36]/35" />
+    <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 pt-36 pb-28 sm:pt-44 sm:pb-36">
+      <div className="max-w-3xl">
+        <p className="text-xs sm:text-sm tracking-[0.32em] uppercase font-semibold text-[#fff0ae] mb-7">Hotel Mirador Ecológico · Ometepe</p>
+        <h1 className="font-serif text-[clamp(2.8rem,6.3vw,6rem)] leading-[1.08] tracking-tight font-medium max-w-3xl mb-8">Donde la <em className="text-[#fff0ae]">naturaleza</em> se abraza con el lago y los volcanes</h1>
+        <p className="text-base sm:text-xl leading-relaxed text-stone-100/95 max-w-2xl mb-10">Descubre nuestras habitaciones, espacios para eventos y el entorno natural de la Isla de Ometepe. Consulta disponibilidad y tarifas directamente con nosotros.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-6 max-w-2xl mb-12 text-sm">
+          <div className="flex flex-col gap-2"><Leaf className="w-6 h-6 text-[#fff0ae]" /><span>Naturaleza y descanso</span></div>
+          <div className="flex flex-col gap-2"><BedDouble className="w-6 h-6 text-[#fff0ae]" /><span>Habitaciones</span></div>
+          <div className="flex flex-col gap-2"><Users className="w-6 h-6 text-[#fff0ae]" /><span>Eventos especiales</span></div>
+          <div className="flex flex-col gap-2"><MapPin className="w-6 h-6 text-[#fff0ae]" /><span>Isla de Ometepe</span></div>
         </div>
-
-        {/* Content Container */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 sm:pt-36 pb-28 sm:pb-32">
-          
-          {/* Brand Board Primary Logo Highlight */}
-          <div className="mb-6 flex justify-center transform hover:scale-[1.02] transition-transform duration-300">
-            <div className="p-4 sm:p-5 rounded-3xl bg-[#142d30]/70 backdrop-blur-md border border-brand-mint/30 shadow-2xl">
-              <HotelLogo variant="full" mode="white" size="lg" />
-            </div>
-          </div>
-
-          {/* Top Pill / Rating Proof */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#18363a]/90 backdrop-blur-md border border-brand-sky/40 text-stone-200 text-xs sm:text-sm mb-6 shadow-xl">
-            <span className="flex text-brand-sun">
-              {Array.from({ length: hotelConfig.stars || 4 }).map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-brand-sun text-brand-sun" />
-              ))}
-            </span>
-            <span className="font-bold text-white">{hotelConfig.ratingScore} / 10 Excepcional</span>
-            <span className="text-[#80CEDE]">•</span>
-            <span className="text-brand-sun font-semibold">Isla de Ometepe, Nicaragua</span>
-          </div>
-
-          {/* Main Title */}
-          <h1 className="font-gidole text-3xl sm:text-5xl lg:text-6xl text-white font-extrabold tracking-tight leading-tight sm:leading-tight mb-5">
-            Donde la naturaleza se abraza con el lago y los volcanes
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-base sm:text-lg lg:text-xl text-stone-200 max-w-3xl mx-auto font-normal leading-relaxed mb-8">
-            Habitaciones con vista al Lago Cocibolca y a los volcanes, piscina panorámica y local para eventos en Altagracia. 
-            Reserva con <span className="text-teal-300 font-bold">tarifa directa garantizada</span> vía WhatsApp sin comisiones de intermediarios.
-          </p>
-
-          {/* Action CTAs using Turquoise Accents */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-10">
-            <button
-              id="hero-book-now-cta"
-              onClick={onOpenBookingModal}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] active:bg-[#115e59] text-white font-bold text-sm sm:text-base tracking-wider shadow-lg shadow-teal-950/40 flex items-center justify-center gap-2 transition-all cursor-pointer border border-teal-300/40"
-            >
-              <Sparkles className="w-5 h-5 text-teal-200" />
-              <span>Cotizar con Tarifa Directa</span>
-            </button>
-
-            <button
-              id="hero-explore-suites-cta"
-              onClick={onExploreRooms}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#0e3d42]/90 hover:bg-[#134e54] text-white font-semibold text-sm sm:text-base border border-teal-400/40 backdrop-blur-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>Ver Habitaciones</span>
-            </button>
-
-            <button
-              id="hero-gallery-cta"
-              onClick={onOpenGallery}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-transparent hover:bg-white/10 text-stone-200 font-medium text-sm sm:text-base border border-stone-400/40 backdrop-blur-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Compass className="w-4 h-4 text-teal-300" />
-              <span>Ver Fotos</span>
-            </button>
-          </div>
-
-          {/* Guarantees Badges */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 border-t border-[#294f54]/80 text-left">
-            <div className="flex items-center gap-2 text-stone-200 text-xs sm:text-sm">
-              <CheckCircle2 className="w-4 h-4 text-brand-sky shrink-0" />
-              <span>Mejor tarifa garantizada</span>
-            </div>
-            <div className="flex items-center gap-2 text-stone-200 text-xs sm:text-sm">
-              <CheckCircle2 className="w-4 h-4 text-brand-sky shrink-0" />
-              <span>Cancelación flexible</span>
-            </div>
-            <div className="flex items-center gap-2 text-stone-200 text-xs sm:text-sm">
-              <CheckCircle2 className="w-4 h-4 text-brand-sky shrink-0" />
-              <span>Desayuno campestre diario</span>
-            </div>
-            <div className="flex items-center gap-2 text-stone-200 text-xs sm:text-sm">
-              <CheckCircle2 className="w-4 h-4 text-brand-sky shrink-0" />
-              <span>Concierge WhatsApp 24/7</span>
-            </div>
-          </div>
-
+        <div className="flex flex-wrap items-center gap-5 sm:gap-8">
+          <button onClick={onExploreRooms} className="rounded-full bg-[#ffe997] hover:bg-[#fff2b8] text-[#18363a] px-8 py-4 font-bold inline-flex items-center gap-3 shadow-lg transition-colors">Ver habitaciones <ArrowRight className="w-5 h-5" /></button>
+          <button onClick={onOpenGallery} className="text-white font-semibold border-b border-white/70 pb-1 hover:text-[#ffe997] transition-colors">Explorar fotografías <ArrowRight className="inline w-4 h-4 ml-2" /></button>
         </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-brand-mint hidden lg:flex flex-col items-center gap-1 opacity-70 hover:opacity-100 transition-opacity">
-          <span className="text-[10px] tracking-widest uppercase font-semibold">Explorar el Mirador</span>
-          <ChevronDown className="w-4 h-4 animate-bounce" />
-        </div>
-
       </div>
     </div>
-  );
-};
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-1 text-xs tracking-widest uppercase text-white/80"><ChevronDown className="w-5 h-5" />Desplaza para explorar</div>
+  </section>
+);
