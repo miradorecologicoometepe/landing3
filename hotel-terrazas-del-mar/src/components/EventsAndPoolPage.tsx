@@ -30,10 +30,10 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 }) => {
   const [activeSection, setActiveSection] = useState<'all' | 'eventos' | 'piscina'>('all');
 
-  const eventPhotos = photos.filter(photo => photo.category === 'gastronomy');
+  const eventPhotos = photos.filter(photo => photo.category === 'events');
   const poolPhotos = photos.filter(photo => photo.category === 'pool');
-  const eventImage = (index: number, fallback: string) => eventPhotos[index % eventPhotos.length]?.url || fallback;
-  const poolImage = (index: number, fallback: string) => poolPhotos[index % poolPhotos.length]?.url || fallback;
+  const eventImage = (index: number, fallback: string) => eventPhotos.length ? eventPhotos[(index - 1) % eventPhotos.length].url : fallback;
+  const poolImage = (index: number, fallback: string) => poolPhotos.length ? poolPhotos[(index - 1) % poolPhotos.length].url : fallback;
 
   const eventFeatures = [
     { title: 'Celebraciones Sociales', desc: 'Cumpleaños, aniversarios, quinceaños y reuniones familiares en un entorno campestre fresco y privado.', icon: Heart },
