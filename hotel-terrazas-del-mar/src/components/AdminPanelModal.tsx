@@ -91,6 +91,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
   const [roomFormData, setRoomFormData] = useState<Room | null>(null);
 
+  const currentUploadedPhotosRef = React.useRef<PhotoItem[]>(photos);
+  useEffect(() => { currentUploadedPhotosRef.current = photos; }, [photos]);
+
   // Gallery editing state
   const [editingPhotoId, setEditingPhotoId] = useState<string | null>(null);
   const [photoFormData, setPhotoFormData] = useState<PhotoItem | null>(null);
@@ -1012,7 +1015,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
             <div className="space-y-6">
               
               <PhotoUploader rooms={rooms} onUploaded={(photo, roomId) => {
-                onSavePhotos([...photos, photo]);
+                onSavePhotos(currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, photo]);
                 if (roomId) onSaveRooms(rooms.map(room => room.id === roomId ? { ...room, images: [...room.images.filter(url => !url.includes('images.unsplash.com')), photo.url] } : room));
               }} />
               <p className="text-xs text-stone-600">La subida anterior publica las fotos en Supabase. El editor de enlaces y el botón «Guardar foto» que aparecen debajo siguen siendo locales; no los uses para publicar fotos nuevas.</p>
