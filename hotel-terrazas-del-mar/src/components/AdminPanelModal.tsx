@@ -3,6 +3,7 @@ import { Room, PhotoItem, HotelConfig, PhotoCategory } from '../types';
 import { getAdminPin, setAdminPin } from '../utils/storageUtils';
 import { supabase } from '../lib/supabase';
 import { PhotoUploader } from './PhotoUploader';
+import { FaqEditor } from './FaqEditor';
 import { 
   X, 
   Settings, 
@@ -57,7 +58,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onLogout,
   isDedicatedPage = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'rooms' | 'gallery' | 'security' | 'domain'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'rooms' | 'gallery' | 'faqs' | 'security' | 'domain'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [logoEmail, setLogoEmail] = useState('');
   const [logoPassword, setLogoPassword] = useState('');
@@ -395,6 +396,11 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         >
           <Image className="w-4 h-4 text-brand-teal" />
           <span>Galería de Fotos ({photos.length})</span>
+        </button>
+
+        <button type="button" onClick={() => setActiveTab('faqs')}
+          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap ${activeTab === 'faqs' ? 'bg-white text-stone-900 border-t-2 border-[#387378]' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
+          <HelpCircle className="w-4 h-4 text-brand-teal" /><span>Preguntas frecuentes</span>
         </button>
 
         <button
@@ -1176,6 +1182,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
 
             </div>
           )}
+
+          {activeTab === 'faqs' && <FaqEditor />}
 
           {/* TAB 4: SECURITY & PIN */}
           {activeTab === 'security' && (
