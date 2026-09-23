@@ -237,7 +237,7 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
         </div>
 
         {/* Minimal Direct Booking Perks Bar */}
-        <div className="mt-10 py-3.5 px-5 rounded-2xl bg-white border border-stone-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs text-stone-600 max-w-5xl mx-auto">
+        <div className="mt-10 py-3.5 px-3 sm:px-5 rounded-2xl bg-white border border-stone-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs text-stone-600 max-w-5xl mx-auto">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-brand-teal shrink-0" />
             <span className="font-semibold text-stone-800">Reserva Directa por WhatsApp:</span>
