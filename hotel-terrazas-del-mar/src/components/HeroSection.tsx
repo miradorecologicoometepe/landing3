@@ -17,9 +17,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpen
     <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 pt-36 pb-28 sm:pt-44 sm:pb-36">
       <div className="max-w-3xl">
         <p className="text-xs sm:text-sm tracking-[0.32em] uppercase font-semibold text-[#fff0ae] mb-7">Hotel Mirador Ecológico · Ometepe</p>
-        <h1 className="font-serif text-[clamp(2.8rem,6.3vw,6rem)] leading-[1.08] tracking-tight font-medium max-w-3xl mb-8">Donde la <em className="text-[#fff0ae]">naturaleza</em> se abraza con el lago y los volcanes</h1>
-        <p className="text-base sm:text-xl leading-relaxed text-stone-100/95 max-w-2xl mb-10">Descubre nuestras habitaciones, espacios para eventos y el entorno natural de la Isla de Ometepe. Consulta disponibilidad y tarifas directamente con nosotros.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-6 max-w-2xl mb-12 text-sm">
+        <h1 className="font-serif text-[clamp(2.8rem,5.7vw,5.5rem)] leading-[1.08] tracking-tight font-medium max-w-3xl mb-10">Donde la <em className="text-[#fff0ae]">naturaleza</em> se abraza con el lago y los volcanes</h1>
+        <p className="text-base sm:text-xl leading-relaxed text-stone-100/95 max-w-2xl mb-12">Descubre nuestras habitaciones, espacios para eventos y el entorno natural de la Isla de Ometepe. Consulta disponibilidad y tarifas directamente con nosotros.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-6 max-w-2xl mb-14 text-sm">
           <div className="flex flex-col gap-2"><Leaf className="w-6 h-6 text-[#fff0ae]" /><span>Naturaleza y descanso</span></div>
           <div className="flex flex-col gap-2"><BedDouble className="w-6 h-6 text-[#fff0ae]" /><span>Habitaciones</span></div>
           <div className="flex flex-col gap-2"><Users className="w-6 h-6 text-[#fff0ae]" /><span>Eventos especiales</span></div>
