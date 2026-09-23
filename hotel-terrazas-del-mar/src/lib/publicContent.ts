@@ -30,6 +30,6 @@ export async function loadPublicSiteData(): Promise<PublicSiteData> {
   return {
     config: config ? { ...HOTEL_CONFIG, ...config } : undefined,
     rooms: rooms?.length ? rooms : undefined,
-    photos: photos?.length ? photos : undefined,
+    photos: photos ?? undefined,
   };
 }
