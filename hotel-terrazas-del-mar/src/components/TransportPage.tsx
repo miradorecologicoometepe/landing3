@@ -71,7 +71,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
 
   const ferryRows = publishedSchedules.filter(row => row.category === 'ferry').map(row => row.details);
   const busRows = publishedSchedules.filter(row => row.category === 'bus').map(row => row.details);
-  const sanJorgeToMoyogalpa = ferryRows.length ? ferryRows.filter(row => row.route === 'San Jorge → Moyogalpa') : fallbackSanJorgeToMoyogalpa;
+  const sanJorgeToMoyogalpa = ferryRows.length ? ferryRows.filter(row => row.route === 'San Jorge → Moyogalpa').sort((a, b) => new Date('2000-01-01 ' + a.time).getTime() - new Date('2000-01-01 ' + b.time).getTime()) : fallbackSanJorgeToMoyogalpa;
   const moyogalpaToSanJorge = ferryRows.length ? ferryRows.filter(row => row.route === 'Moyogalpa → San Jorge') : fallbackMoyogalpaToSanJorge;
   const localBuses = busRows.length ? busRows : fallbackLocalBuses;
 
@@ -271,6 +271,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
 
             </div>
 
+            <p className="text-xs text-stone-600">Salidas San Jorge → Moyogalpa tomadas como referencia de <a href="https://reservaometepe.com/horario-barcos/" target="_blank" rel="noopener noreferrer" className="text-teal-700 underline font-semibold">Reserva Ometepe</a> (consulta del 23 de septiembre de 2026). Los horarios de regreso todavía son provisionales; confirma cada salida y el embarque de vehículos con la naviera.</p>
             {/* Travel Tips for Ferry */}
             <div className="bg-teal-50/70 border border-teal-200/80 rounded-2xl p-6 space-y-4">
               <h4 className="font-bold text-teal-950 text-base flex items-center gap-2">
