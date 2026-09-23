@@ -64,6 +64,14 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [logoPassword, setLogoPassword] = useState('');
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  useEffect(() => {
+    if (!logoFile) { setLogoPreview(null); return; }
+    const url = URL.createObjectURL(logoFile);
+    setLogoPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [logoFile]);
 
   // Security tab state
   const [currentPinInput, setCurrentPinInput] = useState('');
@@ -112,8 +120,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
 
   const handlePublishLogo = async () => {
     if (!supabase) { setLogoStatus('Falta configurar VITE_SUPABASE_URL y VITE_SUPABASE_PUBLISHABLE_KEY en Cloudflare.'); return; }
-    const logoUrl = configForm.logoUrl?.trim() || '';
-    if (logoUrl && !/^https:\/\//i.test(logoUrl)) { setLogoStatus('Utiliza una URL HTTPS pública para el logo.'); return; }
+    if (!logoFile) { setLogoStatus('Selecciona una imagen para subir o reemplazar el logo.'); return; }
+    if (!['image/png','image/jpeg','image/webp','image/avif','image/svg+xml'].includes(logoFile.type) || logoFile.size > 10 * 1024 * 1024) { setLogoStatus('Selecciona una imagen PNG, JPG, WebP, AVIF o SVG de hasta 10 MB.'); return; }
     setLogoSaving(true);
     setLogoStatus('');
     try {
@@ -127,12 +135,19 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       if (!user) throw new Error('No se pudo verificar tu sesión.');
       const { data: admin, error: adminError } = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
       if (adminError || !admin) throw new Error('Esta cuenta no tiene permisos de administrador en Supabase.');
+      const extension = logoFile.name.split('.').pop()?.toLowerCase() || 'png';
+      const path = `branding/logo-${crypto.randomUUID()}.${extension}`;
+      const upload = await supabase.storage.from('hotel-media').upload(path, logoFile, { contentType: logoFile.type, upsert: false });
+      if (upload.error) throw upload.error;
+      const logoUrl = supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl;
       const { data: existing, error: readError } = await supabase.from('site_content').select('value').eq('key', 'hotel_config').maybeSingle();
       if (readError) throw readError;
       const existingValue = existing?.value && typeof existing.value === 'object' && !Array.isArray(existing.value) ? existing.value as Record<string, unknown> : {};
       const { error } = await supabase.from('site_content').upsert({ key: 'hotel_config', value: { ...existingValue, logoUrl } }, { onConflict: 'key' });
       if (error) throw error;
       setConfigForm(prev => ({ ...prev, logoUrl }));
+      onSaveHotelConfig({ ...configForm, logoUrl });
+      setLogoFile(null);
       setLogoStatus('Logo publicado en Supabase. Los visitantes lo verán al recargar la página.');
     } catch (error) {
       setLogoStatus(error instanceof Error ? error.message : 'No se pudo publicar el logo.');
@@ -480,16 +495,16 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
 
               <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-3">
                 <h4 className="font-bold text-base text-stone-900">Logo del hotel</h4>
-                <p className="text-xs text-stone-600">Pega la URL HTTPS pública de tu logo (PNG, SVG o WebP). Al guardar se reemplazará el logo provisional en el encabezado y pie de página de este navegador.</p>
-                <label htmlFor="hotel-logo-url" className="block text-xs font-semibold text-stone-700">URL del logo</label>
-                <input id="hotel-logo-url" type="url" value={configForm.logoUrl || ''} onChange={(e) => handleConfigChange('logoUrl', e.target.value)} placeholder="https://ejemplo.com/logo.png" className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm" />
-                {configForm.logoUrl && <img src={configForm.logoUrl} alt="Vista previa del logo" className="h-20 max-w-full object-contain" />}
-                <p className="text-xs text-stone-500">Deja el campo vacío para volver al logo provisional. Para publicar para todos los visitantes, inicia sesión con un usuario autorizado de Supabase.</p>
+                <p className="text-xs text-stone-600">Selecciona una imagen desde tu teléfono o computadora para subir o reemplazar el logo. PNG, JPG, WebP, AVIF o SVG; máximo 10 MB.</p>
+                <label htmlFor="hotel-logo-file" className="block text-xs font-semibold text-stone-700">Seleccionar logo</label>
+                <input id="hotel-logo-file" type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/svg+xml" onChange={e => { setLogoFile(e.target.files?.[0] || null); setLogoStatus(''); }} className="block w-full min-w-0 text-sm border rounded-xl p-3 bg-white" />
+                {(logoPreview || configForm.logoUrl) && <img src={logoPreview || configForm.logoUrl} alt="Vista previa del logo" className="h-24 max-w-full object-contain rounded-lg border p-2" />}
+                <p className="text-xs text-stone-500">Publica el logo con una cuenta administradora autorizada de Supabase.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input type="email" autoComplete="username" value={logoEmail} onChange={e => setLogoEmail(e.target.value)} placeholder="Correo de administrador Supabase" aria-label="Correo de administrador Supabase" className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm" />
                   <input type="password" autoComplete="current-password" value={logoPassword} onChange={e => setLogoPassword(e.target.value)} placeholder="Contraseña Supabase" aria-label="Contraseña Supabase" className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm" />
                 </div>
-                <button type="button" disabled={logoSaving || !supabase} onClick={handlePublishLogo} className="px-4 py-2 rounded-xl bg-[#087f83] text-white font-semibold text-sm disabled:opacity-50">{logoSaving ? 'Publicando…' : 'Publicar logo para todos'}</button>
+                <button type="button" disabled={logoSaving || !supabase || !logoFile} onClick={handlePublishLogo} className="px-4 py-2 rounded-xl bg-[#087f83] text-white font-semibold text-sm disabled:opacity-50">{logoSaving ? 'Subiendo y publicando…' : 'Subir / reemplazar logo'}</button>
                 {logoStatus && <p role="status" className="text-xs text-stone-700">{logoStatus}</p>}
               </div>
 
