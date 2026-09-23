@@ -412,7 +412,7 @@ export default function App() {
               onBookExperienceViaWhatsApp={handleBookExperienceViaWhatsApp}
             />
 
-            {/* Reviews will be enabled only after verified guest testimonials are available. */}
+            <ReviewsSection />
 
             {/* Location & Frequently Asked Questions */}
             <LocationSection
