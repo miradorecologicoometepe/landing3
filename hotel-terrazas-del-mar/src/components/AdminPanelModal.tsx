@@ -58,6 +58,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onLogout,
   isDedicatedPage = false,
 }) => {
+  const [replacingPhoto, setReplacingPhoto] = useState<PhotoItem | null>(null);
   const [activeTab, setActiveTab] = useState<'general' | 'rooms' | 'gallery' | 'faqs' | 'security' | 'domain'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [logoEmail, setLogoEmail] = useState('');
@@ -1009,6 +1010,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                   {photos.map(photo => <div key={photo.id} className="rounded-xl overflow-hidden border border-stone-200">
                     <img src={photo.url} alt={photo.title} className="w-full aspect-[4/3] object-cover" />
                     <div className="p-2 text-xs font-semibold text-stone-800">{photo.title}</div>
+                    <button type="button" onClick={() => setReplacingPhoto(photo)} className="m-2 rounded-lg bg-teal-700 text-white px-3 py-2 text-xs font-bold">Reemplazar foto</button>
                     <div className="flex gap-2 p-2 pt-0"><button type="button" onClick={() => { setReplacingPhoto(photo); setGalleryStatus(""); }} className="text-xs rounded-lg bg-teal-700 text-white px-2 py-2">Reemplazar</button><button type="button" onClick={async () => { if (!supabase || !window.confirm("¿Eliminar esta fotografía publicada?")) return; const deleted = await supabase.from("gallery_photos").delete().eq("id", photo.id).select("id").maybeSingle(); if (deleted.error || !deleted.data) { setGalleryStatus(deleted.error?.message || "No se pudo eliminar la fotografía."); return; } if (photo.roomTypeId) { const room = await supabase.from("rooms").select("details").eq("id", photo.roomTypeId).maybeSingle(); if (room.data) { const details = room.data.details as Room; await supabase.from("rooms").update({ details: { ...details, images: details.images.filter(image => image !== photo.url) } }).eq("id", photo.roomTypeId); } } onSavePhotos(currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(item => item.id !== photo.id)); setGalleryStatus("Fotografía eliminada de la galería."); }} className="text-xs rounded-lg border border-red-300 text-red-700 px-2 py-2">Eliminar</button></div>
                   </div>)}
                 </div>
