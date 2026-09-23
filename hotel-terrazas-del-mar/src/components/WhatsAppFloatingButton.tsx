@@ -11,7 +11,7 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
   onOpenBookingModal,
   hotelConfig,
 }) => {
-  const [showTooltip, setShowTooltip] = useState(true);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   return (
     <>
@@ -38,7 +38,7 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
                 ¿Deseas cotizar tu estancia?
               </div>
               <p className="text-stone-600 text-[11px] leading-snug">
-                Chatea con nuestro concierge en WhatsApp y obtén <strong className="text-emerald-700">15% de descuento directo</strong>.
+                Chatea con nuestro concierge en WhatsApp y obtén <strong className="text-emerald-700">información sobre disponibilidad y tarifas</strong>.
               </p>
               <button
                 onClick={onOpenBookingModal}
@@ -60,12 +60,6 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
           className="w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white flex items-center justify-center shadow-xl shadow-emerald-900/30 hover:scale-105 transition-all group relative cursor-pointer"
           title="Abrir WhatsApp con el hotel"
         >
-          {/* Notification Ping */}
-          <span className="absolute top-0 right-0 -mt-1 -mr-1 flex h-4 w-4">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white"></span>
-          </span>
-
           <MessageCircle className="w-7 h-7 fill-white" />
         </a>
       </div>
@@ -77,10 +71,10 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
       >
         <div>
           <div className="text-[10px] uppercase font-bold text-stone-500">
-            Tarifa directa garantizada
+            Consulta disponibilidad
           </div>
           <div className="flex items-baseline gap-1">
-            <span className="text-lg font-black text-[#18363a]">Desde $55</span>
+            <span className="text-lg font-black text-[#18363a]">Consultar tarifa</span>
             <span className="text-[10px] text-stone-500 font-medium">USD / noche</span>
           </div>
         </div>
