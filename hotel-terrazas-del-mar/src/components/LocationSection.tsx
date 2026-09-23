@@ -107,7 +107,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
                 <div className="p-3 sm:px-4 flex flex-wrap items-center justify-between gap-3">
                   <span className="text-xs text-stone-600">Consulta la ubicación y la ruta en Google Maps.</span>
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(HOTEL_CONFIG.name + ', ' + HOTEL_CONFIG.address)}`}
+                    href="https://maps.app.goo.gl/3cvrFknvs9qWTZKp9"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-teal hover:text-brand-teal-dark"
