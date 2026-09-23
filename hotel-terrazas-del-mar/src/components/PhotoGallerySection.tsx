@@ -85,8 +85,10 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
             Galería del Mirador, Piscina & Habitaciones
           </h2>
           <p className="text-stone-300 text-base leading-relaxed">
-            Explora nuestra piscina frente al lago, las habitaciones, el local para eventos y el entorno natural de la finca en Altagracia.
+            Explora las habitaciones, los espacios para eventos y el entorno natural. Las fotografías de referencia se reemplazarán por imágenes reales del establecimiento.
           </p>
+
+          <p className="text-amber-200 text-xs mt-3">Imágenes ilustrativas durante el desarrollo; no corresponden necesariamente a las instalaciones reales.</p>
 
           {/* Category Filter Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
@@ -225,7 +227,7 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
                   {currentPhoto.caption}
                 </p>
                 <span className="text-[11px] text-brand-mint">
-                  Ubicación: {HOTEL_CONFIG.name} • Isla de Ometepe, Rivas, Nicaragua
+                  Imagen de referencia • {HOTEL_CONFIG.name}
                 </span>
               </div>
 
