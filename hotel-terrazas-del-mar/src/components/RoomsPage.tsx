@@ -177,9 +177,6 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
                 {/* Footer Actions */}
                 <div className="p-6 pt-0 border-t border-stone-100 flex items-center justify-between gap-3 mt-4">
                   <div>
-                    <div className="text-[10px] text-stone-400 line-through">
-                      OTA: ${room.originalPrice} USD
-                    </div>
                     <div className="flex items-baseline gap-1">
                       <span className="text-2xl font-black text-stone-900">
                         ${room.pricePerNight}
