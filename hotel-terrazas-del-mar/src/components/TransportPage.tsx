@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 import { 
   Ship, 
   Bus, 
@@ -29,8 +30,10 @@ export const TransportPage: React.FC<TransportPageProps> = ({
   onOpenBookingModal 
 }) => {
   const [activeTab, setActiveTab] = useState<'ferries' | 'buses' | 'taxis'>('ferries');
+  const [publishedSchedules, setPublishedSchedules] = useState<Array<{category:string;details: Record<string,string>}>>([]);
+  useEffect(() => { let active = true; if (!supabase) return; supabase.from('transport_schedules').select('category,details').then(({data,error}) => { if (active && !error && data) setPublishedSchedules(data as Array<{category:string;details: Record<string,string>}>); }); return () => {active=false;}; }, []);
 
-  const sanJorgeToMoyogalpa = [
+  const fallbackSanJorgeToMoyogalpa = [
     { time: '07:00 AM', vessel: 'Ferry Che Guevara', type: 'Ferry con Vehículos', duration: '1h 10m' },
     { time: '07:45 AM', vessel: 'Lancha Rey del Cocibolca', type: 'Solo Pasajeros', duration: '1h 00m' },
     { time: '08:30 AM', vessel: 'Ferry El Cacique', type: 'Ferry con Vehículos', duration: '1h 10m' },
@@ -45,7 +48,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
     { time: '05:45 PM', vessel: 'Ferry El Cacique', type: 'Último Ferry (Vehículos)', duration: '1h 15m' },
   ];
 
-  const moyogalpaToSanJorge = [
+  const fallbackMoyogalpaToSanJorge = [
     { time: '06:00 AM', vessel: 'Ferry El Cacique', type: 'Ferry con Vehículos', duration: '1h 10m' },
     { time: '06:45 AM', vessel: 'Lancha Rey del Cocibolca', type: 'Solo Pasajeros', duration: '1h 00m' },
     { time: '07:30 AM', vessel: 'Ferry Ometepe 1', type: 'Ferry con Vehículos', duration: '1h 15m' },
@@ -60,11 +63,17 @@ export const TransportPage: React.FC<TransportPageProps> = ({
     { time: '05:30 PM', vessel: 'Ferry Ometepe 1', type: 'Último Ferry', duration: '1h 15m' },
   ];
 
-  const localBuses = [
+  const fallbackLocalBuses = [
     { route: 'Moyogalpa ➔ Altagracia', frequency: 'Cada 45 - 60 minutos', timeRange: '06:00 AM - 05:30 PM', notes: 'Pasa cerca de la entrada a la finca / hotel en Altagracia' },
     { route: 'Altagracia ➔ Moyogalpa', frequency: 'Cada 45 - 60 minutos', timeRange: '05:30 AM - 05:00 PM', notes: 'Conecta con las salidas de ferry hacia San Jorge' },
     { route: 'Altagracia ➔ Balgüe / Santo Domingo', frequency: 'Cada 1 - 2 horas', timeRange: '07:00 AM - 04:30 PM', notes: 'Ideal para visitar playas de Santo Domingo y el volcán Maderas' },
   ];
+
+  const ferryRows = publishedSchedules.filter(row => row.category === 'ferry').map(row => row.details);
+  const busRows = publishedSchedules.filter(row => row.category === 'bus').map(row => row.details);
+  const sanJorgeToMoyogalpa = ferryRows.length ? ferryRows.filter(row => row.route === 'San Jorge → Moyogalpa') : fallbackSanJorgeToMoyogalpa;
+  const moyogalpaToSanJorge = ferryRows.length ? ferryRows.filter(row => row.route === 'Moyogalpa → San Jorge') : fallbackMoyogalpaToSanJorge;
+  const localBuses = busRows.length ? busRows : fallbackLocalBuses;
 
   const whatsappTransportMessage = encodeURIComponent(
     `Hola ${hotelConfig.name}, deseo consultar horarios actualizados de barcos y asistencia de transporte terrestre para llegar a Altagracia.`
@@ -122,7 +131,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
               Nota para viajeros a Ometepe:
             </p>
             <p className="text-stone-600">
-              Los horarios de ferry pueden tener variaciones leves según la temporada turística y el estado del viento en el Lago Cocibolca. 
+              Los horarios mostrados son orientativos y están pendientes de confirmación con los operadores. Pueden cambiar por clima, disponibilidad y operación. 
               Si viajas con automóvil o motocicleta, se recomienda reservar el cupo del ferry con antelación o llegar al puerto de San Jorge al menos 45 minutos antes.
             </p>
           </div>
