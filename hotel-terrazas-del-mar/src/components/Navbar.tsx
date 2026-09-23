@@ -66,11 +66,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header 
       id="main-navbar-island"
-      className="fixed top-2 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-16px)] sm:w-[95%] max-w-7xl transition-all duration-300"
+      className="fixed top-2 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-12px)] sm:w-[95%] max-w-7xl transition-all duration-300"
     >
       {/* Floating Island Pill Bar */}
       <div 
-        className={`rounded-2xl sm:rounded-full px-2.5 sm:px-7 py-2.5 sm:py-3.5 gap-2 min-w-0 transition-all duration-300 flex items-center justify-between border ${
+        className={`rounded-2xl sm:rounded-full px-2 sm:px-7 py-2.5 sm:py-3.5 gap-2 min-w-0 transition-all duration-300 flex items-center justify-between border ${
           isScrolled 
             ? 'bg-white/95 backdrop-blur-xl border-teal-100 shadow-lg shadow-[#075e68]/10 text-[#103b43]' 
             : 'bg-white/90 backdrop-blur-xl border-white/60 shadow-lg shadow-[#075e68]/10 text-[#103b43]'
