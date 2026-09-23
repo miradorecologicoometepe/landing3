@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Room, PhotoItem, HotelConfig, PhotoCategory } from '../types';
 import { getAdminPin, setAdminPin } from '../utils/storageUtils';
 import { supabase } from '../lib/supabase';
+import { PhotoUploader } from './PhotoUploader';
 import { 
   X, 
   Settings, 
@@ -989,6 +990,11 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
           {activeTab === 'gallery' && (
             <div className="space-y-6">
               
+              <PhotoUploader rooms={rooms} onUploaded={(photo, roomId) => {
+                onSavePhotos([...photos, photo]);
+                if (roomId) onSaveRooms(rooms.map(room => room.id === roomId ? { ...room, images: [...room.images.filter(url => !url.includes('images.unsplash.com')), photo.url] } : room));
+              }} />
+              <p className="text-xs text-stone-600">La subida anterior publica las fotos en Supabase. El editor de enlaces y el botón «Guardar foto» que aparecen debajo siguen siendo locales; no los uses para publicar fotos nuevas.</p>
               {/* Photo Form */}
               {photoFormData ? (
                 <form onSubmit={handleSavePhotoForm} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4 max-w-xl mx-auto">
