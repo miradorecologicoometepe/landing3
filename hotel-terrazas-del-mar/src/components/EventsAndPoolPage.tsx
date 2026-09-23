@@ -45,7 +45,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
   return (
     <div className="pt-24 pb-24 bg-[#f5fbfa] min-h-screen">
       {/* Header Banner */}
-      <div className="bg-gradient-to-br from-[#075e68] via-[#078b91] to-[#0ca5a0] text-white pt-20 pb-20 sm:pt-24 sm:pb-24 px-5 sm:px-8 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#075e68] via-[#078b91] to-[#0ca5a0] text-white pt-20 pb-16 sm:pt-24 sm:pb-20 px-5 sm:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:20px_20px]"></div>
         
         <div className="max-w-6xl mx-auto relative z-10 text-left">
@@ -67,7 +67,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
               href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo cotizar el local de eventos para una celebración.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-lg transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#089b9c] hover:bg-[#087f83] text-white font-bold text-xs sm:text-sm shadow-lg transition-all"
             >
               <MessageCircle className="w-4 h-4 fill-white" />
               <span>Cotizar Local de Eventos por WhatsApp</span>
@@ -76,7 +76,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
               href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo información sobre el acceso a la piscina y pasadía.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-500/30 hover:bg-teal-500/40 text-teal-100 font-bold text-xs sm:text-sm border border-teal-300/30 transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/15 hover:bg-white/25 text-teal-100 font-bold text-xs sm:text-sm border border-teal-300/30 transition-all"
             >
               <Waves className="w-4 h-4" />
               <span>Consultar Pasadía en Piscina</span>
@@ -85,13 +85,13 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-12 sm:pt-16 relative z-10">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-8 sm:pt-12 relative z-10 isolate">
         
         {/* Navigation Selector */}
-        <div className="flex flex-wrap rounded-2xl bg-white p-2 mb-12 max-w-xl mx-auto border border-teal-100 shadow-lg gap-1">
+        <div className="grid grid-cols-1 sm:grid-cols-3 rounded-2xl bg-white p-2 mb-12 w-full max-w-2xl mx-auto border border-teal-100 shadow-lg gap-2 relative z-20">
           <button
             onClick={() => setActiveSection('all')}
-            className={`flex-1 min-w-[120px] py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`w-full min-h-12 px-3 py-3 rounded-xl whitespace-normal leading-snug text-xs sm:text-sm font-bold transition-all ${
               activeSection === 'all'
                 ? 'bg-[#087f83] text-white shadow-sm'
                 : 'text-stone-600 hover:text-stone-900'
@@ -101,7 +101,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
           </button>
           <button
             onClick={() => setActiveSection('eventos')}
-            className={`flex-1 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`w-full min-h-12 px-3 py-3 rounded-xl whitespace-normal leading-snug text-xs sm:text-sm font-bold transition-all ${
               activeSection === 'eventos'
                 ? 'bg-[#087f83] text-white shadow-sm'
                 : 'text-stone-600 hover:text-stone-900'
@@ -111,7 +111,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
           </button>
           <button
             onClick={() => setActiveSection('piscina')}
-            className={`flex-1 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`w-full min-h-12 px-3 py-3 rounded-xl whitespace-normal leading-snug text-xs sm:text-sm font-bold transition-all ${
               activeSection === 'piscina'
                 ? 'bg-[#087f83] text-white shadow-sm'
                 : 'text-stone-600 hover:text-stone-900'
