@@ -42,16 +42,16 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
   return (
     <div 
       id="room-details-modal-overlay" 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-6 bg-black/80 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div 
         id="room-details-modal-content"
-        className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden border border-stone-200 my-auto text-stone-800"
+        className="bg-white rounded-none sm:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[100dvh] sm:max-h-[92vh] flex flex-col overflow-hidden border border-stone-200 my-auto text-stone-800"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header Bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100 bg-stone-50">
+        <div className="flex items-center justify-between gap-2 px-3 sm:px-6 py-3 sm:py-4 border-b border-stone-100 bg-stone-50">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
               {room.type}
@@ -71,7 +71,7 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 max-h-[75vh] overflow-y-auto space-y-6">
+        <div className="p-3 sm:p-6 min-h-0 flex-1 overflow-y-auto space-y-5 sm:space-y-6">
           
           {/* Main Room Photo Showcase */}
           <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-stone-900 shadow-inner group">
@@ -121,7 +121,7 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
           )}
 
           {/* Key Room Specs */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl bg-stone-50 border border-stone-200">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-stone-50 border border-stone-200">
             <div className="flex items-center gap-2">
               <Maximize className="w-5 h-5 text-brand-teal" />
               <div>
@@ -206,7 +206,7 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
         </div>
 
         {/* Modal Footer with Pricing & WhatsApp Reservation CTA */}
-        <div className="px-6 py-4 bg-stone-50 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="px-3 sm:px-6 py-3 sm:py-4 bg-stone-50 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-stone-400 line-through text-sm">
