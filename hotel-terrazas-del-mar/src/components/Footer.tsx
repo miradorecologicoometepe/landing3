@@ -34,7 +34,7 @@ export const Footer: React.FC<FooterProps> = ({
           
           {/* Col 1: Brand & Philosophy */}
           <div className="space-y-4">
-            <HotelLogo variant="horizontal" mode="white" height={44} />
+            <HotelLogo variant="horizontal" mode="white" height={48} logoUrl={hotelConfig.logoUrl} />
 
             <p className="text-xs text-stone-300 leading-relaxed pt-1">
               Un espacio para descansar, descubrir Ometepe y organizar encuentros especiales en {hotelConfig.locationArea || 'Isla de Ometepe'}.
