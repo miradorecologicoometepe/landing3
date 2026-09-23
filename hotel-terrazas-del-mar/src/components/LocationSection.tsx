@@ -94,36 +94,26 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
                 </span>
               </div>
 
-              {/* Styled Map Graphic / Preview */}
-              <div className="relative aspect-[16/9] rounded-xl overflow-hidden bg-stone-200 border border-stone-300 group shadow-inner">
-                <img
-                  src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
-                  alt="Ubicación Ometepe Mirador Ecológico"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              {/* Google Maps: búsqueda por dirección, sin atribuir coordenadas no verificadas. */}
+              <div className="rounded-xl overflow-hidden bg-stone-100 border border-stone-200 shadow-sm">
+                <iframe
+                  title={`Mapa de Google Maps: ${HOTEL_CONFIG.name}`}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(HOTEL_CONFIG.name + ', ' + HOTEL_CONFIG.address)}&output=embed`}
+                  className="w-full h-[320px] sm:h-[400px] border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
                 />
-                
-                {/* Pin Card overlay */}
-                <div className="absolute inset-0 bg-stone-950/30 flex items-center justify-center p-4">
-                  <div className="bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-2xl border border-stone-200 max-w-xs text-center">
-                    <div className="w-10 h-10 rounded-full bg-brand-terracotta text-white flex items-center justify-center mx-auto mb-2 shadow-md">
-                      <MapPin className="w-5 h-5" />
-                    </div>
-                    <div className="font-gidole font-bold text-sm text-stone-900">
-                      {HOTEL_CONFIG.name}
-                    </div>
-                    <div className="text-[11px] text-stone-500 mt-1">
-                      Isla de Ometepe • Rivas, Nicaragua
-                    </div>
-                    <a
-                      href={`https://maps.google.com/?q=${encodeURIComponent(HOTEL_CONFIG.address)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-brand-teal hover:text-brand-teal-dark"
-                    >
-                      <span>Abrir en Google Maps</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
+                <div className="p-3 sm:px-4 flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-xs text-stone-600">Consulta la ubicación y la ruta en Google Maps.</span>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(HOTEL_CONFIG.name + ', ' + HOTEL_CONFIG.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-teal hover:text-brand-teal-dark"
+                  >
+                    Abrir en Google Maps <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
                 </div>
               </div>
             </div>
