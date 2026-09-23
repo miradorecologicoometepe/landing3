@@ -19,7 +19,7 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
         id="floating-whatsapp-widget" 
         className="fixed bottom-6 right-6 z-40 hidden sm:flex flex-col items-end gap-2 animate-in fade-in"
       >
-        {/* Discreet direct contact */}}
+        {/* Discreet direct contact */}
         <a
           id="btn-floating-whatsapp-direct"
           href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo consultar disponibilidad y tarifas.`)}`}
