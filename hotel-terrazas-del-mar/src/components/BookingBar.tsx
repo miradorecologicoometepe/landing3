@@ -68,22 +68,18 @@ export const BookingBar: React.FC<BookingBarProps> = ({
 
   return (
     <div id="ota-search-booking-bar" className="w-full max-w-6xl mx-auto -mt-16 sm:-mt-20 relative z-30 px-4">
-      <div className="bg-white rounded-2xl shadow-2xl shadow-black/20 border border-stone-200/90 p-4 sm:p-5 lg:p-6 backdrop-blur-md">
+      <div className="bg-white rounded-3xl shadow-xl shadow-black/10 border border-stone-200/90 p-4 sm:p-5 lg:p-6 backdrop-blur-md">
         
         {/* Banner above search fields */}
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-stone-100 text-xs sm:text-sm">
           <div className="flex items-center gap-2 text-stone-700 font-semibold">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Motor de Reservas Directas con Concierge en Vivo</span>
+            <span>Consulta disponibilidad y organiza tu estancia</span>
           </div>
           <div className="flex items-center gap-3 text-stone-500 text-xs">
-            <span className="bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-200 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              Garantía: 15% menos que Booking/Expedia
-            </span>
             <span className="hidden md:inline-flex items-center gap-1 text-emerald-700 font-medium">
               <Clock className="w-3.5 h-3.5" />
-              Confirmación inmediata por WhatsApp
+              Consulta directa por WhatsApp
             </span>
           </div>
         </div>
