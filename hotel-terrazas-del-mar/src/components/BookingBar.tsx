@@ -67,7 +67,7 @@ export const BookingBar: React.FC<BookingBarProps> = ({
   };
 
   return (
-    <div id="ota-search-booking-bar" className="w-full max-w-6xl mx-auto -mt-16 sm:-mt-20 relative z-30 px-4">
+    <div id="ota-search-booking-bar" className="w-full max-w-6xl mx-auto -mt-10 sm:-mt-20 relative z-30 px-3 sm:px-4">
       <div className="bg-white rounded-3xl shadow-xl shadow-black/10 border border-stone-200/90 p-4 sm:p-5 lg:p-6 backdrop-blur-md">
         
         {/* Banner above search fields */}
