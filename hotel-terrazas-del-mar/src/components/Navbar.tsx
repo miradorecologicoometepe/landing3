@@ -72,8 +72,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div 
         className={`rounded-2xl sm:rounded-full px-4 sm:px-7 py-3 sm:py-3.5 transition-all duration-300 flex items-center justify-between border ${
           isScrolled 
-            ? 'bg-[#075c63]/95 backdrop-blur-xl border-teal-500/30 shadow-2xl shadow-black/50 text-white' 
-            : 'bg-[#087f83]/80 backdrop-blur-lg border-teal-400/25 shadow-xl shadow-black/35 text-white'
+            ? 'bg-white/95 backdrop-blur-xl border-teal-100 shadow-lg shadow-[#075e68]/10 text-[#103b43]' 
+            : 'bg-white/90 backdrop-blur-xl border-white/60 shadow-lg shadow-[#075e68]/10 text-[#103b43]'
         }`}
       >
         {/* Brand Logo */}
@@ -82,7 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex items-center gap-2 group cursor-pointer shrink-0 text-left focus:outline-none" 
           title={hotelConfig.name}
         >
-          <HotelLogo variant="horizontal" mode="white" height={28} />
+          <HotelLogo variant="horizontal" mode="dark" height={28} />
         </button>
 
         {/* Desktop Minimalist Nav Links */}
@@ -95,8 +95,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => handleNavClick(item.id)}
                 className={`transition-all py-1 px-2.5 rounded-full cursor-pointer font-semibold relative ${
                   isActive 
-                    ? 'text-[#ffe997] border-b border-[#ffe997] rounded-none' 
-                    : 'text-stone-200 hover:text-white hover:bg-white/10'
+                    ? 'text-[#087f83] border-b-2 border-[#087f83] rounded-none' 
+                    : 'text-[#244a50] hover:text-[#087f83] hover:bg-teal-50'
                 }`}
               >
                 {item.label}
@@ -112,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-reserve-btn"
             onClick={() => onOpenBookingModal()}
-            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#b6f2e6] hover:bg-[#d1fff3] active:bg-[#a2e4d9] text-[#075c63] text-xs font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer border border-teal-300/40"
+            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#089b9c] hover:bg-[#087f83] active:bg-[#075e68] text-white text-xs font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer border border-teal-300/40"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Ver tarifas</span>
@@ -125,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className={`w-9 h-9 lg:hidden rounded-full flex items-center justify-center transition-all cursor-pointer border ${
               mobileMenuOpen 
                 ? 'bg-teal-400 text-teal-950 border-teal-300 shadow-md rotate-90' 
-                : 'bg-white/10 hover:bg-white/20 text-white border-white/20'
+                : 'bg-teal-50 hover:bg-teal-100 text-[#087f83] border-teal-200'
             }`}
             aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
             title="Menú de navegación"
