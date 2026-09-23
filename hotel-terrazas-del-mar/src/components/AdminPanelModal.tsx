@@ -998,6 +998,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
           {/* Galería: únicamente carga de archivos; las URL se generan automáticamente en Supabase. */}
           {activeTab === 'gallery' && (
             <div className="space-y-6">
+              <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-stone-800"><h4 className="font-bold mb-2">Reemplazar imágenes iniciales de la landing</h4><p>Portada y exteriores: selecciona «Portada, jardines y exteriores». Eventos: «Eventos y celebraciones». Piscina: «Piscina». Habitaciones: «Habitaciones» y elige la habitación. Al subir la primera foto de una sección, la landing utilizará tu imagen en lugar de la imagen de muestra. Las fotografías que publiques aparecerán abajo con su botón «Reemplazar».</p></div>
               <PhotoUploader key={replacingPhoto?.id || 'new'} rooms={rooms} replacePhoto={replacingPhoto} onCancelReplace={() => setReplacingPhoto(null)} onReplaced={photo => { onSavePhotos(currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.map(item => item.id === photo.id ? photo : item)); setReplacingPhoto(null); setGalleryStatus('Fotografía reemplazada correctamente.'); }} onUploaded={(photo, roomId) => {
                 onSavePhotos(currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, photo]);
                 if (roomId) onSaveRooms(rooms.map(room => room.id === roomId ? { ...room, images: [...room.images.filter(url => !url.includes('images.unsplash.com')), photo.url] } : room));
