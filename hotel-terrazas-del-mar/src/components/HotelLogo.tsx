@@ -6,6 +6,7 @@ interface HotelLogoProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   height?: number;
+  logoUrl?: string;
 }
 
 export const HotelLogo: React.FC<HotelLogoProps> = ({
@@ -14,19 +15,26 @@ export const HotelLogo: React.FC<HotelLogoProps> = ({
   className = '',
   size = 'md',
   height,
+  logoUrl,
 }) => {
+  if (logoUrl && /^https:\/\//i.test(logoUrl)) {
+    return <img src={logoUrl} alt="Hotel Mirador Ecológico Ometepe" className={`object-contain max-w-full ${className}`} style={{ height: height || (variant === 'horizontal' ? 44 : 120), maxWidth: variant === 'horizontal' ? 240 : 360 }} />;
+  }
+
   // Color configuration according to Brand Board
   // Color Principal: #C2ECE5, #80CEDE, #387378
   // Opuestos Complementarios: #804629, #060795, #F2EE9C
 
   const mountainColor = 
     mode === 'white' ? '#FFFFFF' :
-    mode === 'teal' ? '#387378' :
+    mode === 'monochrome' ? '#171717' :
+    mode === 'teal' ? '#087f83' :
     '#387378'; // Brand deep teal
 
   const sunColor = 
-    mode === 'white' ? '#F2EE9C' :
-    mode === 'teal' ? '#80CEDE' :
+    mode === 'white' ? '#FFFFFF' :
+    mode === 'monochrome' ? '#171717' :
+    mode === 'teal' ? '#087f83' :
     '#F2EE9C'; // Brand sunshine yellow
 
   const sunRaysColor = 
