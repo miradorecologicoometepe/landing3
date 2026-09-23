@@ -72,7 +72,7 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
     guestEmail: '',
     specialRequests: '',
     addons: {
-      breakfast: true, // by default true for direct web benefit
+      breakfast: false,
       airportTransfer: false,
       romanticPackage: false,
       lateCheckout: false,
@@ -343,126 +343,11 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
               )}
             </div>
 
-            {/* 3. Addon Services */}
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-stone-600 mb-2 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-600" />
-                2. Servicios & Experiencias Opcionales
-              </label>
-              <div className="space-y-2">
-                
-                {/* Breakfast */}
-                <label className="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:bg-stone-50 transition-colors cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={reservation.addons.breakfast}
-                      onChange={(e) => setReservation({
-                        ...reservation,
-                        addons: { ...reservation.addons, breakfast: e.target.checked }
-                      })}
-                      className="w-4 h-4 text-brand-teal rounded focus:ring-brand-teal"
-                    />
-                    <div>
-                      <div className="text-xs font-bold text-stone-800">
-                        {ADDON_PRICING.breakfast.name}
-                      </div>
-                      <div className="text-[11px] text-stone-500">
-                        Desayuno típico nicaragüense, frutas tropicales frescas y café orgánico de Ometepe
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-brand-terracotta shrink-0">
-                    +${ADDON_PRICING.breakfast.price} USD / pax
-                  </span>
-                </label>
-
-                {/* VIP Ferry / Island Transfer */}
-                <label className="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:bg-stone-50 transition-colors cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={reservation.addons.airportTransfer}
-                      onChange={(e) => setReservation({
-                        ...reservation,
-                        addons: { ...reservation.addons, airportTransfer: e.target.checked }
-                      })}
-                      className="w-4 h-4 text-brand-teal rounded focus:ring-brand-teal"
-                    />
-                    <div>
-                      <div className="text-xs font-bold text-stone-800">
-                        {ADDON_PRICING.airportTransfer.name}
-                      </div>
-                      <div className="text-[11px] text-stone-500">
-                        Recepción privada en puerto Moyogalpa / San José y traslado hasta el mirador
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-brand-terracotta shrink-0">
-                    +${ADDON_PRICING.airportTransfer.price} USD
-                  </span>
-                </label>
-
-                {/* Romantic Package */}
-                <label className="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:bg-stone-50 transition-colors cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={reservation.addons.romanticPackage}
-                      onChange={(e) => setReservation({
-                        ...reservation,
-                        addons: { ...reservation.addons, romanticPackage: e.target.checked }
-                      })}
-                      className="w-4 h-4 text-brand-teal rounded focus:ring-brand-teal"
-                    />
-                    <div>
-                      <div className="text-xs font-bold text-stone-800">
-                        {ADDON_PRICING.romanticPackage.name}
-                      </div>
-                      <div className="text-[11px] text-stone-500">
-                        Decoración especial con flores locales, botella de vino y vista al atardecer
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-brand-terracotta shrink-0">
-                    +${ADDON_PRICING.romanticPackage.price} USD
-                  </span>
-                </label>
-
-                {/* Late Check-out */}
-                <label className="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:bg-stone-50 transition-colors cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={reservation.addons.lateCheckout}
-                      onChange={(e) => setReservation({
-                        ...reservation,
-                        addons: { ...reservation.addons, lateCheckout: e.target.checked }
-                      })}
-                      className="w-4 h-4 text-brand-teal rounded focus:ring-brand-teal"
-                    />
-                    <div>
-                      <div className="text-xs font-bold text-stone-800">
-                        {ADDON_PRICING.lateCheckout.name}
-                      </div>
-                      <div className="text-[11px] text-stone-500">
-                        Disfruta de tu habitación, piscina y mirador hasta la tarde antes de tu ferry
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-brand-terracotta shrink-0">
-                    +${ADDON_PRICING.lateCheckout.price} USD
-                  </span>
-                </label>
-
-              </div>
-            </div>
-
             {/* 4. Guest Details */}
             <div className="space-y-3">
               <label className="text-xs font-bold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-brand-teal" />
-                3. Datos del Huésped Titular (Opcional)
+                2. Datos del Huésped Titular (Opcional)
               </label>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
