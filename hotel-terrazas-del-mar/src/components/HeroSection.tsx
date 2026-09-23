@@ -1,5 +1,5 @@
 import React from 'react';
-import { HotelConfig } from '../types';
+import { HotelConfig, PhotoItem } from '../types';
 import { ArrowRight, BedDouble, ChevronDown, Leaf, MapPin, Users } from 'lucide-react';
 
 interface HeroSectionProps {
@@ -7,11 +7,12 @@ interface HeroSectionProps {
   onOpenGallery: () => void;
   onOpenBookingModal: () => void;
   hotelConfig: HotelConfig;
+  photos: PhotoItem[];
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpenGallery, onOpenBookingModal, hotelConfig }) => (
+export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpenGallery, onOpenBookingModal, hotelConfig, photos }) => (
   <section className="relative isolate min-h-[78svh] sm:min-h-[88svh] lg:min-h-screen overflow-hidden bg-[#087f83] text-white flex items-center">
-    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85" alt="Imagen ilustrativa de un paisaje junto al agua; fotografía real del hotel pendiente" className="absolute inset-0 -z-20 h-full w-full object-cover" />
+    <img src={photos.find(photo => photo.category === "outdoors")?.url || photos.find(photo => photo.category === "pool")?.url || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85"} alt="Vista del Mirador Ecológico Ometepe" className="absolute inset-0 -z-20 h-full w-full object-cover" />
     <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#063f4c]/95 via-[#087f83]/75 to-[#087f83]/25" />
     <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#063f4c]/65 via-transparent to-[#063f4c]/35" />
     <div className="w-full max-w-7xl mx-auto px-4 min-[375px]:px-5 sm:px-10 lg:px-14 pt-28 pb-24 sm:pt-44 sm:pb-36">
