@@ -15,18 +15,25 @@ import {
   ChevronRight,
   Wine
 } from 'lucide-react';
-import { HotelConfig } from '../types';
+import { HotelConfig, PhotoItem } from '../types';
 
 interface EventsAndPoolPageProps {
   hotelConfig: HotelConfig;
+  photos: PhotoItem[];
   onOpenBookingModal: () => void;
 }
 
 export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({ 
   hotelConfig,
+  photos,
   onOpenBookingModal 
 }) => {
   const [activeSection, setActiveSection] = useState<'all' | 'eventos' | 'piscina'>('all');
+
+  const eventPhotos = photos.filter(photo => photo.category === 'gastronomy');
+  const poolPhotos = photos.filter(photo => photo.category === 'pool');
+  const eventImage = (index: number, fallback: string) => eventPhotos[index % eventPhotos.length]?.url || fallback;
+  const poolImage = (index: number, fallback: string) => poolPhotos[index % poolPhotos.length]?.url || fallback;
 
   const eventFeatures = [
     { title: 'Celebraciones Sociales', desc: 'Cumpleaños, aniversarios, quinceaños y reuniones familiares en un entorno campestre fresco y privado.', icon: Heart },
@@ -154,7 +161,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2 rounded-2xl overflow-hidden aspect-[16/10] relative group">
                 <img
-                  src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85"
+                  src={eventImage(1, "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85")}
                   alt="Espacio para eventos campestres"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -172,7 +179,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
               <div className="space-y-4 flex flex-col justify-between">
                 <div className="rounded-2xl overflow-hidden aspect-[16/10] relative group">
                   <img
-                    src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80"
+                    src={eventImage(2, "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80")}
                     alt="Banquete y comida campestre"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -183,7 +190,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
                 <div className="rounded-2xl overflow-hidden aspect-[16/10] relative group">
                   <img
-                    src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80"
+                    src={eventImage(3, "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80")}
                     alt="Retiros y grupos"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -260,7 +267,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
                 <img
-                  src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
+                  src={poolImage(1, "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80")}
                   alt="Piscina con vistas"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -271,7 +278,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
               <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
                 <img
-                  src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80"
+                  src={poolImage(2, "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80")}
                   alt="Agua cristalina y descanso"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -282,7 +289,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
               <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
                 <img
-                  src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=800&q=80"
+                  src={poolImage(3, "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=800&q=80")}
                   alt="Bebidas refrescantes"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
