@@ -43,9 +43,9 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
   ];
 
   return (
-    <div className="pt-24 pb-24 bg-[#f5fbfa] min-h-screen">
+    <main className="pt-24 pb-24 bg-[#f5fbfa] min-h-screen">
       {/* Header Banner */}
-      <div className="bg-gradient-to-br from-[#075e68] via-[#078b91] to-[#0ca5a0] text-white pt-20 pb-16 sm:pt-24 sm:pb-20 px-5 sm:px-8 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#075e68] via-[#078b91] to-[#0ca5a0] text-white pt-20 pb-20 sm:pt-24 sm:pb-24 px-5 sm:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:20px_20px]"></div>
         
         <div className="max-w-6xl mx-auto relative z-10 text-left">
@@ -54,7 +54,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
             Espacios & Amenidades Exclusivas
           </div>
           
-          <h1 className="font-gidole text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-white">
+          <h1 className="font-gidole text-3xl sm:text-5xl font-extrabold tracking-tight mb-6 leading-tight break-words text-white">
             Local para Eventos & Piscina Panorámica
           </h1>
           
@@ -85,10 +85,10 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-8 sm:pt-12 relative z-10 isolate">
+      <section className="w-full bg-[#f5fbfa] px-5 sm:px-8 py-16 sm:py-20 relative clear-both">\n        <div className="max-w-6xl mx-auto">
         
         {/* Navigation Selector */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 rounded-2xl bg-white p-2 mb-12 w-full max-w-2xl mx-auto border border-teal-100 shadow-lg gap-2 relative z-20">
+        <div className="grid grid-cols-1 sm:grid-cols-3 rounded-2xl bg-white p-2 mb-12 w-full max-w-2xl mx-auto border border-teal-100 shadow-lg gap-2">
           <button
             onClick={() => setActiveSection('all')}
             className={`w-full min-h-12 px-3 py-3 rounded-xl whitespace-normal leading-snug text-xs sm:text-sm font-bold transition-all ${
@@ -325,7 +325,8 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
           </div>
         )}
 
-      </div>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 };
