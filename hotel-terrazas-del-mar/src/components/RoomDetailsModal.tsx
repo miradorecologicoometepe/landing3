@@ -126,7 +126,7 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
               <Maximize className="w-5 h-5 text-brand-teal" />
               <div>
                 <div className="text-[10px] uppercase text-stone-500 font-bold">Tamaño</div>
-                <div className="text-sm font-bold text-stone-800">{room.sizeM2} m²</div>
+                <div className="text-sm font-bold text-stone-800">{room.sizeM2 > 0 ? `${room.sizeM2} m²` : "Consultar"}</div>
               </div>
             </div>
 
