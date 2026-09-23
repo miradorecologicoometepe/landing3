@@ -66,11 +66,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header 
       id="main-navbar-island"
-      className="fixed top-2 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl transition-all duration-300"
+      className="fixed top-2 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-16px)] sm:w-[95%] max-w-7xl transition-all duration-300"
     >
       {/* Floating Island Pill Bar */}
       <div 
-        className={`rounded-2xl sm:rounded-full px-4 sm:px-7 py-3 sm:py-3.5 transition-all duration-300 flex items-center justify-between border ${
+        className={`rounded-2xl sm:rounded-full px-2.5 sm:px-7 py-2.5 sm:py-3.5 gap-2 min-w-0 transition-all duration-300 flex items-center justify-between border ${
           isScrolled 
             ? 'bg-white/95 backdrop-blur-xl border-teal-100 shadow-lg shadow-[#075e68]/10 text-[#103b43]' 
             : 'bg-white/90 backdrop-blur-xl border-white/60 shadow-lg shadow-[#075e68]/10 text-[#103b43]'
@@ -79,10 +79,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand Logo */}
         <button 
           onClick={() => handleNavClick('inicio')}
-          className="flex items-center gap-2 group cursor-pointer shrink-0 text-left focus:outline-none" 
+          className="flex items-center gap-2 group cursor-pointer min-w-0 flex-1 lg:flex-none text-left focus:outline-none" 
           title={hotelConfig.name}
         >
-          <HotelLogo variant="horizontal" mode="dark" height={28} />
+          <HotelLogo variant="horizontal" mode="color" height={28} className="min-w-0" />
         </button>
 
         {/* Desktop Minimalist Nav Links */}
@@ -106,13 +106,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Right Actions & CTAs */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2.5 shrink-0 relative z-10">
           
           {/* Primary Direct Booking CTA */}
           <button
             id="nav-reserve-btn"
             onClick={() => onOpenBookingModal()}
-            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#089b9c] hover:bg-[#087f83] active:bg-[#075e68] text-white text-xs font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer border border-teal-300/40"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-teal-200 bg-white hover:bg-teal-50 text-[#075e68] text-xs font-semibold transition-colors cursor-pointer"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Ver tarifas</span>
@@ -122,12 +122,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="mobile-menu-toggle-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`w-9 h-9 lg:hidden rounded-full flex items-center justify-center transition-all cursor-pointer border ${
+            className={`w-11 h-11 shrink-0 lg:hidden rounded-xl flex items-center justify-center transition-all cursor-pointer border-2 shadow-sm ${
               mobileMenuOpen 
-                ? 'bg-teal-400 text-teal-950 border-teal-300 shadow-md rotate-90' 
-                : 'bg-teal-50 hover:bg-teal-100 text-[#087f83] border-teal-200'
+                ? 'bg-[#075e68] text-white border-[#075e68]' 
+                : 'bg-white hover:bg-teal-50 text-[#075e68] border-[#087f83]'
             }`}
             aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation-island-dropdown"
             title="Menú de navegación"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -139,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {mobileMenuOpen && (
         <div 
           id="mobile-navigation-island-dropdown" 
-          className="md:hidden mt-2 p-4 rounded-3xl bg-[#075c63]/96 backdrop-blur-2xl border border-teal-400/30 shadow-2xl space-y-3 animate-in fade-in slide-in-from-top-3 duration-200"
+          className="lg:hidden mt-2 p-4 rounded-3xl bg-[#075c63]/96 backdrop-blur-2xl border border-teal-400/30 shadow-2xl space-y-3 animate-in fade-in slide-in-from-top-3 duration-200"
         >
           <div className="flex flex-col space-y-1 pb-2 border-b border-white/10">
             {navItems.map((item) => {
