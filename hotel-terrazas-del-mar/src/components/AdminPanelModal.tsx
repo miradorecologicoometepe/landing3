@@ -65,6 +65,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [replacingPhoto, setReplacingPhoto] = useState<PhotoItem | null>(null);
+  const [galleryStatus, setGalleryStatus] = useState('');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   useEffect(() => {
     if (!logoFile) { setLogoPreview(null); return; }
@@ -995,17 +997,19 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
           {/* Galería: únicamente carga de archivos; las URL se generan automáticamente en Supabase. */}
           {activeTab === 'gallery' && (
             <div className="space-y-6">
-              <PhotoUploader rooms={rooms} onUploaded={(photo, roomId) => {
+              <PhotoUploader key={replacingPhoto?.id || 'new'} rooms={rooms} replacePhoto={replacingPhoto} onCancelReplace={() => setReplacingPhoto(null)} onReplaced={photo => { onSavePhotos(currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.map(item => item.id === photo.id ? photo : item)); setReplacingPhoto(null); setGalleryStatus('Fotografía reemplazada correctamente.'); }} onUploaded={(photo, roomId) => {
                 onSavePhotos(currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, photo]);
                 if (roomId) onSaveRooms(rooms.map(room => room.id === roomId ? { ...room, images: [...room.images.filter(url => !url.includes('images.unsplash.com')), photo.url] } : room));
               }} />
               <div className="bg-white border border-stone-200 rounded-2xl p-5">
                 <h4 className="font-bold text-stone-900 mb-3">Fotografías de la landing</h4>
+                {galleryStatus && <p role="status" className="text-sm mb-3">{galleryStatus}</p>}
                 <p className="text-xs text-stone-600 mb-4">Las fotos publicadas se muestran en la landing y en su categoría. Para añadir fotos nuevas utiliza el formulario de subida de arriba.</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {photos.map(photo => <div key={photo.id} className="rounded-xl overflow-hidden border border-stone-200">
                     <img src={photo.url} alt={photo.title} className="w-full aspect-[4/3] object-cover" />
                     <div className="p-2 text-xs font-semibold text-stone-800">{photo.title}</div>
+                    <div className="flex gap-2 p-2 pt-0"><button type="button" onClick={() => { setReplacingPhoto(photo); setGalleryStatus(""); }} className="text-xs rounded-lg bg-teal-700 text-white px-2 py-2">Reemplazar</button><button type="button" onClick={async () => { if (!supabase || !window.confirm("¿Eliminar esta fotografía publicada?")) return; const deleted = await supabase.from("gallery_photos").delete().eq("id", photo.id).select("id").maybeSingle(); if (deleted.error || !deleted.data) { setGalleryStatus(deleted.error?.message || "No se pudo eliminar la fotografía."); return; } if (photo.roomTypeId) { const room = await supabase.from("rooms").select("details").eq("id", photo.roomTypeId).maybeSingle(); if (room.data) { const details = room.data.details as Room; await supabase.from("rooms").update({ details: { ...details, images: details.images.filter(image => image !== photo.url) } }).eq("id", photo.roomTypeId); } } onSavePhotos(currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(item => item.id !== photo.id)); setGalleryStatus("Fotografía eliminada de la galería."); }} className="text-xs rounded-lg border border-red-300 text-red-700 px-2 py-2">Eliminar</button></div>
                   </div>)}
                 </div>
               </div>
