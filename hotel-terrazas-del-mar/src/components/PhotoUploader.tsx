@@ -21,13 +21,13 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
     if (!replacePhoto && category === 'rooms' && !(roomId || rooms[0]?.id)) { setStatus('Selecciona la habitación.'); return; }
     if (replacePhoto && files.length !== 1) { setStatus('Para reemplazar una foto selecciona exactamente un archivo.'); return; }
     setBusy(true); setStatus(''); setProgress(0);
+    let uploadedCount = 0;
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError || !user) throw new Error('Tu sesión ha expirado. Cierra sesión y vuelve a ingresar al panel.');
       const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
       if (admin.error || !admin.data) throw new Error('Tu usuario no tiene autorización para publicar fotografías.');
       const selectedRoomId = roomId || rooms[0]?.id || '';
-      let uploadedCount = 0;
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (!['image/jpeg', 'image/png', 'image/webp', 'image/avif'].includes(file.type)) throw new Error('Solo se aceptan JPG, PNG, WebP o AVIF.');
