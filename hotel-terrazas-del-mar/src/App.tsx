@@ -406,6 +406,12 @@ export default function App() {
               </div>
             </section>
 
+            {/* Public photo gallery: photos can later be replaced from the admin panel. */}
+            <PhotoGallerySection
+              photos={photos}
+              onBookExperienceViaWhatsApp={handleBookExperienceViaWhatsApp}
+            />
+
             {/* Verified OTA Reviews & Score Metrics */}
             <ReviewsSection />
 
