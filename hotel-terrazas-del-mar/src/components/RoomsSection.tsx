@@ -57,7 +57,7 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
             Nuestros Tipos de Habitación
           </h2>
           <p className="text-stone-600 text-sm leading-relaxed">
-            Comodidad campestre frente al lago y los volcanes, con aire acondicionado, baño privado y 15% de ahorro directo por WhatsApp.
+            Comodidad campestre frente al lago y los volcanes, con aire acondicionado, baño privado y atención directa por WhatsApp.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
 
                     <span className="px-2 py-0.5 rounded-full bg-[#142d30]/90 backdrop-blur-sm text-brand-sun text-[10px] font-bold shadow-sm flex items-center gap-1 border border-brand-mint/30">
                       <Sparkles className="w-2.5 h-2.5 text-brand-sun" />
-                      15% OFF Directo
+                      Consulta directa
                     </span>
                   </div>
 
@@ -244,11 +244,11 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-brand-teal shrink-0" />
             <span className="font-semibold text-stone-800">Reserva Directa por WhatsApp:</span>
-            <span>15% de descuento garantizado • Sin comisiones de OTA</span>
+            <span>Consulta tarifas y disponibilidad con el establecimiento</span>
           </div>
           <div className="flex items-center gap-1.5 text-stone-500">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Confirmación instantánea con el anfitrión</span>
+            <span>Atención personalizada para tu reserva</span>
           </div>
         </div>
 
