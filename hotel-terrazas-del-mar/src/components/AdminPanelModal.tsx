@@ -869,27 +869,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                        URLs de Fotos (Una por línea)
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={roomFormData.images.join('\n')}
-                        onChange={(e) => setRoomFormData({
-                          ...roomFormData,
-                          images: e.target.value.split('\n').filter(s => s.trim().length > 0)
-                        })}
-                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none font-mono text-xs"
-                      />
+                      <p className="text-xs text-stone-600">Para agregar o reemplazar fotografías de esta habitación, abre la pestaña Galería, selecciona «Habitaciones» y elige la habitación correspondiente. Sube los archivos directamente desde tu dispositivo.</p>
                       <div className="flex gap-2 mt-2 overflow-x-auto py-1">
-                        {roomFormData.images.map((imgUrl, i) => (
-                          <img 
-                            key={i} 
-                            src={imgUrl} 
-                            alt={`Preview ${i}`} 
-                            className="w-16 h-12 rounded-lg object-cover border border-stone-200" 
-                          />
-                        ))}
+                        {roomFormData.images.map((imgUrl, i) => <img key={i} src={imgUrl} alt={`Foto de habitación ${i + 1}`} className="w-16 h-12 rounded-lg object-cover border border-stone-200" />)}
                       </div>
                     </div>
                   </div>
@@ -1010,194 +992,23 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
             </div>
           )}
 
-          {/* TAB 3: GALLERY PHOTOS */}
+          {/* Galería: únicamente carga de archivos; las URL se generan automáticamente en Supabase. */}
           {activeTab === 'gallery' && (
             <div className="space-y-6">
-              
               <PhotoUploader rooms={rooms} onUploaded={(photo, roomId) => {
                 onSavePhotos(currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, photo]);
                 if (roomId) onSaveRooms(rooms.map(room => room.id === roomId ? { ...room, images: [...room.images.filter(url => !url.includes('images.unsplash.com')), photo.url] } : room));
               }} />
-              <p className="text-xs text-stone-600">La subida anterior publica las fotos en Supabase. El editor de enlaces y el botón «Guardar foto» que aparecen debajo siguen siendo locales; no los uses para publicar fotos nuevas.</p>
-              {/* Photo Form */}
-              {photoFormData ? (
-                <form onSubmit={handleSavePhotoForm} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4 max-w-xl mx-auto">
-                  <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                    <h4 className="font-serif-heading font-bold text-base text-stone-900 flex items-center gap-2">
-                      <Image className="w-4 h-4 text-amber-600" />
-                      {editingPhotoId && photos.some((p) => p.id === editingPhotoId) ? 'Editar Fotografía' : 'Añadir Fotografía a Galería'}
-                    </h4>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditingPhotoId(null);
-                        setPhotoFormData(null);
-                      }}
-                      className="text-xs text-stone-500 hover:text-stone-800 cursor-pointer"
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      Título de la Foto
-                    </label>
-                    <input
-                      type="text"
-                      value={photoFormData.title}
-                      onChange={(e) => setPhotoFormData({ ...photoFormData, title: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      Categoría
-                    </label>
-                    <select
-                      value={photoFormData.category}
-                      onChange={(e) => setPhotoFormData({ ...photoFormData, category: e.target.value as PhotoCategory })}
-                      className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium"
-                    >
-                      <option value="rooms">Habitaciones & Suites</option>
-                      <option value="pool">Piscina & Solárium</option>
-                      <option value="gastronomy">Gastronomía & Bares</option>
-                      <option value="spa">Spa & Bienestar</option>
-                      <option value="outdoors">Playa & Exteriores</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      URL de la Imagen (Unsplash o CDN)
-                    </label>
-                    <input
-                      type="url"
-                      value={photoFormData.url}
-                      onChange={(e) => setPhotoFormData({ ...photoFormData, url: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none font-mono text-xs"
-                      required
-                    />
-                    {photoFormData.url && (
-                      <div className="mt-2">
-                        <img
-                          src={photoFormData.url}
-                          alt="Previsualización"
-                          className="w-full h-40 object-cover rounded-xl border border-stone-200"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      Pie de Foto / Explicación
-                    </label>
-                    <input
-                      type="text"
-                      value={photoFormData.caption}
-                      onChange={(e) => setPhotoFormData({ ...photoFormData, caption: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                      required
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-stone-100">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditingPhotoId(null);
-                        setPhotoFormData(null);
-                      }}
-                      className="px-4 py-2 rounded-xl border border-stone-300 text-stone-700 text-xs font-semibold cursor-pointer"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md cursor-pointer"
-                    >
-                      <Save className="w-3.5 h-3.5" />
-                      <span>Guardar Foto</span>
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                /* Photos Grid */
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-serif-heading font-bold text-lg text-stone-900">
-                        Galería Multimedia
-                      </h4>
-                      <p className="text-xs text-stone-500">
-                        Agrega o retira fotografías para el visor Lightbox y las categorías del sitio.
-                      </p>
-                    </div>
-
-                    <button
-                      id="btn-admin-add-photo"
-                      onClick={handleStartCreatePhoto}
-                      className="px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs flex items-center gap-2 shadow-md cursor-pointer"
-                    >
-                      <Plus className="w-4 h-4 text-amber-400" />
-                      <span>Añadir Fotografía</span>
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 min-[360px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-                    {photos.map((photo) => (
-                      <div
-                        key={photo.id}
-                        className="group relative bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col"
-                      >
-                        <div className="aspect-4/3 relative overflow-hidden bg-stone-100">
-                          <img
-                            src={photo.url}
-                            alt={photo.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          <span className="absolute top-2 left-2 text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-stone-900/80 text-amber-300 backdrop-blur-xs">
-                            {photo.category}
-                          </span>
-                        </div>
-
-                        <div className="p-2.5 flex-1 flex flex-col justify-between">
-                          <div>
-                            <div className="font-bold text-stone-900 text-xs truncate">
-                              {photo.title}
-                            </div>
-                            <div className="text-[11px] text-stone-500 truncate mt-0.5">
-                              {photo.caption}
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between pt-2 mt-2 border-t border-stone-100">
-                            <button
-                              onClick={() => handleStartEditPhoto(photo)}
-                              className="text-[11px] text-amber-700 hover:text-amber-800 font-bold flex items-center gap-1 cursor-pointer"
-                            >
-                              <Edit3 className="w-3 h-3" />
-                              <span>Editar</span>
-                            </button>
-                            <button
-                              onClick={() => handleDeletePhoto(photo.id)}
-                              className="text-stone-400 hover:text-red-600 p-1 cursor-pointer"
-                              title="Eliminar"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
+              <div className="bg-white border border-stone-200 rounded-2xl p-5">
+                <h4 className="font-bold text-stone-900 mb-3">Fotografías de la landing</h4>
+                <p className="text-xs text-stone-600 mb-4">Las fotos publicadas se muestran en la landing y en su categoría. Para añadir fotos nuevas utiliza el formulario de subida de arriba.</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {photos.map(photo => <div key={photo.id} className="rounded-xl overflow-hidden border border-stone-200">
+                    <img src={photo.url} alt={photo.title} className="w-full aspect-[4/3] object-cover" />
+                    <div className="p-2 text-xs font-semibold text-stone-800">{photo.title}</div>
+                  </div>)}
                 </div>
-              )}
-
+              </div>
             </div>
           )}
 
