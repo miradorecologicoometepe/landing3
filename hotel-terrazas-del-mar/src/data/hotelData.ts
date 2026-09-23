@@ -22,7 +22,6 @@ export const ROOMS_DATA: Room[] = [
     tagline: 'Comodidad rústica con 2 camas dobles grandes. Tarifa fija de $60 USD por noche.',
     type: 'Habitación Estándar',
     pricePerNight: 60,
-    originalPrice: 72,
     capacity: { adults: 2, children: 1 },
     maxOccupancy: 3, // Máximo 3 personas
     pricingTiers: [
@@ -56,7 +55,6 @@ export const ROOMS_DATA: Room[] = [
     tagline: 'Amplia habitación con 1 cama individual y 2 camas dobles. Máximo 4 personas ($70 para 3 pers., $90 para 4 pers.).',
     type: 'Habitación Familiar Panorámica',
     pricePerNight: 70,
-    originalPrice: 85,
     capacity: { adults: 3, children: 1 },
     maxOccupancy: 4, // Máximo 4 personas
     pricingTiers: [
