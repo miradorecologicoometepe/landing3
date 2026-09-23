@@ -287,10 +287,10 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   };
 
   const content = (
-    <div className={`bg-white ${isDedicatedPage ? 'min-h-screen flex flex-col' : 'rounded-2xl w-full max-w-5xl shadow-2xl border border-stone-200 flex flex-col max-h-[92vh] overflow-hidden'}`}>
+    <div className={`bg-white ${isDedicatedPage ? 'min-h-[100dvh] flex flex-col min-w-0' : 'rounded-xl sm:rounded-2xl w-full max-w-5xl min-w-0 shadow-2xl border border-stone-200 flex flex-col max-h-[92vh] overflow-hidden'}`}>
       
       {/* Header Bar */}
-      <div className="bg-[#18363a] text-white px-6 py-4 flex items-center justify-between border-b border-[#24474d] shrink-0">
+      <div className="bg-[#18363a] text-white px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-[#24474d] shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#C2ECE5]/20 border border-brand-mint/40 flex items-center justify-center text-brand-mint">
             <Lock className="w-5 h-5" />
@@ -357,7 +357,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-stone-100 px-6 pt-3 flex items-center gap-2 border-b border-stone-200 shrink-0 overflow-x-auto">
+      <div className="bg-stone-100 px-2 sm:px-6 pt-2 sm:pt-3 flex items-center gap-2 border-b border-stone-200 shrink-0 overflow-x-auto">
         <button
           id="tab-admin-general"
           onClick={() => setActiveTab('general')}
@@ -433,7 +433,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       )}
 
       {/* Scrollable Content Body */}
-      <div className={`flex-1 overflow-y-auto p-6 bg-stone-50/50 ${isDedicatedPage ? 'max-w-7xl mx-auto w-full' : ''}`}>
+      <div className={`flex-1 overflow-y-auto min-w-0 p-3 sm:p-6 bg-stone-50/50 ${isDedicatedPage ? 'max-w-7xl mx-auto w-full' : ''}`}>
           
           {/* TAB 1: GENERAL CONFIG & WHATSAPP */}
           {activeTab === 'general' && (
@@ -621,7 +621,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
               
               {/* If editing or creating a room, show form */}
               {roomFormData ? (
-                <form onSubmit={handleSaveRoomForm} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-6 max-w-4xl mx-auto">
+                <form onSubmit={handleSaveRoomForm} className="bg-white p-3 sm:p-6 rounded-2xl border border-stone-200 shadow-sm space-y-6 max-w-4xl mx-auto">
                   <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                     <h4 className="font-serif-heading font-bold text-lg text-stone-900 flex items-center gap-2">
                       <Bed className="w-5 h-5 text-amber-600" />
@@ -1123,7 +1123,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 min-[360px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                     {photos.map((photo) => (
                       <div
                         key={photo.id}
@@ -1367,7 +1367,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         </div>
 
         {/* Footer Bar */}
-        <div className="bg-stone-100 px-6 py-3 border-t border-stone-200 flex items-center justify-between text-xs text-stone-500 shrink-0">
+        <div className="bg-stone-100 px-3 sm:px-6 py-3 border-t border-stone-200 flex items-center justify-between text-xs text-stone-500 shrink-0">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             <span>Los cambios se guardan localmente en tu navegador y actualizan todo el sitio al instante.</span>
@@ -1394,7 +1394,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   return (
     <div 
       id="admin-panel-modal" 
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-0 sm:p-6"
     >
       {content}
     </div>
