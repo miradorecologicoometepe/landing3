@@ -110,7 +110,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 -mt-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-10 sm:pt-14 relative z-10">
         
         {/* Important Notice Card */}
         <div className="bg-white rounded-2xl p-5 border border-teal-100 shadow-md flex items-start gap-4 mb-8">
