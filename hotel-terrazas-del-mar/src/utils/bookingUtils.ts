@@ -99,7 +99,7 @@ export function calculateQuote(
     rateLabel = rateInfo.rateLabel;
   }
 
-  const standardSubtotal = pricePerNight * nights * (reservation.roomsCount || 1);
+  const standardSubtotal = pricePerNight * nights;
   const discountedSubtotal = standardSubtotal;
   const directBookingDiscount = 0;
 
@@ -160,7 +160,7 @@ export function generateWhatsAppMessage(
   msg += `_¡Hola! Deseo cotizar y reservar con la tarifa de Reserva Directa:_\n\n`;
 
   msg += `🏨 *Habitación:* ${room.name} (${room.type})\n`;
-  msg += `🚪 *Cantidad:* ${reservation.roomsCount} habitación(es)\n`;
+  msg += `🚪 *Cantidad:* 1 habitación\n`;
   msg += `📅 *Llegada (Check-in):* ${checkInFormatted}\n`;
   msg += `🛫 *Salida (Check-out):* ${checkOutFormatted}\n`;
   msg += `🌙 *Duración:* ${quote.nights} noche(s)\n`;
@@ -176,7 +176,7 @@ export function generateWhatsAppMessage(
   }
 
   msg += `💰 *DESGLOSE DE TARIFA DIRECTA:*\n`;
-  msg += ` • Tarifa base (${quote.nights} noche(s) × $${quote.basePricePerNight} USD): $${quote.basePricePerNight * quote.nights * (reservation.roomsCount || 1)} USD\n`;
+  msg += ` • Tarifa base (${quote.nights} noche(s) × $${quote.basePricePerNight} USD): $${quote.basePricePerNight * quote.nights} USD\n`;
   if (quote.addonsCost > 0) {
     msg += ` • Adicionales: +$${quote.addonsCost} USD\n`;
   }
