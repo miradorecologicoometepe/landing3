@@ -43,26 +43,26 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
   ];
 
   return (
-    <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
+    <div className="pt-24 pb-24 bg-[#f5fbfa] min-h-screen">
       {/* Header Banner */}
-      <div className="bg-gradient-to-b from-[#0a3538] via-[#0f4d52] to-[#135d63] text-white py-14 px-4 sm:px-6 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#075e68] via-[#078b91] to-[#0ca5a0] text-white pt-20 pb-20 sm:pt-24 sm:pb-24 px-5 sm:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:20px_20px]"></div>
         
-        <div className="max-w-5xl mx-auto relative z-10 text-center">
+        <div className="max-w-6xl mx-auto relative z-10 text-left">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-400/20 text-teal-200 text-xs font-bold uppercase tracking-wider mb-4 border border-teal-300/30">
             <Sparkles className="w-3.5 h-3.5" />
             Espacios & Amenidades Exclusivas
           </div>
           
-          <h1 className="font-gidole text-3xl sm:text-5xl font-extrabold tracking-tight mb-4 text-white">
+          <h1 className="font-gidole text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-white">
             Local para Eventos & Piscina Panorámica
           </h1>
           
-          <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
             Celebra tus momentos especiales en nuestro salón campestre con vista al lago y refréscate en la piscina rodeada por la naturaleza de Altagracia, Isla de Ometepe.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-9 flex flex-wrap items-center justify-start gap-4">
             <a
               href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo cotizar el local de eventos para una celebración.`)}`}
               target="_blank"
@@ -85,15 +85,15 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-12 sm:pt-16 relative z-10">
         
         {/* Navigation Selector */}
-        <div className="flex rounded-2xl bg-white p-1.5 mb-10 max-w-md mx-auto border border-stone-200 shadow-md">
+        <div className="flex flex-wrap rounded-2xl bg-white p-2 mb-12 max-w-xl mx-auto border border-teal-100 shadow-lg gap-1">
           <button
             onClick={() => setActiveSection('all')}
-            className={`flex-1 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex-1 min-w-[120px] py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
               activeSection === 'all'
-                ? 'bg-[#0f4d52] text-white shadow-sm'
+                ? 'bg-[#087f83] text-white shadow-sm'
                 : 'text-stone-600 hover:text-stone-900'
             }`}
           >
@@ -103,7 +103,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
             onClick={() => setActiveSection('eventos')}
             className={`flex-1 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
               activeSection === 'eventos'
-                ? 'bg-[#0f4d52] text-white shadow-sm'
+                ? 'bg-[#087f83] text-white shadow-sm'
                 : 'text-stone-600 hover:text-stone-900'
             }`}
           >
@@ -113,7 +113,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
             onClick={() => setActiveSection('piscina')}
             className={`flex-1 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
               activeSection === 'piscina'
-                ? 'bg-[#0f4d52] text-white shadow-sm'
+                ? 'bg-[#087f83] text-white shadow-sm'
                 : 'text-stone-600 hover:text-stone-900'
             }`}
           >
