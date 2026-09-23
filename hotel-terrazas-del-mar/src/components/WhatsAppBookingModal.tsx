@@ -307,6 +307,8 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
 
               </div>
 
+              <p className="text-[11px] text-stone-600 leading-relaxed">Niños mayores de 5 años pagan la tarifa estándar y cuentan para la capacidad de la habitación. Indica sus edades al consultar la reserva para confirmar el precio.</p>
+
               {/* Capacity Status & Dynamic Rate Applied */}
               <div className="pt-2 border-t border-stone-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-1.5 text-stone-700">
