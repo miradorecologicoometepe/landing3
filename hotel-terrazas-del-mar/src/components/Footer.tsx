@@ -37,7 +37,7 @@ export const Footer: React.FC<FooterProps> = ({
             <HotelLogo variant="horizontal" mode="white" height={44} />
 
             <p className="text-xs text-stone-300 leading-relaxed pt-1">
-              Un mirador ecológico con habitaciones campestres, piscina panorámica y local para eventos con vistas al Lago Cocibolca y a los volcanes en {hotelConfig.locationArea || 'Isla de Ometepe'}.
+              Un espacio para descansar, descubrir Ometepe y organizar encuentros especiales en {hotelConfig.locationArea || 'Isla de Ometepe'}.
             </p>
 
             <div className="text-xs text-stone-400 space-y-1">
@@ -73,7 +73,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => onNavigate?.('eventos-piscina')} 
                   className="hover:text-teal-300 transition-colors text-left cursor-pointer"
                 >
-                  Local para Eventos & Piscina
+                  Eventos
                 </button>
               </li>
               <li>
@@ -81,7 +81,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => onNavigate?.('transporte')} 
                   className="hover:text-teal-300 transition-colors text-left cursor-pointer text-teal-200 font-semibold"
                 >
-                  Horarios de Barcos & Transporte
+                  Guía de Ometepe
                 </button>
               </li>
               <li>
@@ -97,7 +97,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => onNavigate?.('contacto')} 
                   className="hover:text-teal-300 transition-colors text-left cursor-pointer"
                 >
-                  Ubicación & Contacto
+                  Contacto
                 </button>
               </li>
             </ul>
@@ -106,20 +106,20 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Col 3: Direct Booking Perks */}
           <div>
             <h4 className="font-gidole text-sm font-bold uppercase tracking-wider text-white mb-4">
-              Ventajas Reserva Directa
+              Planifica tu estancia
             </h4>
             <ul className="space-y-2.5 text-xs text-stone-300">
               <li className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-brand-sun shrink-0" />
-                <span>15% Descuento vs OTAs internacionales</span>
+                <span>Consulta directa de tarifas y disponibilidad</span>
               </li>
               <li className="flex items-center gap-2">
                 <ShieldCheck className="w-3.5 h-3.5 text-brand-mint shrink-0" />
-                <span>Asistencia gratuita con horarios de ferry</span>
+                <span>Información para planificar tu visita</span>
               </li>
               <li className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-brand-sun shrink-0" />
-                <span>Bebida típica de bienvenida</span>
+                <span>Consulta de habitaciones y eventos</span>
               </li>
               <li className="flex items-center gap-2">
                 <ShieldCheck className="w-3.5 h-3.5 text-brand-mint shrink-0" />
