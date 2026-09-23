@@ -222,7 +222,7 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
             <div className="text-[11px] text-stone-500">
               {room.id === 'habitacion-familiar-vistas-lago' 
                 ? 'Tarifa: 3 personas $70 • 4 personas $90 USD/noche (Máx. 4 personas)'
-                : 'Tarifa fija: $60 USD/noche (Capacidad máxima 3 personas)'}
+                : 'Tarifa fija: $60 USD/noche (Capacidad máxima 2 personas)'}
             </div>
           </div>
 
