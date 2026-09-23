@@ -85,7 +85,8 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
         </div>
       </div>
 
-      <section className="w-full bg-[#f5fbfa] px-5 sm:px-8 py-16 sm:py-20 relative clear-both">\n        <div className="max-w-6xl mx-auto">
+      <section className="w-full bg-[#f5fbfa] px-5 sm:px-8 py-16 sm:py-20 relative clear-both">
+        <div className="max-w-6xl mx-auto">
         
         {/* Navigation Selector */}
         <div className="grid grid-cols-1 sm:grid-cols-3 rounded-2xl bg-white p-2 mb-12 w-full max-w-2xl mx-auto border border-teal-100 shadow-lg gap-2">
