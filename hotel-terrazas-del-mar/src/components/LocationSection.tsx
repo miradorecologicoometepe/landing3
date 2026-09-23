@@ -32,7 +32,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
   const faqs = [
     {
       q: '¿Cómo funciona el sistema de reserva directa por WhatsApp?',
-      a: 'Es muy sencillo: seleccionas tus fechas y la cabaña o villa deseada en nuestra web. Al pulsar "Consultar por WhatsApp", se genera un mensaje ordenado con el desglose exacto de noches, huéspedes y el 15% de descuento directo. Nuestro equipo local te responderá de inmediato para confirmar disponibilidad y asistirte con los horarios del ferry a la isla.'
+      a: 'Es muy sencillo: seleccionas tus fechas y la cabaña o villa deseada en nuestra web. Al pulsar "Consultar por WhatsApp", se genera un mensaje ordenado con el desglose exacto de noches, huéspedes y los detalles de tu estancia. Nuestro equipo te responderá para confirmar disponibilidad y asistirte con los horarios del ferry a la isla.'
     },
     {
       q: '¿Cómo se llega al Hotel Mirador Ecológico en Ometepe?',
