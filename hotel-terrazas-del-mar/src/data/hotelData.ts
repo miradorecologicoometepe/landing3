@@ -2,14 +2,14 @@ import { Room, PhotoItem, ReviewItem, HotelConfig } from '../types';
 
 export const HOTEL_CONFIG: HotelConfig = {
   name: 'Hotel Mirador Ecológico',
-  stars: 4,
-  ratingScore: 9.8,
-  totalReviews: 384,
+  stars: 0,
+  ratingScore: 0,
+  totalReviews: 0,
   whatsAppNumber: '50557642833', // Direct WhatsApp E.164 without '+'
   displayPhone: '+505 5764 2833',
   address: 'Finca El Mirador Ecológico, Altagracia, Isla de Ometepe, Rivas, Nicaragua',
   locationArea: 'Altagracia • Mirador Panorámico • Vista al Lago Cocibolca y Volcanes',
-  email: 'reservas@hotelmiradorecologico.com',
+  email: '',
   currency: 'USD',
   checkInTime: '14:00 hrs',
   checkOutTime: '11:00 hrs',
@@ -18,25 +18,25 @@ export const HOTEL_CONFIG: HotelConfig = {
 export const ROOMS_DATA: Room[] = [
   {
     id: 'habitacion-2-camas-grandes',
-    name: 'Habitación con 2 camas grandes',
-    tagline: 'Comodidad rústica con 2 camas dobles grandes. Tarifa fija de $60 USD por noche.',
+    name: 'Habitación matrimonial',
+    tagline: 'Habitación matrimonial para dos personas. Tarifa de $60 USD por noche.',
     type: 'Habitación Estándar',
     pricePerNight: 60,
-    capacity: { adults: 2, children: 1 },
-    maxOccupancy: 3, // Máximo 3 personas
+    capacity: { adults: 2, children: 0 },
+    maxOccupancy: 2, // Máximo 2 personas
     pricingTiers: [
-      { guests: 3, price: 60, label: 'Hasta 3 personas: $60 USD' }
+      { guests: 2, price: 60, label: 'Hasta 2 personas: $60 USD' }
     ],
-    bedType: '2 camas dobles grandes',
-    sizeM2: 32,
+    bedType: 'Cama matrimonial',
+    sizeM2: 0,
     view: 'Jardines Tropicales y Mirador',
     badge: 'Fija: $60 USD',
     featured: true,
     amenities: [
-      '2 camas dobles grandes con lencería fresca',
-      'Capacidad máxima: 3 personas',
+      'Cama matrimonial con lencería fresca',
+      'Capacidad máxima: 2 personas',
       'Baño privado con ducha y toallas limpias',
-      'Aire acondicionado y ventilador de techo',
+      'Aire acondicionado',
       'Balcón o terraza con vista al entorno natural',
       'Conexión WiFi gratuita de alta velocidad',
       'Mosquiteros y ventanas con ventilación cruzada'
@@ -46,8 +46,8 @@ export const ROOMS_DATA: Room[] = [
       'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=85'
     ],
-    description: 'Habitación fresca y luminosa equipada con dos camas dobles grandes y capacidad máxima para 3 personas. Rodeada por la exuberante flora de la finca en Altagracia, ofrece baño privado completo, aire acondicionado y fácil acceso a la piscina panorámica por una tarifa directa de $60 USD/noche.',
-    includedServices: ['Desayuno continental campestre diario', 'Acceso a la piscina panorámica', 'Parqueo privado gratuito', 'WiFi en la habitación']
+    description: 'Habitación matrimonial con capacidad máxima para 2 personas. Rodeada por la exuberante flora de la finca en Altagracia, ofrece baño privado completo, aire acondicionado y fácil acceso a la piscina panorámica por una tarifa directa de $60 USD/noche.',
+    includedServices: ['Acceso a la piscina panorámica', 'Parqueo privado gratuito', 'WiFi en la habitación']
   },
   {
     id: 'habitacion-familiar-vistas-lago',
@@ -62,7 +62,7 @@ export const ROOMS_DATA: Room[] = [
       { guests: 4, price: 90, label: '4 personas: $90 USD' }
     ],
     bedType: '1 cama individual y 2 camas dobles',
-    sizeM2: 56,
+    sizeM2: 0,
     view: 'Vistas al Lago de Nicaragua & Volcanes',
     badge: 'Máx. 4 personas',
     featured: true,
@@ -70,9 +70,9 @@ export const ROOMS_DATA: Room[] = [
       '1 cama individual + 2 camas dobles',
       'Capacidad máxima: 4 personas (3 pers. $70 / 4 pers. $90)',
       'Balcón o terraza privada con vista panorámica al lago',
-      'Baño privado completo con agua caliente',
-      'Aire acondicionado ecológico y ventilador',
-      'Mobiliario rústico de madera y hamaca relajante',
+      'Baño privado completo',
+      'Aire acondicionado',
+      'Mobiliario rústico de madera',
       'WiFi gratuito de alta cobertura'
     ],
     images: [
@@ -81,7 +81,7 @@ export const ROOMS_DATA: Room[] = [
       'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=85'
     ],
     description: 'Habitación familiar espaciosa con 1 cama individual y 2 camas dobles, con capacidad máxima estricta para 4 personas. Su tarifa por noche es de $70 USD para 1 a 3 personas, o $90 USD para 4 personas. Dispone de un balcón privado con vistas directas al Lago Cocibolca y a los volcanes de Ometepe.',
-    includedServices: ['Desayuno campestre para todos los huéspedes', 'Piscina al aire libre con solárium', 'Parqueo privado seguro', 'Asistencia para tours y ferrys']
+    includedServices: ['Piscina al aire libre con solárium', 'Parqueo privado seguro', 'Asistencia para tours y ferrys']
   }
 ];
 
@@ -130,10 +130,10 @@ export const GALLERY_PHOTOS: PhotoItem[] = [
   },
   {
     id: 'p6',
-    title: 'Desayuno Campestre Nicaragüense',
+    title: 'Fotografía de gastronomía pendiente de confirmar',
     category: 'gastronomy',
     url: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=1200&q=85',
-    caption: 'Gallo pinto tradicional, queso frito, plátanos maduros, frutas frescas y café orgánico.',
+    caption: 'Imagen ilustrativa; pendiente de reemplazar por una fotografía real del hotel.',
     aspectRatio: 'landscape'
   },
   {
@@ -187,44 +187,7 @@ export const GALLERY_PHOTOS: PhotoItem[] = [
   }
 ];
 
-export const REVIEWS_DATA: ReviewItem[] = [
-  {
-    id: 'rev-1',
-    author: 'Gabriel & Lucía Valenzuela',
-    country: 'Costa Rica',
-    flag: '🇨🇷',
-    rating: 10,
-    date: 'Hace 4 días',
-    title: '¡El mejor mirador y la paz más hermosa de Ometepe!',
-    comment: 'Reservamos directo por WhatsApp y nos asistieron con el ferry y el taxi desde Moyogalpa sin complicaciones. La vista desde la habitación al lago con el volcán Concepción de fondo es algo que no se olvida. La comida campestre deliciosa y la piscina súper refrescante.',
-    roomStayed: 'Habitación con 2 Camas Grandes',
-    travelerType: 'Pareja'
-  },
-  {
-    id: 'rev-2',
-    author: 'Thomas & Sarah Jenkins',
-    country: 'Estados Unidos / Canadá',
-    flag: '🇨🇦',
-    rating: 9.8,
-    date: 'La semana pasada',
-    title: 'Authentic eco-lodge with warm hospitality and stunning pool',
-    comment: 'We spent 4 nights in the family room. The kids loved the pool and looking at the howler monkeys in the mango trees. Booking via WhatsApp was smooth and fast. The local coffee and homemade plantains are unbeatable.',
-    roomStayed: 'Habitación Familiar con Vistas al Lago',
-    travelerType: 'Familia con niños'
-  },
-  {
-    id: 'rev-3',
-    author: 'Ing. Carlos Mendoza',
-    country: 'Nicaragua',
-    flag: '🇳🇮',
-    rating: 10,
-    date: 'Hace 2 semanas',
-    title: 'Orgullo de nuestra Isla de Ometepe, un verdadero paraíso ecológico',
-    comment: 'La tranquilidad del lugar es única. Despertar con la brisa fresca del volcán y el canto de las urracas no tiene precio. Todo el personal es sumamente atento. Las tarifas directas por WhatsApp fueron las más justas de la isla.',
-    roomStayed: 'Habitación con 2 Camas Grandes',
-    travelerType: 'Viaje de descanso'
-  }
-];
+export const REVIEWS_DATA: ReviewItem[] = [];
 
 export const HOTEL_AMENITIES = [
   {
@@ -260,13 +223,11 @@ export const HOTEL_AMENITIES = [
 ];
 
 export const ADDON_PRICING = {
-  breakfast: { name: 'Desayuno Campestre Típico Completo', price: 10, unit: 'por persona / día' },
   airportTransfer: { name: 'Traslado Privado desde Puerto Moyogalpa / San José', price: 30, unit: 'por trayecto (hasta 4 pax)' },
   romanticPackage: { name: 'Paquete Romántico Atardecer en Ometepe', price: 45, unit: 'por estancia con flores y vino' },
   lateCheckout: { name: 'Late Check-Out Flexible en Mirador & Piscina', price: 20, unit: 'hasta las 17:00' },
   volcanoTour: { name: 'Excursión Guiada al Volcán Maderas o Concepción', price: 45, unit: 'por persona con guía' },
   kayakIstian: { name: 'Tour en Kayak por el Humedal de Río Istián', price: 35, unit: 'por persona con equipo' },
-  breakfastCampestre: { name: 'Desayuno Campestre Típico Completo', price: 10, unit: 'por persona / día' },
   motoRental: { name: 'Alquiler de Motocicleta / Scooter 150cc (24 hrs)', price: 25, unit: 'por día' },
   ferryTransfer: { name: 'Coordinación de Traslado Privado desde Puerto Moyogalpa / San José', price: 30, unit: 'por trayecto (hasta 4 pax)' }
 };
