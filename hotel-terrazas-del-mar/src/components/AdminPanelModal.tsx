@@ -477,6 +477,15 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 </div>
               </div>
 
+              <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+                <h4 className="font-bold text-base text-stone-900">Logo del hotel</h4>
+                <p className="text-xs text-stone-600">Pega la URL HTTPS pública de tu logo (PNG, SVG o WebP). Al guardar se reemplazará el logo provisional en el encabezado y pie de página de este navegador.</p>
+                <label htmlFor="hotel-logo-url" className="block text-xs font-semibold text-stone-700">URL del logo</label>
+                <input id="hotel-logo-url" type="url" value={configForm.logoUrl || ''} onChange={(e) => handleConfigChange('logoUrl', e.target.value)} placeholder="https://ejemplo.com/logo.png" className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm" />
+                {configForm.logoUrl && <img src={configForm.logoUrl} alt="Vista previa del logo" className="h-20 max-w-full object-contain" />}
+                <p className="text-xs text-stone-500">Deja el campo vacío para usar el logo vectorial provisional. Este panel aún guarda los cambios localmente; no los publica para todos los visitantes.</p>
+              </div>
+
               {/* Box 2: WhatsApp & Direct Contact */}
               <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-4">
                 <h4 className="font-serif-heading font-bold text-base text-stone-900 border-b border-stone-100 pb-2 flex items-center gap-2">
