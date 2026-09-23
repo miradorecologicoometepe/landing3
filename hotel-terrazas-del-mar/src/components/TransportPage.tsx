@@ -71,22 +71,22 @@ export const TransportPage: React.FC<TransportPageProps> = ({
   );
 
   return (
-    <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
+    <div className="pt-24 pb-24 bg-[#f5fbfa] min-h-screen">
       {/* Header Banner */}
-      <div className="bg-gradient-to-b from-[#0c393c] to-[#114b4f] text-white py-14 px-4 sm:px-6 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#075e68] via-[#078b91] to-[#0ca5a0] text-white pt-20 pb-20 sm:pt-24 sm:pb-24 px-5 sm:px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#14b8a6_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
-        <div className="max-w-5xl mx-auto relative z-10 text-center">
+        <div className="max-w-6xl mx-auto relative z-10 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 text-xs font-bold uppercase tracking-wider mb-4 border border-teal-400/30">
             <Compass className="w-3.5 h-3.5" />
             Guía de Transporte a Ometepe
           </div>
           
-          <h1 className="font-gidole text-3xl sm:text-5xl font-extrabold tracking-tight mb-4 text-white">
+          <h1 className="font-gidole text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-white">
             Horarios de Barcos & Transporte Terrestre
           </h1>
           
-          <p className="text-stone-300 text-sm sm:text-base max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-stone-300 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
             Te ayudamos a planificar tu viaje hacia el <strong className="text-teal-200">Hotel Mirador Ecológico</strong> en Altagracia. Consulta las salidas de ferries entre San Jorge y Ometepe, y las opciones de transporte en la isla.
           </p>
 
@@ -407,7 +407,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
         )}
 
         {/* Action Call to Action Banner */}
-        <div className="mt-12 p-8 rounded-3xl bg-gradient-to-r from-[#0c393c] via-[#115e59] to-[#0f766e] text-white text-center space-y-4 shadow-xl">
+        <div className="mt-12 p-8 rounded-3xl bg-gradient-to-r from-[#0c393c] via-[#115e59] to-[#087f83] text-white text-center space-y-4 shadow-xl">
           <h3 className="font-gidole text-2xl sm:text-3xl font-bold">
             ¿Tienes alguna duda con tu llegada a Ometepe?
           </h3>
