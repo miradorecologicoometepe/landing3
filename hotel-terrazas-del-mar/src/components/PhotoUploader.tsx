@@ -85,7 +85,7 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
     {!supabase && <p role="alert" className="text-red-700 text-sm">Supabase no está configurado en esta versión de la web.</p>}
     {!replacePhoto && <label className="block text-sm font-semibold text-stone-800">Ubicación de las fotografías
       <select value={category} onChange={e=>setCategory(e.target.value as PhotoCategory)} className="block w-full mt-1 border rounded-xl p-3">
-        <option value="rooms">Habitaciones</option><option value="pool">Piscina</option><option value="outdoors">Jardines, mirador y exteriores</option><option value="gastronomy">Gastronomía</option>
+        <option value="rooms">Habitaciones</option><option value="pool">Piscina</option><option value="outdoors">Portada, jardines y exteriores</option><option value="events">Eventos y celebraciones</option><option value="gastronomy">Gastronomía</option>
       </select>
     </label>}
     {!replacePhoto && category === 'rooms' && <label className="block text-sm font-semibold text-stone-800">Habitación
