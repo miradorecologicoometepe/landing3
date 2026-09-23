@@ -85,10 +85,9 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
             Galería del Mirador, Piscina & Habitaciones
           </h2>
           <p className="text-stone-300 text-base leading-relaxed">
-            Explora las habitaciones, los espacios para eventos y el entorno natural. Las fotografías de referencia se reemplazarán por imágenes reales del establecimiento.
+            Explora nuestras habitaciones, los espacios para eventos y el entorno natural de Ometepe.
           </p>
 
-          <p className="text-amber-200 text-xs mt-3">Imágenes ilustrativas durante el desarrollo; no corresponden necesariamente a las instalaciones reales.</p>
 
           {/* Category Filter Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
@@ -227,7 +226,7 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
                   {currentPhoto.caption}
                 </p>
                 <span className="text-[11px] text-brand-mint">
-                  Imagen de referencia • {HOTEL_CONFIG.name}
+                  {HOTEL_CONFIG.name}
                 </span>
               </div>
 
