@@ -66,11 +66,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header 
       id="main-navbar-island"
-      className="fixed top-2 sm:top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl transition-all duration-300"
+      className="fixed top-2 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl transition-all duration-300"
     >
       {/* Floating Island Pill Bar */}
       <div 
-        className={`rounded-full px-3 sm:px-5 py-2 sm:py-2.5 transition-all duration-300 flex items-center justify-between border ${
+        className={`rounded-2xl sm:rounded-full px-4 sm:px-7 py-3 sm:py-3.5 transition-all duration-300 flex items-center justify-between border ${
           isScrolled 
             ? 'bg-[#0b2f33]/95 backdrop-blur-xl border-teal-500/30 shadow-2xl shadow-black/50 text-white' 
             : 'bg-[#0e3d42]/88 backdrop-blur-lg border-teal-400/25 shadow-xl shadow-black/35 text-white'
@@ -86,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
 
         {/* Desktop Minimalist Nav Links */}
-        <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-xs lg:text-[13px] font-medium">
+        <nav className="hidden md:flex items-center gap-5 lg:gap-8 text-xs lg:text-[13px] font-medium">
           {navItems.map((item) => {
             const isActive = activePage === item.id;
             return (
@@ -108,33 +108,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Right Actions & CTAs */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
-          {/* Subtle Currency Selector */}
-          <div className="hidden sm:flex items-center text-xs text-stone-300">
-            <select 
-              value={currency}
-              onChange={(e) => onChangeCurrency(e.target.value as 'USD' | 'EUR' | 'MXN')}
-              className="bg-white/10 hover:bg-white/15 text-stone-200 border border-teal-400/30 rounded-full px-2 py-1 text-[11px] font-medium focus:outline-none focus:ring-1 focus:ring-teal-300 cursor-pointer"
-              aria-label="Moneda"
-            >
-              <option value="USD" className="bg-[#0e3d42] text-white">USD ($)</option>
-              <option value="EUR" className="bg-[#0e3d42] text-white">EUR (€)</option>
-              <option value="MXN" className="bg-[#0e3d42] text-white">MXN ($)</option>
-            </select>
-          </div>
-
-          {/* Quick WhatsApp Inquiry */}
-          <a
-            id="nav-whatsapp-quick-btn"
-            href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo consultar disponibilidad directa en Ometepe.`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600/90 hover:bg-emerald-500 text-white text-xs font-semibold tracking-wide border border-emerald-400/30 transition-all shadow-sm"
-            title="Consultar por WhatsApp"
-          >
-            <MessageCircle className="w-3.5 h-3.5 fill-white" />
-            <span>WhatsApp</span>
-          </a>
-
           {/* Primary Direct Booking CTA */}
           <button
             id="nav-reserve-btn"
@@ -142,8 +115,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#0d9488] hover:bg-[#0f766e] active:bg-[#115e59] text-white text-xs font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer border border-teal-300/40"
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span className="hidden xs:inline">Reservar</span>
-            <span className="xs:hidden">Tarifas</span>
+            <span>Ver tarifas</span>
           </button>
 
           {/* Mobile Menu Toggle Button - Perfectly Tucked Inside Island Bar */}
@@ -191,20 +163,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               );
             })}
-          </div>
-
-          {/* Currency selector inside mobile menu */}
-          <div className="flex items-center justify-between text-xs text-stone-300 px-3 py-1">
-            <span>Moneda de cotización:</span>
-            <select 
-              value={currency}
-              onChange={(e) => onChangeCurrency(e.target.value as 'USD' | 'EUR' | 'MXN')}
-              className="bg-[#0f4347] text-white border border-teal-400/40 rounded-lg px-2.5 py-1 text-xs focus:outline-none"
-            >
-              <option value="USD">USD ($)</option>
-              <option value="EUR">EUR (€)</option>
-              <option value="MXN">MXN ($)</option>
-            </select>
           </div>
 
           {/* Direct WhatsApp and Reservation Action Buttons */}
