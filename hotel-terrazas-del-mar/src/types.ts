@@ -47,7 +47,7 @@ export interface BookingReservation {
   };
 }
 
-export type PhotoCategory = 'all' | 'rooms' | 'pool' | 'gastronomy' | 'spa' | 'outdoors';
+export type PhotoCategory = 'all' | 'rooms' | 'pool' | 'gastronomy' | 'events' | 'spa' | 'outdoors';
 
 export interface PhotoItem {
   id: string;
