@@ -82,7 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex items-center gap-2 group cursor-pointer min-w-0 flex-1 lg:flex-none text-left focus:outline-none" 
           title={hotelConfig.name}
         >
-          <HotelLogo variant="horizontal" mode="color" height={28} className="min-w-0" />
+          <HotelLogo variant="horizontal" mode="color" height={40} logoUrl={hotelConfig.logoUrl} className="min-w-0" />
         </button>
 
         {/* Desktop Minimalist Nav Links */}
