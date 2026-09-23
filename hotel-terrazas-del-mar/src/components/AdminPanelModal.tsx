@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Room, PhotoItem, HotelConfig, PhotoCategory } from '../types';
 import { getAdminPin, setAdminPin } from '../utils/storageUtils';
+import { supabase } from '../lib/supabase';
 import { 
   X, 
   Settings, 
@@ -57,6 +58,10 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'rooms' | 'gallery' | 'security' | 'domain'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
+  const [logoEmail, setLogoEmail] = useState('');
+  const [logoPassword, setLogoPassword] = useState('');
+  const [logoStatus, setLogoStatus] = useState('');
+  const [logoSaving, setLogoSaving] = useState(false);
 
   // Security tab state
   const [currentPinInput, setCurrentPinInput] = useState('');
@@ -101,6 +106,35 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     e.preventDefault();
     onSaveHotelConfig(configForm);
     triggerToast('Información general guardada correctamente.');
+  };
+
+  const handlePublishLogo = async () => {
+    if (!supabase) { setLogoStatus('Falta configurar VITE_SUPABASE_URL y VITE_SUPABASE_PUBLISHABLE_KEY en Cloudflare.'); return; }
+    const logoUrl = configForm.logoUrl?.trim() || '';
+    if (logoUrl && !/^https:\/\//i.test(logoUrl)) { setLogoStatus('Utiliza una URL HTTPS pública para el logo.'); return; }
+    setLogoSaving(true);
+    setLogoStatus('');
+    try {
+      let { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        if (!logoEmail || !logoPassword) throw new Error('Inicia sesión con una cuenta autorizada de Supabase para publicar.');
+        const login = await supabase.auth.signInWithPassword({ email: logoEmail, password: logoPassword });
+        if (login.error) throw login.error;
+        user = login.data.user;
+      }
+      if (!user) throw new Error('No se pudo verificar tu sesión.');
+      const { data: admin, error: adminError } = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+      if (adminError || !admin) throw new Error('Esta cuenta no tiene permisos de administrador en Supabase.');
+      const { data: existing, error: readError } = await supabase.from('site_content').select('value').eq('key', 'hotel_config').maybeSingle();
+      if (readError) throw readError;
+      const existingValue = existing?.value && typeof existing.value === 'object' && !Array.isArray(existing.value) ? existing.value as Record<string, unknown> : {};
+      const { error } = await supabase.from('site_content').upsert({ key: 'hotel_config', value: { ...existingValue, logoUrl } }, { onConflict: 'key' });
+      if (error) throw error;
+      setConfigForm(prev => ({ ...prev, logoUrl }));
+      setLogoStatus('Logo publicado en Supabase. Los visitantes lo verán al recargar la página.');
+    } catch (error) {
+      setLogoStatus(error instanceof Error ? error.message : 'No se pudo publicar el logo.');
+    } finally { setLogoSaving(false); }
   };
 
   // --- ROOMS HANDLERS ---
@@ -483,7 +517,13 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 <label htmlFor="hotel-logo-url" className="block text-xs font-semibold text-stone-700">URL del logo</label>
                 <input id="hotel-logo-url" type="url" value={configForm.logoUrl || ''} onChange={(e) => handleConfigChange('logoUrl', e.target.value)} placeholder="https://ejemplo.com/logo.png" className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm" />
                 {configForm.logoUrl && <img src={configForm.logoUrl} alt="Vista previa del logo" className="h-20 max-w-full object-contain" />}
-                <p className="text-xs text-stone-500">Deja el campo vacío para usar el logo vectorial provisional. Este panel aún guarda los cambios localmente; no los publica para todos los visitantes.</p>
+                <p className="text-xs text-stone-500">Deja el campo vacío para volver al logo provisional. Para publicar para todos los visitantes, inicia sesión con un usuario autorizado de Supabase.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input type="email" autoComplete="username" value={logoEmail} onChange={e => setLogoEmail(e.target.value)} placeholder="Correo de administrador Supabase" aria-label="Correo de administrador Supabase" className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+                  <input type="password" autoComplete="current-password" value={logoPassword} onChange={e => setLogoPassword(e.target.value)} placeholder="Contraseña Supabase" aria-label="Contraseña Supabase" className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+                </div>
+                <button type="button" disabled={logoSaving || !supabase} onClick={handlePublishLogo} className="px-4 py-2 rounded-xl bg-[#087f83] text-white font-semibold text-sm disabled:opacity-50">{logoSaving ? 'Publicando…' : 'Publicar logo para todos'}</button>
+                {logoStatus && <p role="status" className="text-xs text-stone-700">{logoStatus}</p>}
               </div>
 
               {/* Box 2: WhatsApp & Direct Contact */}
