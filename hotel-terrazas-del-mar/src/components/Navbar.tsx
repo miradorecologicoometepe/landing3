@@ -52,10 +52,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItems: { id: PageId; label: string; icon: React.ElementType }[] = [
     { id: 'inicio', label: 'Inicio', icon: Home },
     { id: 'habitaciones', label: 'Habitaciones', icon: Bed },
-    { id: 'eventos-piscina', label: 'Eventos & Piscina', icon: Waves },
-    { id: 'transporte', label: 'Horarios Barcos', icon: Ship },
-    { id: 'galeria', label: 'Galería', icon: ImageIcon },
-    { id: 'contacto', label: 'Ubicación', icon: MapPin },
+    { id: 'eventos-piscina', label: 'Eventos', icon: Waves },
+    { id: 'transporte', label: 'Guía', icon: Ship },
+    { id: 'contacto', label: 'Contacto', icon: MapPin },
   ];
 
   const handleNavClick = (pageId: PageId) => {
