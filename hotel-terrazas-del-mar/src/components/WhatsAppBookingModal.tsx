@@ -137,9 +137,6 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
                 <h3 className="font-gidole font-extrabold text-lg sm:text-xl text-white">
                   Motor de Reserva Directa por WhatsApp
                 </h3>
-                <span className="px-2 py-0.5 rounded-full bg-brand-terracotta text-[10px] font-bold uppercase tracking-wider text-white">
-                  15% OFF Directo
-                </span>
               </div>
               <p className="text-xs text-[#C2ECE5]/80">
                 Atención personalizada en {hotelConfig.name} • Ometepe, Nicaragua
@@ -506,7 +503,7 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
                   Cotización de Estancia
                 </span>
                 <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                  Tarifa Directa Garantizada
+                  Cotización estimada
                 </span>
               </div>
 
@@ -523,15 +520,6 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
                   </span>
                 </div>
 
-                <div className="flex justify-between text-stone-400 text-[11px]">
-                  <span>Tarifa regular OTA estimada</span>
-                  <span className="line-through">${quote.subtotal} USD</span>
-                </div>
-
-                <div className="flex justify-between text-emerald-700 font-semibold text-[11px]">
-                  <span>Beneficio Reserva Directa</span>
-                  <span>-${quote.directBookingDiscount} USD</span>
-                </div>
 
                 {quote.addonsList.map((addon, i) => (
                   <div key={i} className="flex justify-between text-stone-700 text-[11px]">
@@ -543,7 +531,7 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
                 <div className="pt-3 border-t border-stone-200 flex justify-between items-baseline">
                   <div>
                     <div className="text-xs text-stone-500 font-medium">Total Estimado</div>
-                    <div className="text-[10px] text-stone-400">Impuestos y cargos hoteleros incluidos</div>
+                    <div className="text-[10px] text-stone-400">Tarifa sujeta a confirmación del establecimiento</div>
                   </div>
                   <div className="text-right">
                     <span className="text-2xl font-black text-stone-900">
