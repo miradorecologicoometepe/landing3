@@ -118,16 +118,16 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
   return (
     <div 
       id="whatsapp-booking-modal-overlay" 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-5 bg-black/80 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div 
         id="whatsapp-booking-modal-container"
-        className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-stone-200 my-auto text-stone-800"
+        className="bg-white rounded-none sm:rounded-2xl shadow-2xl max-w-5xl w-full max-h-[100dvh] sm:max-h-[92vh] flex flex-col overflow-hidden border border-stone-200 my-auto text-stone-800"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 bg-[#18363a] text-white">
+        <div className="flex items-center justify-between gap-2 px-3 sm:px-6 py-3 sm:py-4 border-b border-stone-200 bg-[#18363a] text-white">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#C2ECE5]/20 border border-brand-mint/40 flex items-center justify-center text-brand-mint shrink-0">
               <MessageCircle className="w-5 h-5 fill-brand-mint" />
@@ -273,7 +273,7 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
               </div>
 
               {/* Adults & Children */}
-              <div className="grid grid-cols-2 gap-3 pt-1">
+              <div className="grid grid-cols-1 min-[350px]:grid-cols-2 gap-3 pt-1">
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
                     Adultos
