@@ -93,6 +93,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   // Rooms editing state
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
   const [roomFormData, setRoomFormData] = useState<Room | null>(null);
+  const [roomPhotoStatus, setRoomPhotoStatus] = useState('');
+  const [roomPhotoBusy, setRoomPhotoBusy] = useState(false);
 
   const currentUploadedPhotosRef = React.useRef<PhotoItem[]>(photos);
   useEffect(() => { currentUploadedPhotosRef.current = photos; }, [photos]);
@@ -230,6 +232,53 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     setEditingRoomId(null);
     setRoomFormData(null);
     triggerToast('Habitación guardada y actualizada en el catálogo web.');
+  };
+
+  const handleUploadRoomPhotos = async (files: FileList | null) => {
+    if (!supabase || !roomFormData || !files?.length) return;
+    setRoomPhotoBusy(true); setRoomPhotoStatus('');
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Tu sesión administrativa expiró. Vuelve a iniciar sesión.');
+      const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+      if (admin.error || !admin.data) throw new Error('Tu usuario no tiene permisos de administrador.');
+      const urls: string[] = [];
+      for (const file of Array.from(files)) {
+        if (!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)) throw new Error('Usa fotografías JPG, PNG, WebP o AVIF.');
+        if (file.size > 10 * 1024 * 1024) throw new Error('Cada fotografía debe pesar menos de 10 MB.');
+        const ext = ({'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'} as Record<string,string>)[file.type];
+        const path = `rooms/${roomFormData.id}/${crypto.randomUUID()}.${ext}`;
+        const upload = await supabase.storage.from('hotel-media').upload(path, file, { contentType: file.type, upsert: false });
+        if (upload.error) throw upload.error;
+        urls.push(supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl);
+      }
+      const cleanExisting = (roomFormData.images || []).filter(url => !url.includes('images.unsplash.com'));
+      const updatedRoom = { ...roomFormData, images: [...cleanExisting, ...urls] };
+      const saved = await supabase.from('rooms').upsert({ id: updatedRoom.id, details: updatedRoom }, { onConflict: 'id' }).select('id').maybeSingle();
+      if (saved.error || !saved.data) throw new Error(saved.error?.message || 'No se pudo guardar la habitación.');
+      for (let i=0; i<urls.length; i++) {
+        const photo: PhotoItem = { id: crypto.randomUUID(), title: `${updatedRoom.name} ${cleanExisting.length+i+1}`, category: 'rooms', url: urls[i], caption: '', roomTypeId: updatedRoom.id, aspectRatio: 'landscape' };
+        await supabase.from('gallery_photos').insert({ id: photo.id, category: 'rooms', image_path: photo.url, details: { title: photo.title, caption: '', roomTypeId: updatedRoom.id, aspectRatio: 'landscape' }, sort_order: Date.now()+i });
+        currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, photo];
+      }
+      setRoomFormData(updatedRoom);
+      onSaveRooms(rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room));
+      onSavePhotos(currentUploadedPhotosRef.current);
+      setRoomPhotoStatus(`${urls.length} fotografía(s) añadidas correctamente.`);
+    } catch (error) { setRoomPhotoStatus(error instanceof Error ? error.message : 'No se pudieron subir las fotografías.'); }
+    finally { setRoomPhotoBusy(false); }
+  };
+
+  const handleRemoveRoomPhoto = async (url: string) => {
+    if (!supabase || !roomFormData) return;
+    const updatedRoom = { ...roomFormData, images: roomFormData.images.filter(image => image !== url) };
+    const saved = await supabase.from('rooms').upsert({ id: updatedRoom.id, details: updatedRoom }, { onConflict: 'id' });
+    if (saved.error) { setRoomPhotoStatus(saved.error.message); return; }
+    const linked = currentUploadedPhotosRef.current.filter(photo => photo.roomTypeId === updatedRoom.id && photo.url === url);
+    for (const photo of linked) await supabase.from('gallery_photos').delete().eq('id', photo.id);
+    currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(photo => !(photo.roomTypeId === updatedRoom.id && photo.url === url));
+    setRoomFormData(updatedRoom); onSaveRooms(rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room)); onSavePhotos(currentUploadedPhotosRef.current);
+    setRoomPhotoStatus('Fotografía retirada de la habitación.');
   };
 
   const handleDeleteRoom = (roomId: string) => {
@@ -898,10 +947,17 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     </div>
 
                     <div className="sm:col-span-2">
-                      <p className="text-xs text-stone-600">Para agregar o reemplazar fotografías de esta habitación, abre la pestaña Galería, selecciona «Habitaciones» y elige la habitación correspondiente. Sube los archivos directamente desde tu dispositivo.</p>
-                      <div className="flex gap-2 mt-2 overflow-x-auto py-1">
-                        {roomFormData.images.map((imgUrl, i) => <img key={i} src={imgUrl} alt={`Foto de habitación ${i + 1}`} className="w-16 h-12 rounded-lg object-cover border border-stone-200" />)}
+                      <div className="flex items-center justify-between gap-3 mb-2">
+                        <div><div className="text-sm font-bold text-stone-900">Fotos de esta habitación</div><p className="text-xs text-stone-600">Súbelas aquí directamente. La primera foto será la principal.</p></div>
+                        <label className="shrink-0 rounded-xl bg-teal-700 text-white font-bold text-xs px-4 py-3 cursor-pointer">
+                          {roomPhotoBusy ? 'Subiendo…' : 'Añadir fotos'}
+                          <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple disabled={roomPhotoBusy} onChange={e => { void handleUploadRoomPhotos(e.target.files); e.currentTarget.value=''; }} className="sr-only" />
+                        </label>
                       </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {roomFormData.images.map((imgUrl, i) => <div key={imgUrl+i} className="relative rounded-xl overflow-hidden border bg-white"><img src={imgUrl} alt={`Foto de habitación ${i + 1}`} className="w-full h-24 object-cover" /><div className="p-2 flex items-center justify-between gap-1"><span className="text-[10px] text-stone-500">{i===0?'Principal':`Foto ${i+1}`}</span><button type="button" onClick={() => void handleRemoveRoomPhoto(imgUrl)} className="text-[10px] font-bold text-red-600">Quitar</button></div></div>)}
+                      </div>
+                      {roomPhotoStatus && <p role="status" className="text-xs text-stone-700 mt-2">{roomPhotoStatus}</p>}
                     </div>
                   </div>
 
