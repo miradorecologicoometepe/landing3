@@ -160,19 +160,10 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
                         </span>
                       </div>
 
-                      {/* Pricing Tier Breakdown for Family Room */}
-                      {room.id === 'habitacion-familiar-vistas-lago' && (
-                        <div className="mt-1 p-2 rounded-lg bg-amber-50/70 border border-amber-200/80 text-[11px] text-amber-900 flex items-center justify-between">
-                          <span>Tarifas por personas:</span>
-                          <span className="font-bold">3 pers: $70 • 4 pers: $90 USD</span>
-                        </div>
-                      )}
-                      {room.id === 'habitacion-2-camas-grandes' && (
-                        <div className="mt-1 p-2 rounded-lg bg-stone-50 border border-stone-200 text-[11px] text-stone-700 flex items-center justify-between">
-                          <span>Tarifa fija directa:</span>
-                          <span className="font-bold text-brand-teal">$60 USD / noche</span>
-                        </div>
-                      )}
+                      <div className="mt-1 p-2 rounded-lg bg-stone-50 border border-stone-200 text-[11px] text-stone-700 flex items-center justify-between gap-2">
+                        <span>Precio estándar:</span>
+                        <span className="font-bold text-brand-teal">Hasta {room.includedGuests ?? room.maxOccupancy} pers. · ${room.pricePerNight} USD{(room.extraGuestPrice ?? 0) > 0 ? ` · +${room.extraGuestPrice}/persona extra` : ''}</span>
+                      </div>
                     </div>
 
                     {/* Minimal Highlights */}
@@ -205,7 +196,7 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
                           ${room.pricePerNight}
                         </span>
                         <span className="text-[10px] text-stone-500 font-medium">
-                          {room.id === 'habitacion-familiar-vistas-lago' ? 'USD/noche (1-3p)' : 'USD/noche'}
+                          USD/noche
                         </span>
                       </div>
                     </div>
