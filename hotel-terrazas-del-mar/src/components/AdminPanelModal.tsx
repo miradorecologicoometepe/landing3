@@ -63,6 +63,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [faviconFile, setFaviconFile] = useState<File | null>(null);
+  const [faviconStatus, setFaviconStatus] = useState('');
+  const [faviconSaving, setFaviconSaving] = useState(false);
   const [replacingPhoto, setReplacingPhoto] = useState<PhotoItem | null>(null);
   const [galleryStatus, setGalleryStatus] = useState('');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -149,6 +152,33 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     } catch (error) {
       setLogoStatus(error instanceof Error ? error.message : 'No se pudo publicar el logo.');
     } finally { setLogoSaving(false); }
+  };
+
+  const handlePublishFavicon = async () => {
+    if (!supabase) { setFaviconStatus('Supabase no está configurado.'); return; }
+    if (!faviconFile) { setFaviconStatus('Selecciona una imagen para el favicon.'); return; }
+    if (!['image/png','image/jpeg','image/webp','image/svg+xml','image/x-icon','image/vnd.microsoft.icon'].includes(faviconFile.type) || faviconFile.size > 2 * 1024 * 1024) { setFaviconStatus('Usa PNG, JPG, WebP, SVG o ICO de hasta 2 MB.'); return; }
+    setFaviconSaving(true); setFaviconStatus('');
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Tu sesión administrativa expiró. Vuelve a iniciar sesión.');
+      const { data: admin, error: adminError } = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+      if (adminError || !admin) throw new Error('Esta cuenta no tiene permisos de administrador.');
+      const extension = faviconFile.name.split('.').pop()?.toLowerCase() || 'png';
+      const path = `branding/favicon-${crypto.randomUUID()}.${extension}`;
+      const upload = await supabase.storage.from('hotel-media').upload(path, faviconFile, { contentType: faviconFile.type, upsert: false });
+      if (upload.error) throw upload.error;
+      const faviconUrl = supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl;
+      const { data: existing, error: readError } = await supabase.from('site_content').select('value').eq('key', 'hotel_config').maybeSingle();
+      if (readError) throw readError;
+      const existingValue = existing?.value && typeof existing.value === 'object' && !Array.isArray(existing.value) ? existing.value as Record<string, unknown> : {};
+      const { error } = await supabase.from('site_content').upsert({ key: 'hotel_config', value: { ...existingValue, faviconUrl } }, { onConflict: 'key' });
+      if (error) throw error;
+      const updated = { ...configForm, faviconUrl };
+      setConfigForm(updated); onSaveHotelConfig(updated); setFaviconFile(null);
+      setFaviconStatus('Favicon publicado. Puede tardar un momento en reflejarse en la pestaña por la caché del navegador.');
+    } catch (error) { setFaviconStatus(error instanceof Error ? error.message : 'No se pudo publicar el favicon.'); }
+    finally { setFaviconSaving(false); }
   };
 
   // --- ROOMS HANDLERS ---
@@ -499,6 +529,15 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 <p className="text-xs text-emerald-700">Tu sesión administrativa actual se utilizará para publicar el logo.</p>
                 <button type="button" disabled={logoSaving || !supabase || !logoFile} onClick={handlePublishLogo} className="px-4 py-2 rounded-xl bg-[#087f83] text-white font-semibold text-sm disabled:opacity-50">{logoSaving ? 'Subiendo y publicando…' : 'Subir / reemplazar logo'}</button>
                 {logoStatus && <p role="status" className="text-xs text-stone-700">{logoStatus}</p>}
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+                <h4 className="font-bold text-base text-stone-900">Favicon del sitio</h4>
+                <p className="text-xs text-stone-600">Sube el ícono que aparecerá en la pestaña del navegador. Recomendado: imagen cuadrada PNG, SVG o ICO.</p>
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/x-icon,.ico" onChange={e => { setFaviconFile(e.target.files?.[0] || null); setFaviconStatus(''); }} className="block w-full min-w-0 text-sm border rounded-xl p-3 bg-white" />
+                {configForm.faviconUrl && <img src={configForm.faviconUrl} alt="Favicon actual" className="w-16 h-16 object-contain rounded-xl border p-2" />}
+                <button type="button" disabled={faviconSaving || !supabase || !faviconFile} onClick={handlePublishFavicon} className="px-4 py-2 rounded-xl bg-[#087f83] text-white font-semibold text-sm disabled:opacity-50">{faviconSaving ? 'Publicando…' : 'Subir / reemplazar favicon'}</button>
+                {faviconStatus && <p role="status" className="text-xs text-stone-700">{faviconStatus}</p>}
               </div>
 
               {/* Box 2: WhatsApp & Direct Contact */}
