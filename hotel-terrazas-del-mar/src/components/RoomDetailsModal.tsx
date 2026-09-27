@@ -4,7 +4,6 @@ import {
   X, 
   Check, 
   Users, 
-  Maximize, 
   Eye, 
   Bed, 
   MessageCircle, 
@@ -121,15 +120,7 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
           )}
 
           {/* Key Room Specs */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-stone-50 border border-stone-200">
-            <div className="flex items-center gap-2">
-              <Maximize className="w-5 h-5 text-brand-teal" />
-              <div>
-                <div className="text-[10px] uppercase text-stone-500 font-bold">Tamaño</div>
-                <div className="text-sm font-bold text-stone-800">{room.sizeM2 > 0 ? `${room.sizeM2} m²` : "Consultar"}</div>
-              </div>
-            </div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-stone-50 border border-stone-200">
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-brand-teal" />
               <div>
@@ -138,9 +129,7 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
                   Máximo {room.maxOccupancy} personas
                 </div>
                 <div className="text-[10px] text-stone-500">
-                  {room.id === 'habitacion-familiar-vistas-lago' 
-                    ? '3 pers: $70 • 4 pers: $90' 
-                    : 'Tarifa fija: $60 USD'}
+                  Hasta {room.includedGuests ?? room.maxOccupancy} pers: ${room.pricePerNight}{(room.extraGuestPrice ?? 0) > 0 ? ` • +${room.extraGuestPrice} por persona adicional` : ''}
                 </div>
               </div>
             </div>
@@ -213,16 +202,14 @@ export const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
                 ${room.originalPrice} USD
               </span>
               <span className="font-bold text-2xl text-stone-900">
-                ${room.pricePerNight} {room.id === 'habitacion-familiar-vistas-lago' && '- $90'} <span className="text-xs font-normal text-stone-500">USD / noche</span>
+                ${room.pricePerNight} <span className="text-xs font-normal text-stone-500">USD / noche</span>
               </span>
               <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">
                 Reserva Directa
               </span>
             </div>
             <div className="text-[11px] text-stone-500">
-              {room.id === 'habitacion-familiar-vistas-lago' 
-                ? 'Tarifa: 3 personas $70 • 4 personas $90 USD/noche (Máx. 4 personas)'
-                : 'Tarifa fija: $60 USD/noche (Capacidad máxima 2 personas)'}
+              Precio estándar hasta {room.includedGuests ?? room.maxOccupancy} persona{(room.includedGuests ?? room.maxOccupancy) === 1 ? '' : 's'}{(room.extraGuestPrice ?? 0) > 0 ? ` · +${room.extraGuestPrice} USD por persona adicional` : ''} · Máx. {room.maxOccupancy} personas
             </div>
           </div>
 
