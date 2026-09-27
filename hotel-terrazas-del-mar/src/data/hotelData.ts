@@ -13,6 +13,15 @@ export const HOTEL_CONFIG: HotelConfig = {
   currency: 'USD',
   checkInTime: '14:00 hrs',
   checkOutTime: '11:00 hrs',
+  dayPass: {
+    enabled: false,
+    title: 'Day Pass Piscina',
+    days: [],
+    startTime: '',
+    endTime: '',
+    price: null,
+    notes: '',
+  },
 };
 
 export const ROOMS_DATA: Room[] = [
