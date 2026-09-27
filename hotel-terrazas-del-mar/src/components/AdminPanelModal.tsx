@@ -60,6 +60,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [replacingPhoto, setReplacingPhoto] = useState<PhotoItem | null>(null);
   const [galleryStatus, setGalleryStatus] = useState('');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [adminName, setAdminName] = useState('');
   useEffect(() => {
     if (!logoFile) { setLogoPreview(null); return; }
     const url = URL.createObjectURL(logoFile);
@@ -73,6 +74,18 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   useEffect(() => {
     setConfigForm(hotelConfig);
   }, [hotelConfig, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !supabase) return;
+    void supabase.auth.getSession().then(({ data }) => {
+      const user = data.session?.user;
+      if (!user) return;
+      const metadataName = user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.first_name;
+      const emailName = user.email?.split('@')[0]?.split(/[._-]/)[0];
+      const rawName = String(metadataName || emailName || '').trim();
+      if (rawName) setAdminName(rawName.charAt(0).toUpperCase() + rawName.slice(1));
+    });
+  }, [isOpen]);
 
   // Rooms editing state
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
@@ -387,7 +400,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     <div className={`bg-white ${isDedicatedPage ? 'min-h-[100dvh] flex flex-col min-w-0' : 'rounded-xl sm:rounded-2xl w-full max-w-5xl min-w-0 shadow-2xl border border-stone-200 flex flex-col max-h-[92vh] overflow-hidden'}`}>
       
       {/* Header Bar */}
-      <div className="bg-[#18363a] text-white px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#24474d] shrink-0">
+      <div className="bg-[#18363a] text-white px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#24474d] shrink-0 sticky top-0 z-40">
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 rounded-xl bg-[#C2ECE5]/20 border border-brand-mint/40 flex items-center justify-center text-brand-mint">
             <Lock className="w-5 h-5" />
@@ -402,7 +415,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
               </span>
             </div>
             <p className="text-[11px] sm:text-xs text-[#C2ECE5]/80 line-clamp-2">
-              Administración privada de contenido, habitaciones y operación del Mirador Ecológico.
+              {adminName ? `Hola, ${adminName} · ` : ''}Administración privada de contenido, habitaciones y operación.
             </p>
           </div>
         </div>
@@ -443,7 +456,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white px-3 sm:px-6 py-2.5 grid grid-cols-5 sm:flex sm:items-center gap-1.5 sm:gap-2 border-b border-stone-200 shrink-0 sm:overflow-x-auto sticky top-0 z-20">
+      <div className="bg-white px-3 sm:px-6 py-2.5 grid grid-cols-5 sm:flex sm:items-center gap-1.5 sm:gap-2 border-b border-stone-200 shrink-0 sm:overflow-x-auto sticky top-[105px] sm:top-[73px] z-30 shadow-sm">
         <button type="button" onClick={() => setActiveTab('calendar')}
           className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'calendar' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
           <CalendarDays className="w-4 h-4 text-brand-teal" /><span>Calendario</span>
