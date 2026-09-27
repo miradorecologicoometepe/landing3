@@ -71,13 +71,13 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
           <div className="mt-9 flex flex-wrap items-center justify-start gap-4">
             <a
-              href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo cotizar el local de eventos para una celebración.`)}`}
+              href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, quiero cotizar el salón de eventos. ¿Me pueden ayudar con disponibilidad, capacidad y opciones para mi celebración?`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#089b9c] hover:bg-[#087f83] text-white font-bold text-xs sm:text-sm shadow-lg transition-all"
             >
               <MessageCircle className="w-4 h-4 fill-white" />
-              <span>Cotizar Local de Eventos por WhatsApp</span>
+              <span>Cotizar salón de eventos</span>
             </a>
             {hotelConfig.dayPass?.enabled && <a
               href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo información sobre el Day Pass de piscina.`)}`}
@@ -144,13 +144,13 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
               </div>
 
               <a
-                href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo cotizar el local de eventos para una fecha específica.`)}`}
+                href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, quiero cotizar el salón de eventos para una fecha específica. ¿Me pueden compartir disponibilidad, capacidad y opciones?`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs shadow-md shrink-0 self-start md:self-auto"
               >
                 <Calendar className="w-4 h-4" />
-                <span>Consultar Fechas de Evento</span>
+                <span>Cotizar salón de eventos</span>
               </a>
             </div>
 
