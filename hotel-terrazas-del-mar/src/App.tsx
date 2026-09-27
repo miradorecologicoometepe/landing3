@@ -188,12 +188,10 @@ export default function App() {
     if (error) console.error('Unable to publish hotel config to Supabase', error);
   };
 
-  const handleSaveRooms = async (updatedRooms: Room[]) => {
+  const handleSaveRooms = (updatedRooms: Room[]) => {
+    // Persistence is handled by the admin action that changed the room.
+    // Keep this callback lightweight so uploads/reordering do not write every room again.
     setRooms(updatedRooms);
-    if (!supabase || !isAdminAuth) return;
-    const rows = updatedRooms.map(room => ({ id: room.id, details: room }));
-    const { error } = await supabase.from('rooms').upsert(rows, { onConflict: 'id' });
-    if (error) console.error('Unable to publish rooms to Supabase', error);
   };
 
   const handleSavePhotos = (updatedPhotos: PhotoItem[]) => {
