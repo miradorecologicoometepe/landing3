@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Room, PhotoItem, HotelConfig, PhotoCategory } from '../types';
-import { getAdminPin, setAdminPin } from '../utils/storageUtils';
 import { supabase } from '../lib/supabase';
 import { PhotoUploader } from './PhotoUploader';
 import { FaqEditor } from './FaqEditor';
@@ -58,7 +57,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onLogout,
   isDedicatedPage = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'rooms' | 'gallery' | 'faqs' | 'security' | 'domain'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'rooms' | 'gallery' | 'faqs' | 'domain'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
@@ -75,13 +74,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     setLogoPreview(url);
     return () => URL.revokeObjectURL(url);
   }, [logoFile]);
-
-  // Security tab state
-  const [currentPinInput, setCurrentPinInput] = useState('');
-  const [newPinInput, setNewPinInput] = useState('');
-  const [confirmPinInput, setConfirmPinInput] = useState('');
-  const [pinError, setPinError] = useState<string | null>(null);
-  const [pinSuccess, setPinSuccess] = useState<string | null>(null);
 
   // General config form state
   const [configForm, setConfigForm] = useState<HotelConfig>(hotelConfig);
@@ -358,35 +350,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       onResetAllData();
       onClose();
     }
-  };
-
-  const handleUpdatePin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPinError(null);
-    setPinSuccess(null);
-
-    const actualPin = getAdminPin();
-    if (currentPinInput.trim() !== actualPin.trim() && currentPinInput.trim() !== '1234') {
-      setPinError('El PIN actual ingresado no coincide con el registrado.');
-      return;
-    }
-
-    if (!newPinInput.trim() || newPinInput.trim().length < 4) {
-      setPinError('El nuevo PIN debe tener al menos 4 caracteres numéricos o alfanuméricos.');
-      return;
-    }
-
-    if (newPinInput.trim() !== confirmPinInput.trim()) {
-      setPinError('La confirmación del nuevo PIN no coincide.');
-      return;
-    }
-
-    setAdminPin(newPinInput.trim());
-    setPinSuccess('¡El PIN de seguridad se ha actualizado correctamente!');
-    setCurrentPinInput('');
-    setNewPinInput('');
-    setConfirmPinInput('');
-    triggerToast('PIN de acceso actualizado con éxito.');
   };
 
   const content = (
