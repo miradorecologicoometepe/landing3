@@ -99,6 +99,13 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
 
   if (!isOpen) return null;
 
+  const storagePathFromUrl = (url?: string) => {
+    if (!url) return null;
+    const marker = '/storage/v1/object/public/hotel-media/';
+    const at = url.indexOf(marker);
+    return at >= 0 ? decodeURIComponent(url.slice(at + marker.length).split('?')[0]) : null;
+  };
+
   const triggerToast = (msg: string) => {
     setSaveToast(msg);
     setTimeout(() => {
@@ -290,6 +297,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     if (saved.error) { setRoomPhotoStatus(saved.error.message); return; }
     const linked = currentUploadedPhotosRef.current.filter(photo => photo.roomTypeId === updatedRoom.id && photo.url === url);
     for (const photo of linked) await supabase.from('gallery_photos').delete().eq('id', photo.id);
+    const storagePath = storagePathFromUrl(url);
+    if (storagePath) await supabase.storage.from('hotel-media').remove([storagePath]);
     currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(photo => !(photo.roomTypeId === updatedRoom.id && photo.url === url));
     setRoomFormData(updatedRoom); onSaveRooms(rooms.some(room => room.id === updatedRoom.id) ? rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room) : [updatedRoom, ...rooms]); onSavePhotos(currentUploadedPhotosRef.current);
     setRoomPhotoStatus('Fotografía retirada de la habitación.');
@@ -300,7 +309,11 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       const deleted = await supabase.from('rooms').delete().eq('id', roomId);
       if (deleted.error) { triggerToast(deleted.error.message); return; }
       const linked = currentUploadedPhotosRef.current.filter(p => p.roomTypeId === roomId);
-      if (linked.length) await supabase.from('gallery_photos').delete().in('id', linked.map(p => p.id));
+      if (linked.length) {
+        await supabase.from('gallery_photos').delete().in('id', linked.map(p => p.id));
+        const paths = linked.map(p => storagePathFromUrl(p.url)).filter((p): p is string => Boolean(p));
+        if (paths.length) await supabase.storage.from('hotel-media').remove(paths);
+      }
       currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(p => p.roomTypeId !== roomId);
       onSavePhotos(currentUploadedPhotosRef.current);
       const updated = rooms.filter((r) => r.id !== roomId);
@@ -357,6 +370,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     if (supabase && confirm('¿Eliminar esta fotografía de la galería?')) {
       const deleted = await supabase.from('gallery_photos').delete().eq('id', photoId);
       if (deleted.error) { triggerToast(deleted.error.message); return; }
+      const removedPhoto = photos.find(p => p.id === photoId);
+      const storagePath = storagePathFromUrl(removedPhoto?.url);
+      if (storagePath) await supabase.storage.from('hotel-media').remove([storagePath]);
       const updated = photos.filter((p) => p.id !== photoId);
       onSavePhotos(updated);
       if (editingPhotoId === photoId) {
