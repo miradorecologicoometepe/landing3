@@ -53,8 +53,8 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
             const room = await supabase.from('rooms').select('details').eq('id', replacePhoto.roomTypeId).maybeSingle();
             if (room.error || !room.data) throw new Error('La foto se reemplazó, pero no se pudo actualizar la habitación.');
             const details = room.data.details as Room;
-            const updated = await supabase.from('rooms').update({ details: { ...details, images: (details.images || []).map((image: string) => image === replacePhoto.url ? url : image) } }).eq('id', replacePhoto.roomTypeId);
-            if (updated.error) throw new Error('La foto se reemplazó, pero no se pudo actualizar la habitación: ' + updated.error.message);
+            const updated = await supabase.from('rooms').update({ details: { ...details, images: (details.images || []).map((image: string) => image === replacePhoto.url ? url : image) } }).eq('id', replacePhoto.roomTypeId).select('id').maybeSingle();
+            if (updated.error || !updated.data) throw new Error('La foto se reemplazó, pero no se pudo actualizar la habitación: ' + (updated.error?.message || 'No se encontró la habitación vinculada.'));
           }
           onReplaced?.(photo);
         } else {
@@ -64,8 +64,8 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
             const room = await supabase.from('rooms').select('details').eq('id', selectedRoomId).maybeSingle();
             if (room.error || !room.data) throw new Error('La foto se guardó en galería, pero no se encontró la habitación para vincularla.');
             const details = room.data.details as Room;
-            const updated = await supabase.from('rooms').update({ details: { ...details, images: [...(details.images || []).filter((x: string) => !x.includes('images.unsplash.com')), url] } }).eq('id', selectedRoomId);
-            if (updated.error) throw new Error('La foto se guardó en galería, pero no pudo vincularse a la habitación: ' + updated.error.message);
+            const updated = await supabase.from('rooms').update({ details: { ...details, images: [...(details.images || []).filter((x: string) => !x.includes('images.unsplash.com')), url] } }).eq('id', selectedRoomId).select('id').maybeSingle();
+            if (updated.error || !updated.data) throw new Error('La foto se guardó en galería, pero no pudo vincularse a la habitación: ' + (updated.error?.message || 'No se encontró la habitación seleccionada.'));
           }
           onUploaded(photo, category === 'rooms' ? selectedRoomId : '');
         }
