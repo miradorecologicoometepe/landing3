@@ -3,15 +3,7 @@ import { loadPublicSiteData } from './lib/publicContent';
 import { supabase } from './lib/supabase';
 import { Room, PhotoItem, HotelConfig } from './types';
 import { getDefaultDates } from './utils/bookingUtils';
-import { 
-  loadHotelConfig, 
-  saveHotelConfig, 
-  loadRooms, 
-  saveRooms, 
-  loadGalleryPhotos, 
-  saveGalleryPhotos, 
-  resetAllDataToDefault,
-} from './utils/storageUtils';
+import { HOTEL_CONFIG, ROOMS_DATA, GALLERY_PHOTOS } from './data/hotelData';
 import { Navbar, PageId } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { BookingBar } from './components/BookingBar';
@@ -46,9 +38,9 @@ export default function App() {
   const defaultDates = getDefaultDates();
 
   // Persistent Customization State
-  const [hotelConfig, setHotelConfig] = useState<HotelConfig>(loadHotelConfig);
-  const [rooms, setRooms] = useState<Room[]>(loadRooms);
-  const [photos, setPhotos] = useState<PhotoItem[]>(loadGalleryPhotos);
+  const [hotelConfig, setHotelConfig] = useState<HotelConfig>(HOTEL_CONFIG);
+  const [rooms, setRooms] = useState<Room[]>(ROOMS_DATA);
+  const [photos, setPhotos] = useState<PhotoItem[]>(GALLERY_PHOTOS);
 
   // Load published content for all visitors; preserve existing defaults until content is published.
   useEffect(() => {
@@ -186,7 +178,6 @@ export default function App() {
   // Handlers for Admin Panel updates with localStorage synchronization
   const handleSaveHotelConfig = async (updatedConfig: HotelConfig) => {
     setHotelConfig(updatedConfig);
-    saveHotelConfig(updatedConfig);
     if (!supabase || !isAdminAuth) return;
     const { error } = await supabase.from('site_content').upsert({ key: 'hotel_config', value: updatedConfig }, { onConflict: 'key' });
     if (error) console.error('Unable to publish hotel config to Supabase', error);
@@ -194,7 +185,6 @@ export default function App() {
 
   const handleSaveRooms = async (updatedRooms: Room[]) => {
     setRooms(updatedRooms);
-    saveRooms(updatedRooms);
     if (!supabase || !isAdminAuth) return;
     const rows = updatedRooms.map(room => ({ id: room.id, details: room }));
     const { error } = await supabase.from('rooms').upsert(rows, { onConflict: 'id' });
@@ -203,19 +193,17 @@ export default function App() {
 
   const handleSavePhotos = (updatedPhotos: PhotoItem[]) => {
     setPhotos(updatedPhotos);
-    saveGalleryPhotos(updatedPhotos);
     // Gallery rows and Storage files are persisted by PhotoUploader/AdminPanelModal.
     // This callback keeps the current UI synchronized with those Supabase writes.
   };
 
-  const handleResetAllData = () => {
-    resetAllDataToDefault();
-    const defConfig = loadHotelConfig();
-    const defRooms = loadRooms();
-    const defPhotos = loadGalleryPhotos();
-    setHotelConfig(defConfig);
-    setRooms(defRooms);
-    setPhotos(defPhotos);
+  const handleResetAllData = async () => {
+    setHotelConfig(HOTEL_CONFIG);
+    setRooms(ROOMS_DATA);
+    setPhotos(GALLERY_PHOTOS);
+    if (!supabase || !isAdminAuth) return;
+    await supabase.from('site_content').upsert({ key: 'hotel_config', value: HOTEL_CONFIG }, { onConflict: 'key' });
+    await supabase.from('rooms').upsert(ROOMS_DATA.map(room => ({ id: room.id, details: room })), { onConflict: 'id' });
   };
 
   const handleExitAdminRoute = () => {
