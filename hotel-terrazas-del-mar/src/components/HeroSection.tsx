@@ -11,24 +11,24 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpenGallery, onOpenBookingModal, hotelConfig, photos }) => (
-  <section className="relative isolate min-h-[78svh] sm:min-h-[88svh] lg:min-h-screen overflow-hidden bg-[#087f83] text-white flex items-center">
+  <section className="relative isolate min-h-[82svh] sm:min-h-[90svh] lg:min-h-[94vh] overflow-hidden bg-[#087f83] text-white flex items-center">
     <img src={photos.find(photo => photo.category === "outdoors")?.url || photos.find(photo => photo.category === "pool")?.url || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85"} alt="Vista del Mirador Ecológico Ometepe" className="absolute inset-0 -z-20 h-full w-full object-cover" />
-    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#063f4c]/95 via-[#087f83]/75 to-[#087f83]/25" />
-    <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#063f4c]/65 via-transparent to-[#063f4c]/35" />
+    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#062f32]/90 via-[#0b4f50]/58 to-transparent" />
+    <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#062f32]/65 via-transparent to-black/15" />
     <div className="w-full max-w-7xl mx-auto px-4 min-[375px]:px-5 sm:px-10 lg:px-14 pt-28 pb-24 sm:pt-44 sm:pb-36">
       <div className="max-w-3xl">
-        <p className="text-xs sm:text-sm tracking-[0.32em] uppercase font-semibold text-[#b6f2e6] mb-7">Hotel Mirador Ecológico · Ometepe</p>
-        <h1 className="font-serif text-[clamp(2.15rem,9.3vw,5.5rem)] leading-[1.08] tracking-tight font-medium max-w-3xl mb-6 sm:mb-10">Donde la <em className="text-[#b6f2e6]">naturaleza</em> se abraza con el lago y los volcanes</h1>
-        <p className="text-base sm:text-xl leading-relaxed text-stone-100/95 max-w-2xl mb-8 sm:mb-12">Descubre nuestras habitaciones, espacios para eventos y el entorno natural de la Isla de Ometepe. Consulta disponibilidad y tarifas directamente con nosotros.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-2 sm:gap-x-5 gap-y-4 sm:gap-y-6 max-w-2xl mb-8 sm:mb-14 text-xs min-[375px]:text-sm">
-          <div className="flex flex-col gap-2"><Leaf className="w-6 h-6 text-[#b6f2e6]" /><span>Naturaleza y descanso</span></div>
-          <div className="flex flex-col gap-2"><BedDouble className="w-6 h-6 text-[#b6f2e6]" /><span>Habitaciones</span></div>
-          <div className="flex flex-col gap-2"><Users className="w-6 h-6 text-[#b6f2e6]" /><span>Eventos especiales</span></div>
-          <div className="flex flex-col gap-2"><MapPin className="w-6 h-6 text-[#b6f2e6]" /><span>Isla de Ometepe</span></div>
+        <p className="text-xs sm:text-sm tracking-[0.32em] uppercase font-semibold text-[#d7f4ee] mb-5">Hotel Mirador Ecológico · Ometepe</p>
+        <h1 className="font-serif text-[clamp(2.35rem,8.5vw,5.25rem)] leading-[1.02] tracking-[-0.035em] font-semibold max-w-3xl mb-6 sm:mb-8">Donde la <em className="text-[#d7f4ee]">naturaleza</em> se abraza con el lago y los volcanes</h1>
+        <p className="text-[15px] sm:text-lg leading-relaxed text-white/85 max-w-xl mb-8 sm:mb-10">Descubre nuestras habitaciones, espacios para eventos y el entorno natural de la Isla de Ometepe. Consulta disponibilidad y tarifas directamente con nosotros.</p>
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 max-w-2xl mb-8 sm:mb-10 text-xs">
+          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-3 py-2"><Leaf className="w-4 h-4 text-[#d7f4ee]" /><span>Naturaleza y descanso</span></div>
+          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-3 py-2"><BedDouble className="w-4 h-4 text-[#d7f4ee]" /><span>Habitaciones</span></div>
+          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-3 py-2"><Users className="w-4 h-4 text-[#d7f4ee]" /><span>Eventos especiales</span></div>
+          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-3 py-2"><MapPin className="w-4 h-4 text-[#d7f4ee]" /><span>Isla de Ometepe</span></div>
         </div>
-        <div className="flex flex-wrap items-center gap-5 sm:gap-8">
-          <button onClick={onExploreRooms} className="rounded-full bg-[#b6f2e6] hover:bg-[#d1fff3] text-[#075c63] px-5 sm:px-8 py-3.5 sm:py-4 font-bold inline-flex items-center gap-3 shadow-lg transition-colors">Ver habitaciones <ArrowRight className="w-5 h-5" /></button>
-          <button onClick={onOpenGallery} className="text-white font-semibold border-b border-white/70 pb-1 hover:text-[#b6f2e6] transition-colors">Explorar fotografías <ArrowRight className="inline w-4 h-4 ml-2" /></button>
+        <div className="flex flex-col min-[390px]:flex-row items-stretch min-[390px]:items-center gap-3 sm:gap-6">
+          <button onClick={onExploreRooms} className="rounded-full bg-white hover:bg-[#eefaf7] text-[#075c63] px-6 sm:px-8 py-3.5 sm:py-4 font-bold inline-flex items-center justify-center gap-3 shadow-xl shadow-black/10 transition-all">Ver habitaciones <ArrowRight className="w-5 h-5" /></button>
+          <button onClick={onOpenGallery} className="rounded-full border border-white/35 bg-white/5 px-6 py-3.5 text-white text-center font-semibold hover:bg-white/10 transition-colors">Explorar fotografías <ArrowRight className="inline w-4 h-4 ml-2" /></button>
         </div>
       </div>
     </div>
