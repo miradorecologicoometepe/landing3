@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { PhotoItem, PhotoCategory } from '../types';
-import { GALLERY_PHOTOS, HOTEL_CONFIG } from '../data/hotelData';
 import { 
   Camera, 
   X, 
@@ -109,6 +108,8 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
           </div>
         </div>
 
+        {filteredPhotos.length === 0 && <div className="mb-8 rounded-2xl border border-stone-700 bg-stone-800/60 px-5 py-10 text-center text-sm text-stone-300">Aún no hay fotografías publicadas en esta categoría.</div>}
+
         {/* Mosaic Photo Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPhotos.map((photo, index) => (
@@ -133,7 +134,7 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
               <div className="absolute inset-0 p-5 flex flex-col justify-end transform translate-y-2 group-hover:translate-y-0 transition-transform">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#387378] text-white backdrop-blur-xs">
-                    {photo.category}
+                    {categories.find(category => category.id === photo.category)?.label || photo.category}
                   </span>
                   <span className="text-[10px] text-stone-300">
                     Click para ampliar
@@ -227,9 +228,7 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
                 <p className="text-sm text-stone-200">
                   {currentPhoto.caption}
                 </p>
-                <span className="text-[11px] text-brand-mint">
-                  {HOTEL_CONFIG.name}
-                </span>
+                <span className="text-[11px] text-brand-mint">Mirador Ecológico · Ometepe</span>
               </div>
 
               <button
