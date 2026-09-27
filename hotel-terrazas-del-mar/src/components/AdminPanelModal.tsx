@@ -718,7 +718,10 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-5">
+                    <section className="rounded-2xl border border-stone-200 p-4 sm:p-5">
+                      <div className="mb-4"><h5 className="font-bold text-stone-900">1. Información de la habitación</h5><p className="text-xs text-stone-500">Así verá el huésped la habitación en el sitio.</p></div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
                         Nombre de la Suite
@@ -772,9 +775,15 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                       />
                     </div>
 
+                      </div>
+                    </section>
+
+                    <section className="rounded-2xl border border-stone-200 p-4 sm:p-5">
+                      <div className="mb-4"><h5 className="font-bold text-stone-900">2. Precio y capacidad</h5><p className="text-xs text-stone-500">Configura la tarifa y cuántas personas pueden hospedarse.</p></div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                        Tarifa Directa por Noche (USD)
+                        Tarifa por noche
                       </label>
                       <input
                         type="number"
@@ -881,6 +890,12 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                       />
                     </div>
 
+                      </div>
+                    </section>
+
+                    <section className="rounded-2xl border border-stone-200 p-4 sm:p-5">
+                      <div className="mb-4"><h5 className="font-bold text-stone-900">3. Detalles de la estancia</h5><p className="text-xs text-stone-500">Cama, espacio, vista y descripción para ayudar al huésped a elegir.</p></div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
                         Tipo de Vista
@@ -907,10 +922,20 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                         required
                       />
                     </div>
+                      </div>
+                    </section>
 
-                    <div className="sm:col-span-2">
+                    <section className="rounded-2xl border border-stone-200 p-4 sm:p-5">
+                      <div className="mb-4"><h5 className="font-bold text-stone-900">4. Comodidades</h5><p className="text-xs text-stone-500">Marca las opciones disponibles o agrega una personalizada.</p></div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                        {['Aire acondicionado','Baño privado','Wi-Fi','Agua caliente','Ventilador','Vista al lago','Vista al volcán','Terraza','Desayuno'].map(item => {
+                          const selected=roomFormData.amenities.includes(item);
+                          return <button key={item} type="button" onClick={()=>setRoomFormData({...roomFormData,amenities:selected?roomFormData.amenities.filter(a=>a!==item):[...roomFormData.amenities,item]})} className={`rounded-xl border px-3 py-2.5 text-xs font-semibold text-left ${selected?'border-teal-600 bg-teal-50 text-teal-800':'border-stone-200 bg-white text-stone-600'}`}>{selected?'✓ ':''}{item}</button>
+                        })}
+                      </div>
+                    <div>
                       <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                        Amenidades (Una por línea)
+                        Otras comodidades
                       </label>
                       <textarea
                         rows={3}
@@ -919,13 +944,14 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                           ...roomFormData,
                           amenities: e.target.value.split('\n').filter(s => s.trim().length > 0)
                         })}
-                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none font-mono text-xs"
+                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none text-xs"
                       />
                     </div>
+                    </section>
 
-                    <div className="sm:col-span-2">
+                    <section className="rounded-2xl border border-stone-200 p-4 sm:p-5">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
-                        <div><div className="text-sm font-bold text-stone-900">Fotos de esta habitación</div><p className="text-xs text-stone-600">Súbelas aquí directamente. La primera foto será la principal.</p></div>
+                        <div><div className="font-bold text-stone-900">5. Fotos</div><p className="text-xs text-stone-600">Añade varias fotos y elige cuál será la portada que verá el huésped.</p></div>
                         <label className={`w-full sm:w-auto shrink-0 rounded-xl text-white font-bold text-xs px-4 py-3 text-center ${roomPhotoBusy?'bg-stone-400 cursor-wait':'bg-teal-700 hover:bg-teal-800 cursor-pointer'}`}>
                           {roomPhotoBusy ? 'Subiendo…' : '＋ Subir fotos'}
                           <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple disabled={roomPhotoBusy} onChange={e => { const selected=e.currentTarget.files; if(selected?.length) void handleUploadRoomPhotos(selected); e.currentTarget.value=''; }} className="absolute w-px h-px opacity-0 overflow-hidden" />
@@ -935,7 +961,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                         {roomFormData.images.map((imgUrl, i) => <div key={imgUrl+i} className="relative rounded-xl overflow-hidden border bg-white"><img src={imgUrl} alt={`Foto de habitación ${i + 1}`} className="w-full h-24 object-cover" /><div className="p-2 space-y-2"><div className="flex items-center justify-between"><span className={`text-[10px] font-bold ${i===0?'text-teal-700':'text-stone-500'}`}>{i===0?'★ Portada':`Foto ${i+1}`}</span><button type="button" onClick={() => void handleRemoveRoomPhoto(imgUrl)} className="text-[10px] font-bold text-red-600">Quitar</button></div>{i!==0 && <button type="button" onClick={() => void handleSetPrimaryRoomPhoto(imgUrl)} className="w-full rounded-lg border border-teal-300 bg-teal-50 text-teal-800 text-[10px] font-bold py-1.5">Usar como portada</button>}</div></div>)}
                       </div>
                       {roomPhotoStatus && <p role="status" className="text-xs text-stone-700 mt-2">{roomPhotoStatus}</p>}
-                    </div>
+                    </section>
                   </div>
 
                   <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-100">
