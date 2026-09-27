@@ -141,8 +141,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
               Nota para viajeros a Ometepe:
             </p>
             <p className="text-stone-600">
-              Los horarios mostrados son orientativos y están pendientes de confirmación con los operadores. Pueden cambiar por clima, disponibilidad y operación. 
-              Si viajas con automóvil o motocicleta, se recomienda reservar el cupo del ferry con antelación o llegar al puerto de San Jorge al menos 45 minutos antes.
+              Los horarios pueden variar según clima, disponibilidad y operación. Si viajas con vehículo, recomendamos reservar con 10 días de anticipación en temporada alta y 2–3 días en temporada regular. Si no tienes reserva, procura llegar al puerto unas 2 horas antes. Si viajas en motocicleta, recomendamos llegar 1 hora antes.
             </p>
           </div>
         </div>
