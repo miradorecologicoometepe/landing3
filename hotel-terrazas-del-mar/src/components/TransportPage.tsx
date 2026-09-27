@@ -232,28 +232,28 @@ export const TransportPage: React.FC<TransportPageProps> = ({
             <div className="bg-teal-50/70 border border-teal-200/80 rounded-2xl p-6 space-y-4">
               <h4 className="font-bold text-teal-950 text-base flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-teal-600" />
-                Consejos para tu cruce en Ferry
+                Consejos para tu viaje a Ometepe
               </h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-stone-700">
                 <div className="bg-white p-3.5 rounded-xl border border-teal-100 shadow-sm">
-                  <div className="font-bold text-stone-900 mb-1">🚗 Cruce con Vehículo</div>
+                  <div className="font-bold text-stone-900 mb-1">🚗 Si viajas con vehículo</div>
                   <p className="text-stone-600">
-                    Es indispensable reservar tu espacio en el ferry con anticipación para vehículos altos o camionetas. Escríbenos y te compartimos los contactos de las navieras.
+                    Consulta con anticipación qué embarcaciones transportan vehículos y confirma disponibilidad directamente con el operador.
                   </p>
                 </div>
                 
                 <div className="bg-white p-3.5 rounded-xl border border-teal-100 shadow-sm">
-                  <div className="font-bold text-stone-900 mb-1">💵 Efectivo a mano</div>
+                  <div className="font-bold text-stone-900 mb-1">🎟️ Antes de embarcar</div>
                   <p className="text-stone-600">
-                    En el puerto de San Jorge se abona la tasa municipal (~1 USD) y el boleto de ferry se compra directamente en ventanilla antes de embarcar.
+                    Llega con tiempo al puerto y confirma tarifa, boleto y condiciones de embarque directamente con la naviera.
                   </p>
                 </div>
 
                 <div className="bg-white p-3.5 rounded-xl border border-teal-100 shadow-sm">
-                  <div className="font-bold text-stone-900 mb-1">📍 Llegada a Moyogalpa</div>
+                  <div className="font-bold text-stone-900 mb-1">📍 Elige tu puerto de llegada</div>
                   <p className="text-stone-600">
-                    Desde el puerto de Moyogalpa hasta nuestro hotel en Altagracia hay aprox. 25 km (35-40 min en taxi o 50 min en bus colectivo).
+                    Puedes llegar por Moyogalpa o San José del Sur. Revisa cuál ruta y horario se adapta mejor a tu viaje hacia el Mirador Ecológico.
                   </p>
                 </div>
               </div>
