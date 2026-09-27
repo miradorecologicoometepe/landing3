@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { DEFAULT_FAQS, FaqItem } from '../data/faqs';
-import { HOTEL_CONFIG } from '../data/hotelData';
+import { FaqItem } from '../data/faqs';
+import type { HotelConfig } from '../types';
 import { 
   MapPin, 
   Plane, 
@@ -17,10 +16,14 @@ import {
 
 interface LocationSectionProps {
   onOpenBookingModal: () => void;
+  hotelConfig: HotelConfig;
+  faqs: FaqItem[];
 }
 
 export const LocationSection: React.FC<LocationSectionProps> = ({
   onOpenBookingModal,
+  hotelConfig,
+  faqs,
 }) => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -32,20 +35,6 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
     { name: 'Playa Mangos', distance: '25 minutos', icon: MapPin, detail: 'Playa en la Isla de Ometepe' },
     { name: 'Volcanes Concepción & Maderas', distance: 'Vistas panorámicas directas', icon: Compass, detail: 'Paisajes volcánicos de Ometepe' },
   ];
-
-  const [faqs, setFaqs] = useState<FaqItem[]>(DEFAULT_FAQS);
-  useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      if (!supabase) return;
-      const result = await supabase.from('site_content').select('value').eq('key', 'hotel_faqs').maybeSingle();
-      if (mounted && !result.error && Array.isArray(result.data?.value)) {
-        setFaqs((result.data.value as FaqItem[]).filter(item => typeof item.q === 'string' && typeof item.a === 'string'));
-      }
-    };
-    void load();
-    return () => { mounted = false; };
-  }, []);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -78,10 +67,10 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-gidole font-bold text-xl text-stone-900">
-                    {HOTEL_CONFIG.name}
+                    {hotelConfig.name}
                   </h3>
                   <p className="text-xs text-stone-500">
-                    {HOTEL_CONFIG.address}
+                    {hotelConfig.address}
                   </p>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-[#C2ECE5] text-brand-teal-dark border border-brand-mint text-xs font-semibold">
@@ -92,8 +81,8 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
               {/* Google Maps: búsqueda por dirección, sin atribuir coordenadas no verificadas. */}
               <div className="rounded-xl overflow-hidden bg-stone-100 border border-stone-200 shadow-sm">
                 <iframe
-                  title={`Mapa de Google Maps: ${HOTEL_CONFIG.name}`}
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(HOTEL_CONFIG.name + ', ' + HOTEL_CONFIG.address)}&output=embed`}
+                  title={`Mapa de Google Maps: ${hotelConfig.name}`}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(hotelConfig.name + ', ' + hotelConfig.address)}&output=embed`}
                   className="w-full h-[320px] sm:h-[400px] border-0"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -185,7 +174,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
                 </div>
               </div>
               <a
-                href={`https://wa.me/${HOTEL_CONFIG.whatsAppNumber}?text=${encodeURIComponent('Hola, tengo unas dudas antes de reservar en Hotel Mirador Ecológico en Ometepe.')}`}
+                href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent('Hola, tengo unas dudas antes de reservar en Hotel Mirador Ecológico en Ometepe.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-3.5 py-2 rounded-lg bg-[#387378] hover:bg-[#2c5b5f] text-white text-xs font-bold shrink-0 flex items-center gap-1.5 shadow-sm"
