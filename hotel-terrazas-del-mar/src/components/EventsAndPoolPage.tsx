@@ -45,7 +45,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
   const poolFeatures = [
     { title: 'Piscina al Aire Libre', desc: 'Piscina con agua cristalina y vistas abiertas a la vegetación tropical de la finca.' },
     { title: 'Solárium & Tumbonas', desc: 'Área empedrada con sillas reclinables y sombra natural para relajarse bajo el sol de Ometepe.' },
-    { title: 'Acceso Huéspedes & Pasadía', desc: 'Uso 100% gratuito para huéspedes alojados, y opción de Day-Pass para visitantes por el día.' },
+    { title: 'Acceso para Huéspedes', desc: 'Disfruta de la piscina y el entorno del Mirador durante tu estancia.' },
     { title: 'Ambiente Familiar & Tranquilo', desc: 'Entorno seguro y acogedor rodeado de árboles frutales y cantos de aves silvestres.' }
   ];
 
@@ -79,15 +79,12 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
               <MessageCircle className="w-4 h-4 fill-white" />
               <span>Cotizar Local de Eventos por WhatsApp</span>
             </a>
-            <a
-              href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo información sobre el acceso a la piscina y pasadía.`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/15 hover:bg-white/25 text-teal-100 font-bold text-xs sm:text-sm border border-teal-300/30 transition-all"
-            >
-              <Waves className="w-4 h-4" />
-              <span>Consultar Pasadía en Piscina</span>
-            </a>
+            {hotelConfig.dayPass?.enabled && <a
+              href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, deseo información sobre el Day Pass de piscina.`)}`}
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/15 hover:bg-white/25 text-teal-100 font-bold text-xs sm:text-sm border border-teal-300/30 transition-all">
+              <Waves className="w-4 h-4" /><span>Consultar Day Pass</span>
+            </a>}
           </div>
         </div>
       </div>
@@ -245,13 +242,21 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                 <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
                   Incluida para Huéspedes
                 </span>
-                <span className="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-bold">
-                  Pasadía Disponible
-                </span>
+                {hotelConfig.dayPass?.enabled && <span className="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-bold">Day Pass disponible</span>}
               </div>
             </div>
 
-            {/* Pool Images Showcase */}
+              {hotelConfig.dayPass?.enabled && (
+                <div className="mt-4 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-xs text-stone-700">
+                  <div className="font-bold text-teal-950 text-sm">{hotelConfig.dayPass.title || 'Day Pass Piscina'}</div>
+                  {hotelConfig.dayPass.days?.length ? <div className="mt-1">Días: {hotelConfig.dayPass.days.join(', ')}</div> : null}
+                  {(hotelConfig.dayPass.startTime || hotelConfig.dayPass.endTime) && <div>Horario: {hotelConfig.dayPass.startTime || '—'} – {hotelConfig.dayPass.endTime || '—'}</div>}
+                  {hotelConfig.dayPass.price != null && <div>Tarifa: {hotelConfig.dayPass.price} USD por persona</div>}
+                  {hotelConfig.dayPass.notes && <div className="mt-1 text-stone-600">{hotelConfig.dayPass.notes}</div>}
+                </div>
+              )}
+
+                        {/* Pool Images Showcase */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
                 {poolImage(1) ? <img src={poolImage(1)} alt="Piscina con vistas" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>}
