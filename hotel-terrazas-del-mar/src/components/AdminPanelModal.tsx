@@ -21,7 +21,8 @@ import {
   Save,
   Lock,
   LogOut,
-  CalendarDays
+  CalendarDays,
+  Waves
 } from 'lucide-react';
 
 interface AdminPanelModalProps {
@@ -49,7 +50,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onLogout,
   isDedicatedPage = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'rooms' | 'gallery' | 'faqs'>('general');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'services' | 'rooms' | 'gallery' | 'faqs'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
@@ -455,7 +456,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       </div>
 
       {/* Tab Navigation */}
-      <div className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 z-50 bg-white px-1.5 sm:px-6 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:py-2.5 grid grid-cols-5 sm:flex sm:items-center gap-0.5 sm:gap-2 border-t sm:border-t-0 sm:border-b border-stone-200 shrink-0 sm:overflow-x-auto shadow-[0_-6px_24px_rgba(0,0,0,0.08)] sm:shadow-sm">
+      <div className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 z-50 bg-white px-1.5 sm:px-6 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:py-2.5 grid grid-cols-6 sm:flex sm:items-center gap-0.5 sm:gap-2 border-t sm:border-t-0 sm:border-b border-stone-200 shrink-0 sm:overflow-x-auto shadow-[0_-6px_24px_rgba(0,0,0,0.08)] sm:shadow-sm">
         <button type="button" onClick={() => setActiveTab('calendar')}
           className={`px-1 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'calendar' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
           <CalendarDays className="w-4 h-4 text-brand-teal" /><span>Calendario</span>
@@ -472,6 +473,11 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         >
           <Building2 className="w-4 h-4 text-brand-teal" />
           <span className="truncate">Hotel</span>
+        </button>
+
+        <button type="button" onClick={() => setActiveTab('services')}
+          className={`px-1 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'services' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
+          <Waves className="w-4 h-4 text-brand-teal" /><span className="truncate">Servicios</span>
         </button>
 
         <button
@@ -689,28 +695,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                       />
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Pool Day Pass */}
-              <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-4">
-                <div className="flex items-center justify-between gap-4 border-b border-stone-100 pb-3">
-                  <div>
-                    <h4 className="font-bold text-base text-stone-900">Day Pass de Piscina</h4>
-                    <p className="text-xs text-stone-500 mt-1">Déjalo desactivado mientras el servicio no esté disponible. La landing no lo mostrará hasta que lo actives.</p>
-                  </div>
-                  <label className="inline-flex items-center gap-2 text-xs font-bold text-stone-700 shrink-0">
-                    <input type="checkbox" checked={Boolean(configForm.dayPass?.enabled)} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || {}), enabled: e.target.checked })} className="w-5 h-5 accent-teal-700" />
-                    {configForm.dayPass?.enabled ? 'Activo' : 'Oculto'}
-                  </label>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Nombre</label><input value={configForm.dayPass?.title || 'Day Pass Piscina'} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), title:e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
-                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Precio por persona (opcional)</label><input type="number" min="0" value={configForm.dayPass?.price ?? ''} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), price:e.target.value === '' ? null : Number(e.target.value) })} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
-                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Hora de inicio</label><input type="time" value={configForm.dayPass?.startTime || ''} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), startTime:e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
-                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Hora de cierre</label><input type="time" value={configForm.dayPass?.endTime || ''} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), endTime:e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
-                  <div className="sm:col-span-2"><label className="block text-xs font-bold text-stone-700 mb-2">Días disponibles</label><div className="flex flex-wrap gap-2">{['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(day => { const selected=configForm.dayPass?.days?.includes(day); return <button key={day} type="button" onClick={() => { const days=configForm.dayPass?.days || []; handleConfigChange('dayPass',{...(configForm.dayPass || {enabled:false}),days:selected?days.filter(d=>d!==day):[...days,day]}); }} className={`px-3 py-2 rounded-lg border text-xs font-semibold ${selected?'bg-teal-700 border-teal-700 text-white':'bg-white border-stone-200 text-stone-600'}`}>{day}</button>; })}</div></div>
-                  <div className="sm:col-span-2"><label className="block text-xs font-bold text-stone-700 mb-1">Notas / condiciones</label><textarea value={configForm.dayPass?.notes || ''} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), notes:e.target.value })} rows={3} placeholder="Ej. Cupos limitados, incluye uso de piscina..." className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
                 </div>
               </div>
 
@@ -1112,6 +1096,26 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
               )}
 
             </div>
+          )}
+
+          {activeTab === 'services' && (
+            <form onSubmit={handleSaveConfig} className="max-w-3xl mx-auto space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <div className="flex items-center justify-between gap-4 border-b border-stone-100 pb-3">
+                  <div><h4 className="font-bold text-lg text-stone-900">Day Pass de Piscina</h4><p className="text-xs text-stone-500 mt-1">Configura el servicio aquí. Mientras esté oculto, no aparecerá ninguna promoción de Day Pass en la landing.</p></div>
+                  <label className="inline-flex items-center gap-2 text-xs font-bold text-stone-700 shrink-0"><input type="checkbox" checked={Boolean(configForm.dayPass?.enabled)} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || {}), enabled: e.target.checked })} className="w-5 h-5 accent-teal-700" />{configForm.dayPass?.enabled ? 'Activo' : 'Oculto'}</label>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Nombre</label><input value={configForm.dayPass?.title || 'Day Pass Piscina'} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), title:e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
+                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Precio por persona (opcional)</label><input type="number" min="0" value={configForm.dayPass?.price ?? ''} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), price:e.target.value === '' ? null : Number(e.target.value) })} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
+                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Hora de inicio</label><input type="time" value={configForm.dayPass?.startTime || ''} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), startTime:e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
+                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Hora de cierre</label><input type="time" value={configForm.dayPass?.endTime || ''} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), endTime:e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
+                  <div className="sm:col-span-2"><label className="block text-xs font-bold text-stone-700 mb-2">Días disponibles</label><div className="flex flex-wrap gap-2">{['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].map(day => { const selected=configForm.dayPass?.days?.includes(day); return <button key={day} type="button" onClick={() => { const days=configForm.dayPass?.days || []; handleConfigChange('dayPass',{...(configForm.dayPass || {enabled:false}),days:selected?days.filter(d=>d!==day):[...days,day]}); }} className={`px-3 py-2 rounded-lg border text-xs font-semibold ${selected?'bg-teal-700 border-teal-700 text-white':'bg-white border-stone-200 text-stone-600'}`}>{day}</button>; })}</div></div>
+                  <div className="sm:col-span-2"><label className="block text-xs font-bold text-stone-700 mb-1">Notas / condiciones</label><textarea value={configForm.dayPass?.notes || ''} onChange={e => handleConfigChange('dayPass', { ...(configForm.dayPass || { enabled:false }), notes:e.target.value })} rows={3} placeholder="Ej. Cupos limitados, incluye uso de piscina..." className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
+                </div>
+              </div>
+              <div className="flex justify-end"><button type="submit" className="px-5 py-3 rounded-xl bg-[#087f83] hover:bg-[#076f73] text-white font-bold text-sm flex items-center gap-2"><Save className="w-4 h-4" />Guardar servicio</button></div>
+            </form>
           )}
 
           {/* Galería: únicamente carga de archivos; las URL se generan automáticamente en Supabase. */}
