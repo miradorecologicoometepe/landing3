@@ -20,7 +20,7 @@ create table if not exists public.gallery_photos (
   category text not null,
   image_path text not null,
   details jsonb not null default '{}'::jsonb,
-  sort_order integer not null default 0,
+  sort_order bigint not null default 0,
   updated_at timestamptz not null default now()
 );
 create table if not exists public.admin_users (
@@ -47,3 +47,29 @@ create policy "Admin manages gallery" on public.gallery_photos for all to authen
 
 -- Provision admin_users via the Supabase SQL editor after creating an Auth user.
 -- Do not create public policies allowing visitors to add themselves as admins.
+
+
+-- Private reservations calendar. Never expose this table to anon.
+create table if not exists public.reservations (
+  id uuid primary key default gen_random_uuid(),
+  guest_name text not null,
+  guest_phone text,
+  room_id text references public.rooms(id) on delete set null,
+  check_in date not null,
+  check_out date not null,
+  adults integer not null default 1 check (adults >= 0),
+  children integer not null default 0 check (children >= 0),
+  status text not null default 'inquiry' check (status in ('inquiry','confirmed','paid','cancelled')),
+  notes text,
+  created_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (check_out > check_in)
+);
+alter table public.reservations enable row level security;
+create policy "Admins read reservations" on public.reservations for select to authenticated using (exists (select 1 from public.admin_users a where a.user_id = (select auth.uid())));
+create policy "Admins create reservations" on public.reservations for insert to authenticated with check (exists (select 1 from public.admin_users a where a.user_id = (select auth.uid())));
+create policy "Admins update reservations" on public.reservations for update to authenticated using (exists (select 1 from public.admin_users a where a.user_id = (select auth.uid()))) with check (exists (select 1 from public.admin_users a where a.user_id = (select auth.uid())));
+create policy "Admins delete reservations" on public.reservations for delete to authenticated using (exists (select 1 from public.admin_users a where a.user_id = (select auth.uid())));
+create index if not exists reservations_dates_idx on public.reservations(check_in, check_out);
+create index if not exists reservations_room_idx on public.reservations(room_id);
