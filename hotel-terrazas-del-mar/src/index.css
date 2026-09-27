@@ -21,8 +21,26 @@
 }
 
 @layer base {
+  html {
+    background: #f7faf8;
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', 'Jost', system-ui, -apple-system, sans-serif;
+    background: #f7faf8;
+    color: #173638;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: #bfe9df;
+    color: #123d3d;
+  }
+
+  button, a, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
   }
   
   h1, h2, h3, .font-serif-heading {
