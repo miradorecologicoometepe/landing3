@@ -4,6 +4,7 @@ import { supabase } from './lib/supabase';
 import { Room, PhotoItem, HotelConfig } from './types';
 import { getDefaultDates } from './utils/bookingUtils';
 import { HOTEL_CONFIG, ROOMS_DATA, GALLERY_PHOTOS } from './data/hotelData';
+import { DEFAULT_FAQS, FaqItem } from './data/faqs';
 import { Navbar, PageId } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { BookingBar } from './components/BookingBar';
@@ -41,6 +42,8 @@ export default function App() {
   const [hotelConfig, setHotelConfig] = useState<HotelConfig>(HOTEL_CONFIG);
   const [rooms, setRooms] = useState<Room[]>(ROOMS_DATA);
   const [photos, setPhotos] = useState<PhotoItem[]>(GALLERY_PHOTOS);
+  const [faqs, setFaqs] = useState<FaqItem[]>(DEFAULT_FAQS);
+  const [publicContentError, setPublicContentError] = useState('');
 
   // Load published content for all visitors; preserve existing defaults until content is published.
   useEffect(() => {
@@ -50,7 +53,9 @@ export default function App() {
       if (data.config) setHotelConfig(data.config);
       if (data.rooms) setRooms(data.rooms);
       if (data.photos) setPhotos(data.photos);
-    }).catch(error => console.error('Unable to load published site content', error));
+      if (data.faqs) setFaqs(data.faqs);
+      setPublicContentError(data.error || '');
+    }).catch(error => { console.error('Unable to load published site content', error); if (active) setPublicContentError('No se pudo cargar el contenido publicado.'); });
     return () => { active = false; };
   }, []);
 
@@ -275,6 +280,7 @@ export default function App() {
   // ==========================================
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 text-stone-800 selection:bg-teal-600 selection:text-white relative">
+      {publicContentError && <div className="sr-only" role="status">{publicContentError}</div>}
       
       {/* Discreet floating session pill for authenticated staff inspecting the live guest site */}
       {isAdminAuth && (
