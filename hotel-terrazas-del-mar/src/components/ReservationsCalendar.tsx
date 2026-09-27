@@ -1,66 +1,68 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, ChevronLeft, ChevronRight, Plus, Save, Trash2, X } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { Room } from '../types';
+import React,{useEffect,useMemo,useState}from'react';
+import{CalendarDays,ChevronLeft,ChevronRight,Plus,Save,Trash2,X,MessageCircle}from'lucide-react';
+import{supabase}from'../lib/supabase';
+import{Room}from'../types';
 
-type Reservation = {
-  id: string; guest_name: string; guest_phone: string | null; room_id: string | null;
-  check_in: string; check_out: string; adults: number; children: number;
-  status: 'inquiry'|'confirmed'|'paid'|'cancelled'; notes: string | null;
-};
+type EntryType='room'|'event'|'daypass'|'block'|'note';
+type Status='inquiry'|'confirmed'|'paid'|'cancelled';
+type Reservation={id:string;guest_name:string;guest_phone:string|null;room_id:string|null;check_in:string;check_out:string;adults:number;children:number;status:Status;notes:string|null;entry_type:EntryType;title:string|null;start_time:string|null;end_time:string|null;event_type:string|null};
+const labels:Record<EntryType,string>={room:'Habitación',event:'Evento / Salón',daypass:'Day Pass',block:'Bloqueo',note:'Nota'};
+const statusLabel:Record<Status,string>={inquiry:'Consulta',confirmed:'Confirmada',paid:'Pagada',cancelled:'Cancelada'};
+const iso=(d:Date)=>d.toISOString().slice(0,10);
+const addDays=(s:string,n:number)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const weekStart=(d:Date)=>{const x=new Date(d);x.setDate(x.getDate()-x.getDay());return x};
 
-export const ReservationsCalendar: React.FC<{rooms: Room[]}> = ({ rooms }) => {
-  const [items,setItems]=useState<Reservation[]>([]);
-  const [loading,setLoading]=useState(true);
-  const [editing,setEditing]=useState<Partial<Reservation>|null>(null);
-  const [status,setStatus]=useState('');
-  const [month,setMonth]=useState(()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1)});
-  const load=async()=>{ if(!supabase)return; setLoading(true); const {data,error}=await supabase.from('reservations').select('*').order('check_in'); if(error)setStatus(error.message); else setItems((data||[]) as Reservation[]); setLoading(false); };
-  useEffect(()=>{void load()},[]);
-  const upcoming=useMemo(()=>items.filter(x=>x.status!=='cancelled'&&x.check_out>=new Date().toISOString().slice(0,10)),[items]);
-  const days=useMemo(()=>{const y=month.getFullYear(),m=month.getMonth(),first=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();return [...Array(first).fill(null),...Array.from({length:count},(_,i)=>i+1)]},[month]);
-  const monthName=month.toLocaleDateString('es-NI',{month:'long',year:'numeric'});
-  const nextDay=(date:string)=>{const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+1);return d.toISOString().slice(0,10)};
-  const startNew=(date?:string)=>setEditing({status:'inquiry',adults:1,children:0,check_in:date,check_out:date?nextDay(date):undefined});
-  const reservationsForDay=(day:number)=>{const d=`${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;return items.filter(r=>r.status!=='cancelled'&&r.check_in<=d&&r.check_out>d)};
-  const save=async()=>{ if(!supabase||!editing?.guest_name||!editing.check_in||!editing.check_out){setStatus('Completa huésped, entrada y salida.');return}
-    if(editing.check_out<=editing.check_in){setStatus('La salida debe ser posterior a la entrada.');return}
-    if((editing.status==='confirmed'||editing.status==='paid')&&!editing.room_id){setStatus('Selecciona una habitación para confirmar o marcar como pagada.');return}
-    const {data:{user}}=await supabase.auth.getUser(); if(!user){setStatus('Tu sesión expiró.');return}
-    if(editing.room_id&&(editing.status==='confirmed'||editing.status==='paid')){
-      let conflicts=supabase.from('reservations').select('id,guest_name,check_in,check_out').eq('room_id',editing.room_id).in('status',['confirmed','paid']).lt('check_in',editing.check_out).gt('check_out',editing.check_in);
-      if(editing.id) conflicts=conflicts.neq('id',editing.id);
-      const {data:overlap,error:overlapError}=await conflicts;
-      if(overlapError){setStatus('No se pudo comprobar la disponibilidad: '+overlapError.message);return}
-      if(overlap?.length){setStatus(`Esta habitación ya está ocupada del ${overlap[0].check_in} al ${overlap[0].check_out} por ${overlap[0].guest_name}.`);return}
-    }
-    const basePayload={guest_name:editing.guest_name.trim(),guest_phone:editing.guest_phone||null,room_id:editing.room_id||null,check_in:editing.check_in,check_out:editing.check_out,adults:Number(editing.adults||1),children:Number(editing.children||0),status:editing.status||'inquiry',notes:editing.notes||null,updated_at:new Date().toISOString()};
-    const q=editing.id?supabase.from('reservations').update(basePayload).eq('id',editing.id):supabase.from('reservations').insert({...basePayload,created_by:user.id});
-    const {error}=await q;if(error){setStatus(error.message);return} setEditing(null);setStatus('Reserva guardada.');void load();
-  };
-  const remove=async(id:string)=>{if(!supabase||!confirm('¿Eliminar esta reserva?'))return;const {error}=await supabase.from('reservations').delete().eq('id',id);if(error)setStatus(error.message);else void load()};
-  return <div className="max-w-6xl mx-auto space-y-4">
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><h3 className="text-xl font-bold text-stone-900 flex items-center gap-2"><CalendarDays className="w-5 h-5 text-teal-700"/>Calendario y reservas</h3><p className="text-sm text-stone-600">Control interno privado. Estos datos no se muestran en la landing.</p></div><button onClick={()=>startNew()} className="bg-teal-700 text-white rounded-xl px-4 py-3 font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4"/>Nueva reserva</button></div>
-    {status&&<p className="text-sm rounded-xl bg-white border p-3">{status}</p>}
-    <div className="bg-white border rounded-2xl p-3 sm:p-5 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between mb-4"><button aria-label="Mes anterior" onClick={()=>setMonth(new Date(month.getFullYear(),month.getMonth()-1,1))} className="p-2 rounded-lg border"><ChevronLeft className="w-4 h-4"/></button><h4 className="font-bold capitalize text-stone-900">{monthName}</h4><button aria-label="Mes siguiente" onClick={()=>setMonth(new Date(month.getFullYear(),month.getMonth()+1,1))} className="p-2 rounded-lg border"><ChevronRight className="w-4 h-4"/></button></div>
-      <div className="grid grid-cols-7 text-center text-[10px] sm:text-xs font-bold text-stone-500 mb-1">{['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d=><div key={d} className="py-1">{d}</div>)}</div>
-      <div className="grid grid-cols-7 gap-1">{days.map((day,i)=>day===null?<div key={`e-${i}`} className="min-h-14 sm:min-h-24"/>:<button key={day} onClick={()=>{const date=`${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;startNew(date)}} className="min-h-14 sm:min-h-24 rounded-lg border p-1 sm:p-2 text-left hover:bg-teal-50 overflow-hidden"><span className="text-xs font-bold">{day}</span><div className="mt-1 space-y-1">{reservationsForDay(day).slice(0,2).map(r=><div key={r.id} className="text-[9px] sm:text-[11px] bg-teal-100 text-teal-900 rounded px-1 py-0.5 truncate">{r.guest_name}</div>)}{reservationsForDay(day).length>2&&<div className="text-[9px] text-stone-500">+{reservationsForDay(day).length-2}</div>}</div></button>)}</div>
-    </div>
-    {editing&&<div className="bg-white border rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
-      <div className="flex justify-between"><h4 className="font-bold">{editing.id?'Editar reserva':'Nueva reserva'}</h4><button onClick={()=>setEditing(null)}><X className="w-5 h-5"/></button></div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <input className="border rounded-xl p-3" placeholder="Nombre del huésped" value={editing.guest_name||''} onChange={e=>setEditing({...editing,guest_name:e.target.value})}/>
-        <input className="border rounded-xl p-3" placeholder="WhatsApp / teléfono" value={editing.guest_phone||''} onChange={e=>setEditing({...editing,guest_phone:e.target.value})}/>
-        <label className="text-xs font-bold text-stone-600">Entrada<input type="date" className="block w-full border rounded-xl p-3 mt-1" value={editing.check_in||''} onChange={e=>{const check_in=e.target.value;setEditing({...editing,check_in,check_out:!editing.check_out||editing.check_out<=check_in?nextDay(check_in):editing.check_out})}}/></label>
-        <label className="text-xs font-bold text-stone-600">Salida<input type="date" className="block w-full border rounded-xl p-3 mt-1" value={editing.check_out||''} onChange={e=>setEditing({...editing,check_out:e.target.value})}/></label>
-        <select className="border rounded-xl p-3" value={editing.room_id||''} onChange={e=>setEditing({...editing,room_id:e.target.value})}><option value="">Habitación</option>{rooms.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select>
-        <select className="border rounded-xl p-3" value={editing.status||'inquiry'} onChange={e=>setEditing({...editing,status:e.target.value as Reservation['status']})}><option value="inquiry">Consulta</option><option value="confirmed">Confirmada</option><option value="paid">Pagada</option><option value="cancelled">Cancelada</option></select>
-        <label className="text-xs font-bold text-stone-600">Adultos<input type="number" min="0" className="block w-full border rounded-xl p-3 mt-1" value={editing.adults??1} onChange={e=>setEditing({...editing,adults:+e.target.value})}/></label>
-        <label className="text-xs font-bold text-stone-600">Niños<input type="number" min="0" className="block w-full border rounded-xl p-3 mt-1" value={editing.children??0} onChange={e=>setEditing({...editing,children:+e.target.value})}/></label>
-      </div><textarea className="w-full border rounded-xl p-3" rows={3} placeholder="Notas internas" value={editing.notes||''} onChange={e=>setEditing({...editing,notes:e.target.value})}/>
-      <button onClick={()=>void save()} className="w-full sm:w-auto bg-teal-700 text-white rounded-xl px-5 py-3 font-semibold flex items-center justify-center gap-2"><Save className="w-4 h-4"/>Guardar reserva</button>
-    </div>}
-    <div className="space-y-2">{loading?<p className="text-sm text-stone-500">Cargando reservas…</p>:upcoming.length===0?<div className="bg-white border rounded-2xl p-8 text-center text-stone-500">No hay reservas próximas.</div>:upcoming.map(r=><div key={r.id} className="bg-white border rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"><button className="text-left flex-1" onClick={()=>setEditing(r)}><div className="font-bold text-stone-900">{r.guest_name}</div><div className="text-sm text-stone-600">{r.check_in} → {r.check_out} · {rooms.find(x=>x.id===r.room_id)?.name||'Sin habitación'}</div><div className="text-xs mt-1 uppercase font-bold text-teal-700">{r.status==='inquiry'?'Consulta':r.status==='confirmed'?'Confirmada':r.status==='paid'?'Pagada':'Cancelada'}</div></button><button onClick={()=>void remove(r.id)} className="self-end sm:self-auto p-3 text-red-600"><Trash2 className="w-4 h-4"/></button></div>)}</div>
+export const ReservationsCalendar:React.FC<{rooms:Room[]}>=({rooms})=>{
+ const[items,setItems]=useState<Reservation[]>([]),[loading,setLoading]=useState(true),[editing,setEditing]=useState<Partial<Reservation>|null>(null),[message,setMessage]=useState('');
+ const[cursor,setCursor]=useState(new Date()),[view,setView]=useState<'month'|'week'|'day'>('month'),[filter,setFilter]=useState<'all'|EntryType>('all');
+ const load=async()=>{if(!supabase)return;setLoading(true);const{data,error}=await supabase.from('reservations').select('*').order('check_in');if(error)setMessage(error.message);else setItems((data||[])as Reservation[]);setLoading(false)};
+ useEffect(()=>{void load()},[]);
+ const visible=useMemo(()=>items.filter(x=>filter==='all'||x.entry_type===filter),[items,filter]);
+ const upcoming=useMemo(()=>visible.filter(x=>x.status!=='cancelled'&&x.check_out>=iso(new Date())).sort((a,b)=>a.check_in.localeCompare(b.check_in)).slice(0,12),[visible]);
+ const startNew=(date=iso(cursor),type:EntryType='room')=>setEditing({entry_type:type,status:'inquiry',adults:1,children:0,check_in:date,check_out:addDays(date,1),guest_name:''});
+ const titleOf=(r:Reservation)=>r.title||r.guest_name||labels[r.entry_type];
+ const forDate=(date:string)=>visible.filter(r=>r.status!=='cancelled'&&r.check_in<=date&&r.check_out>date);
+ const save=async()=>{if(!supabase||!editing?.check_in||!editing.check_out)return setMessage('Completa las fechas.');
+  const type=editing.entry_type||'room'; if(editing.check_out<=editing.check_in)return setMessage('La salida/final debe ser posterior al inicio.');
+  if(type==='room'&&!editing.guest_name?.trim())return setMessage('Agrega el nombre del huésped.');
+  if((type==='room'||type==='block')&&!editing.room_id)return setMessage('Selecciona una habitación.');
+  if(editing.room_id&&['room','block'].includes(type)&&editing.status!=='cancelled'){
+   let q=supabase.from('reservations').select('id,guest_name,check_in,check_out').eq('room_id',editing.room_id).in('entry_type',['room','block']).neq('status','cancelled').lt('check_in',editing.check_out).gt('check_out',editing.check_in);if(editing.id)q=q.neq('id',editing.id);
+   const{data,error}=await q;if(error)return setMessage(error.message);if(data?.length)return setMessage('La habitación ya está ocupada o bloqueada en esas fechas.');
+  }
+  const{data:{user}}=await supabase.auth.getUser();if(!user)return setMessage('Tu sesión expiró.');
+  const payload={guest_name:(editing.guest_name||editing.title||labels[type]).trim(),guest_phone:editing.guest_phone||null,room_id:editing.room_id||null,check_in:editing.check_in,check_out:editing.check_out,adults:Number(editing.adults||0),children:Number(editing.children||0),status:editing.status||'inquiry',notes:editing.notes||null,entry_type:type,title:editing.title||null,start_time:editing.start_time||null,end_time:editing.end_time||null,event_type:editing.event_type||null,updated_at:new Date().toISOString()};
+  const q=editing.id?supabase.from('reservations').update(payload).eq('id',editing.id):supabase.from('reservations').insert({...payload,created_by:user.id});const{error}=await q;if(error)return setMessage(error.message);setEditing(null);setMessage('Guardado correctamente.');void load()
+ };
+ const remove=async(id:string)=>{if(!supabase||!confirm('¿Eliminar este registro?'))return;const{error}=await supabase.from('reservations').delete().eq('id',id);if(error)setMessage(error.message);else void load()};
+ const move=(n:number)=>{const d=new Date(cursor);if(view==='month')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n*(view==='week'?7:1));setCursor(d)};
+ const monthDays=useMemo(()=>{const y=cursor.getFullYear(),m=cursor.getMonth(),first=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();return[...Array(first).fill(null),...Array.from({length:count},(_,i)=>new Date(y,m,i+1))]},[cursor]);
+ const weekDays=useMemo(()=>Array.from({length:7},(_,i)=>{const d=weekStart(cursor);d.setDate(d.getDate()+i);return d}),[cursor]);
+ const renderDay=(d:Date,compact=false)=>{const date=iso(d),entries=forDate(date);return <button key={date} onClick={()=>startNew(date)} className={'rounded-xl border text-left hover:bg-teal-50 '+(compact?'p-3 min-h-32':'p-1.5 sm:p-2 min-h-20 sm:min-h-28')}><div className="text-xs font-bold">{d.getDate()}</div><div className="mt-1 space-y-1">{entries.slice(0,3).map(r=><div key={r.id} onClick={e=>{e.stopPropagation();setEditing(r)}} className="text-[9px] sm:text-[11px] rounded px-1.5 py-1 truncate bg-teal-50 border border-teal-100"><b>{labels[r.entry_type]}</b> · {titleOf(r)}</div>)}{entries.length>3&&<div className="text-[10px] text-stone-500">+{entries.length-3}</div>}</div></button>};
+ const whatsapp=(r:Reservation)=>{if(!r.guest_phone)return;const p=r.guest_phone.replace(/\D/g,'');window.open('https://wa.me/'+p+'?text='+encodeURIComponent('Hola '+r.guest_name+', le escribimos de Mirador Ecológico sobre su reserva.'),'_blank')};
+ return <div className="max-w-7xl mx-auto space-y-4">
+  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3"><div><h3 className="text-xl font-bold flex items-center gap-2"><CalendarDays className="w-5 h-5 text-teal-700"/>Calendario operativo</h3><p className="text-sm text-stone-500">Reservas, eventos, Day Pass, bloqueos y notas internas.</p></div><button onClick={()=>startNew()} className="bg-teal-700 text-white rounded-xl px-4 py-2.5 font-bold flex gap-2 items-center justify-center"><Plus className="w-4 h-4"/>Nuevo</button></div>
+  {message&&<p className="text-sm rounded-xl bg-teal-50 border border-teal-100 p-3">{message}</p>}
+  <div className="flex flex-wrap gap-2 items-center justify-between"><div className="flex gap-1 bg-stone-100 p-1 rounded-xl">{(['month','week','day']as const).map(v=><button key={v} onClick={()=>setView(v)} className={'px-3 py-1.5 rounded-lg text-xs font-bold '+(view===v?'bg-white shadow-sm text-teal-800':'text-stone-500')}>{v==='month'?'Mes':v==='week'?'Semana':'Día'}</button>)}</div><select value={filter} onChange={e=>setFilter(e.target.value as any)} className="border rounded-xl px-3 py-2 text-sm bg-white"><option value="all">Todos</option>{Object.entries(labels).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></div>
+  <div className="bg-white border rounded-2xl p-3 sm:p-5 shadow-sm"><div className="flex items-center justify-between mb-4"><button onClick={()=>move(-1)} className="p-2 border rounded-lg"><ChevronLeft className="w-4 h-4"/></button><div className="text-center"><button onClick={()=>setCursor(new Date())} className="text-xs font-bold text-teal-700">Hoy</button><h4 className="font-bold capitalize">{view==='month'?cursor.toLocaleDateString('es-NI',{month:'long',year:'numeric'}):view==='week'?'Semana del '+weekStart(cursor).toLocaleDateString('es-NI') : cursor.toLocaleDateString('es-NI',{weekday:'long',day:'numeric',month:'long'})}</h4></div><button onClick={()=>move(1)} className="p-2 border rounded-lg"><ChevronRight className="w-4 h-4"/></button></div>
+   {view==='month'&&<><div className="grid grid-cols-7 text-center text-[10px] font-bold text-stone-500">{['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(x=><div key={x} className="py-1">{x}</div>)}</div><div className="grid grid-cols-7 gap-1">{monthDays.map((d,i)=>d?renderDay(d):<div key={i}/>)}</div></>}
+   {view==='week'&&<div className="grid grid-cols-1 md:grid-cols-7 gap-2">{weekDays.map(d=>renderDay(d,true))}</div>}
+   {view==='day'&&<div className="space-y-2">{forDate(iso(cursor)).length?forDate(iso(cursor)).map(r=><button key={r.id} onClick={()=>setEditing(r)} className="w-full text-left border rounded-xl p-3"><b>{labels[r.entry_type]}</b> · {titleOf(r)} <span className="text-xs text-stone-500">{r.start_time?.slice(0,5)||''}</span></button>):<button onClick={()=>startNew(iso(cursor))} className="w-full border border-dashed rounded-xl p-10 text-stone-500">+ Crear registro para este día</button>}</div>}
   </div>
+  {editing&&<div className="bg-white border rounded-2xl p-4 sm:p-5 shadow-sm space-y-4"><div className="flex justify-between"><h4 className="font-bold">{editing.id?'Editar':'Nuevo registro'}</h4><button onClick={()=>setEditing(null)}><X className="w-5 h-5"/></button></div>
+   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"><label className="text-xs font-bold">Tipo<select className="block w-full border rounded-xl p-3 mt-1 bg-white" value={editing.entry_type||'room'} onChange={e=>setEditing({...editing,entry_type:e.target.value as EntryType})}>{Object.entries(labels).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label>
+   <label className="text-xs font-bold">Estado<select className="block w-full border rounded-xl p-3 mt-1 bg-white" value={editing.status||'inquiry'} onChange={e=>setEditing({...editing,status:e.target.value as Status})}>{Object.entries(statusLabel).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label>
+   <label className="text-xs font-bold">Título<input className="block w-full border rounded-xl p-3 mt-1" value={editing.title||''} onChange={e=>setEditing({...editing,title:e.target.value})} placeholder="Ej. Boda López / Mantenimiento"/></label>
+   <label className="text-xs font-bold">Inicio<input type="date" className="block w-full border rounded-xl p-3 mt-1" value={editing.check_in||''} onChange={e=>setEditing({...editing,check_in:e.target.value,check_out:!editing.check_out||editing.check_out<=e.target.value?addDays(e.target.value,1):editing.check_out})}/></label>
+   <label className="text-xs font-bold">Final<input type="date" className="block w-full border rounded-xl p-3 mt-1" value={editing.check_out||''} onChange={e=>setEditing({...editing,check_out:e.target.value})}/></label>
+   <label className="text-xs font-bold">Habitación<select className="block w-full border rounded-xl p-3 mt-1 bg-white" value={editing.room_id||''} onChange={e=>setEditing({...editing,room_id:e.target.value||null})}><option value="">Sin habitación</option>{rooms.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+   <input className="border rounded-xl p-3 self-end" placeholder="Huésped / contacto" value={editing.guest_name||''} onChange={e=>setEditing({...editing,guest_name:e.target.value})}/><input className="border rounded-xl p-3 self-end" placeholder="WhatsApp / teléfono" value={editing.guest_phone||''} onChange={e=>setEditing({...editing,guest_phone:e.target.value})}/>
+   <label className="text-xs font-bold">Tipo de evento<input className="block w-full border rounded-xl p-3 mt-1" placeholder="Boda, cumpleaños…" value={editing.event_type||''} onChange={e=>setEditing({...editing,event_type:e.target.value})}/></label>
+   <label className="text-xs font-bold">Hora inicio<input type="time" className="block w-full border rounded-xl p-3 mt-1" value={editing.start_time?.slice(0,5)||''} onChange={e=>setEditing({...editing,start_time:e.target.value})}/></label><label className="text-xs font-bold">Hora final<input type="time" className="block w-full border rounded-xl p-3 mt-1" value={editing.end_time?.slice(0,5)||''} onChange={e=>setEditing({...editing,end_time:e.target.value})}/></label>
+   <label className="text-xs font-bold">Adultos<input type="number" min="0" className="block w-full border rounded-xl p-3 mt-1" value={editing.adults??0} onChange={e=>setEditing({...editing,adults:+e.target.value})}/></label><label className="text-xs font-bold">Niños<input type="number" min="0" className="block w-full border rounded-xl p-3 mt-1" value={editing.children??0} onChange={e=>setEditing({...editing,children:+e.target.value})}/></label></div>
+   <textarea className="w-full border rounded-xl p-3" rows={3} placeholder="Notas internas" value={editing.notes||''} onChange={e=>setEditing({...editing,notes:e.target.value})}/>
+   <div className="flex flex-wrap gap-2"><button onClick={()=>void save()} className="bg-teal-700 text-white rounded-xl px-5 py-3 font-bold flex gap-2"><Save className="w-4 h-4"/>Guardar</button>{editing.id&&<button onClick={()=>void remove(editing.id!)} className="border border-red-200 text-red-600 rounded-xl px-4 py-3"><Trash2 className="w-4 h-4"/></button>}</div>
+  </div>}
+  <div><h4 className="font-bold mb-2">Próximos</h4><div className="space-y-2">{loading?<p className="text-sm text-stone-500">Cargando…</p>:upcoming.length===0?<div className="border rounded-2xl p-6 text-center text-stone-500">No hay registros próximos.</div>:upcoming.map(r=><div key={r.id} className="bg-white border rounded-xl p-3 flex items-center gap-3"><button onClick={()=>setEditing(r)} className="flex-1 text-left"><b>{titleOf(r)}</b><div className="text-xs text-stone-500">{labels[r.entry_type]} · {r.check_in} → {r.check_out} · {statusLabel[r.status]}</div></button>{r.guest_phone&&<button title="WhatsApp" onClick={()=>whatsapp(r)} className="p-2 text-emerald-700"><MessageCircle className="w-5 h-5"/></button>}</div>)}</div></div>
+ </div>
 };
