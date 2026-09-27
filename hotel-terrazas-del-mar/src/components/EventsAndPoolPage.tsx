@@ -48,7 +48,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
   const eventFeatures = [
     { title: 'Celebraciones Sociales', desc: 'Cumpleaños, aniversarios, quinceaños y reuniones familiares en un entorno campestre fresco y privado.', icon: Heart },
-    { title: 'Bodas & Eventos Románticos', desc: 'Ceremonias al atardecer con vista panorámica al Lago Cocibolca y a los volcanes de Ometepe.', icon: Wine },
+    { title: 'Bodas & Eventos Románticos', desc: 'Ceremonias al atardecer en el mirador, con panorámicas hacia el Lago Cocibolca y el paisaje volcánico de Ometepe.', icon: Wine },
     { title: 'Retiros & Talleres Grupales', desc: 'Jornadas de yoga, meditación, retiros corporativos y convivencia de equipos de trabajo.', icon: Users },
     { title: 'Catering Campestre', desc: 'Menú de comida típica nicaragüense, asados al aire libre, frutas tropicales y bebidas frescas.', icon: Coffee }
   ];
@@ -77,7 +77,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
           </h1>
           
           <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
-            Celebra tus momentos especiales en nuestro salón campestre con vista al lago y refréscate en la piscina rodeada por la naturaleza de Altagracia, Isla de Ometepe.
+            Celebra tus momentos especiales en nuestro salón campestre, ubicado en un mirador con vistas panorámicas hacia el lago y el paisaje volcánico de Ometepe.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center justify-start gap-4">
@@ -150,7 +150,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                   Local para Eventos & Celebraciones
                 </h2>
                 <p className="text-stone-600 text-xs sm:text-sm max-w-2xl mt-1">
-                  Un entorno campestre auténtico, con amplia brisa del lago y vista a la montaña, ideal para agasajar a tus invitados sin prisas.
+                  Un entorno campestre en altura, con vistas abiertas hacia el lago por un lado y el volcán por el otro, ideal para celebrar con tranquilidad.
                 </p>
               </div>
 
@@ -169,7 +169,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                     <span className="px-2.5 py-1 rounded bg-teal-500 text-white text-[10px] font-bold uppercase tracking-wider">
                       Eventos Sociales
                     </span>
-                    <h4 className="font-bold text-lg mt-1">Celebraciones frente al Lago Cocibolca</h4>
+                    <h4 className="font-bold text-lg mt-1">Celebraciones con vistas panorámicas de Ometepe</h4>
                     <p className="text-xs text-stone-200">Bodas, cumpleaños y cenas con atardeceres mágicos</p>
                   </div>
                 </div>
