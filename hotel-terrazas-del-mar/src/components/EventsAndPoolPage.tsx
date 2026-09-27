@@ -69,15 +69,15 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
         <div className="max-w-6xl mx-auto relative z-10 text-left">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-400/20 text-teal-200 text-xs font-bold uppercase tracking-wider mb-4 border border-teal-300/30">
             <Sparkles className="w-3.5 h-3.5" />
-            Espacios & Amenidades Exclusivas
+            Eventos y celebraciones en Ometepe
           </div>
           
           <h1 className="font-gidole text-3xl sm:text-5xl font-extrabold tracking-tight mb-6 leading-tight break-words text-white">
-            Local para Eventos & Piscina Panorámica
+            Local para Eventos y Piscina en Ometepe
           </h1>
           
           <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
-            Celebra tus momentos especiales en nuestro salón campestre, rodeado de naturaleza y del paisaje característico de Ometepe, entre vistas al lago y al volcán.
+            Celebra bodas, cumpleaños y encuentros en Altagracia, Ometepe, en un espacio campestre rodeado de naturaleza. Complementa tu evento con piscina y opciones de alojamiento para tus invitados.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center justify-start gap-4">
