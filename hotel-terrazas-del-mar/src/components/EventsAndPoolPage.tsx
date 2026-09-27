@@ -13,6 +13,7 @@ import {
   Camera, 
   Phone,
   ChevronRight,
+  ChevronLeft,
   Wine
 } from 'lucide-react';
 import { HotelConfig, PhotoItem } from '../types';
@@ -33,6 +34,12 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
   const [eventDate, setEventDate] = useState('');
   const [eventType, setEventType] = useState('');
   const [eventGuests, setEventGuests] = useState('');
+  const poolCarouselRef = React.useRef<HTMLDivElement>(null);
+  const scrollPool = (direction: 'left' | 'right') => {
+    const el = poolCarouselRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction === 'right' ? el.clientWidth * 0.8 : -el.clientWidth * 0.8, behavior: 'smooth' });
+  };
 
   const openEventWhatsApp = () => {
     if (!eventDate || !eventType || !eventGuests) return;
@@ -263,27 +270,36 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
               )}
 
                         {/* Pool Images Showcase */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
-                {poolImage(1) ? <img src={poolImage(1)} alt="Piscina con vistas" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
-                  Piscina al aire libre en Altagracia
+            <div className="relative">
+              {poolPhotos.length > 0 ? (
+                <>
+                  <div ref={poolCarouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    {poolPhotos.map((photo, index) => (
+                      <div key={photo.id} className="relative group shrink-0 w-[86%] sm:w-[48%] lg:w-[32%] aspect-[4/3] rounded-2xl overflow-hidden snap-start bg-stone-100">
+                        <img src={photo.url} alt={photo.title || `Piscina y entorno del Mirador ${index + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent flex items-end p-4">
+                          <span className="text-white text-xs font-bold">{photo.title || 'Piscina & Mirador Ecológico'}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {poolPhotos.length > 3 && (
+                    <div className="flex justify-end gap-2 mt-3">
+                      <button type="button" onClick={() => scrollPool('left')} aria-label="Fotos anteriores de piscina" className="w-10 h-10 rounded-full border border-teal-200 bg-white text-teal-800 hover:bg-teal-50 flex items-center justify-center shadow-sm"><ChevronLeft className="w-5 h-5" /></button>
+                      <button type="button" onClick={() => scrollPool('right')} aria-label="Más fotos de piscina" className="w-10 h-10 rounded-full border border-teal-200 bg-white text-teal-800 hover:bg-teal-50 flex items-center justify-center shadow-sm"><ChevronRight className="w-5 h-5" /></button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {['Piscina al aire libre en Altagracia','Solárium para disfrutar del atardecer','Entorno para descansar'].map(label => (
+                    <div key={label} className="rounded-2xl overflow-hidden aspect-[4/3] relative bg-gradient-to-br from-teal-50 to-stone-100">
+                      <div className="w-full h-full flex items-center justify-center text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">{label}</div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-
-              <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
-                {poolImage(2) ? <img src={poolImage(2)} alt="Agua cristalina y descanso" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
-                  Solárium para disfrutar del atardecer
-                </div>
-              </div>
-
-              <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
-                {poolImage(3) ? <img src={poolImage(3)} alt="Bebidas refrescantes" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
-                  Bebidas tropicales y descanso total
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Pool Details List */}
