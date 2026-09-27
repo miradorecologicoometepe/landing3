@@ -54,7 +54,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
             Ubicación del Mirador & Preguntas Frecuentes
           </h2>
           <p className="text-stone-600 text-base leading-relaxed">
-            Situado en un punto alto privilegiado con vistas panorámicas al volcán y al Lago Cocibolca, a minutos de las principales atracciones de la isla.
+            Un espacio rodeado de naturaleza donde el paisaje se abre hacia el Lago Cocibolca por un lado y hacia el volcán por el otro, a minutos de atractivos de la isla.
           </p>
         </div>
 
