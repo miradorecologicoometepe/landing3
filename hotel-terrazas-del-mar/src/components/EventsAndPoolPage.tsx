@@ -48,7 +48,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
   const eventFeatures = [
     { title: 'Celebraciones Sociales', desc: 'Cumpleaños, aniversarios, quinceaños y reuniones familiares en un entorno campestre fresco y privado.', icon: Heart },
-    { title: 'Bodas & Eventos Románticos', desc: 'Ceremonias al atardecer en el mirador, con panorámicas hacia el Lago Cocibolca y el paisaje volcánico de Ometepe.', icon: Wine },
+    { title: 'Bodas & Eventos Románticos', desc: 'Ceremonias al atardecer en un entorno natural, con el lago y el paisaje volcánico de Ometepe como parte del panorama.', icon: Wine },
     { title: 'Retiros & Talleres Grupales', desc: 'Jornadas de yoga, meditación, retiros corporativos y convivencia de equipos de trabajo.', icon: Users },
     { title: 'Catering Campestre', desc: 'Menú de comida típica nicaragüense, asados al aire libre, frutas tropicales y bebidas frescas.', icon: Coffee }
   ];
@@ -77,7 +77,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
           </h1>
           
           <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
-            Celebra tus momentos especiales en nuestro salón campestre, en un entorno natural con vistas panorámicas hacia el lago y el paisaje volcánico de Ometepe.
+            Celebra tus momentos especiales en nuestro salón campestre, rodeado de naturaleza y del paisaje característico de Ometepe, entre vistas al lago y al volcán.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center justify-start gap-4">
@@ -150,7 +150,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                   Local para Eventos & Celebraciones
                 </h2>
                 <p className="text-stone-600 text-xs sm:text-sm max-w-2xl mt-1">
-                  Un entorno campestre rodeado de naturaleza, con vistas hacia el lago por un lado y el volcán por el otro, ideal para celebrar con tranquilidad.
+                  Un entorno campestre rodeado de naturaleza, donde puedes disfrutar del paisaje hacia el lago y el volcán, ideal para celebrar con tranquilidad.
                 </p>
               </div>
 
@@ -240,7 +240,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                   Piscina Panorámica & Solárium
                 </h2>
                 <p className="text-stone-600 text-xs sm:text-sm max-w-2xl mt-1">
-                  Refréscate tras explorar los senderos o volcanes de Ometepe. Agua limpia, solárium empedrado y vistas abiertas al lago.
+                  Refréscate tras explorar Ometepe. Disfruta de la piscina, el solárium y el entorno natural del Mirador.
                 </p>
               </div>
 
