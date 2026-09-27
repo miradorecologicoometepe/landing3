@@ -11,7 +11,7 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpenGallery, onOpenBookingModal, hotelConfig, photos }) => {
-  const heroPhoto = photos.find(photo => photo.category === 'outdoors')?.url || photos.find(photo => photo.category === 'pool')?.url || photos.find(photo => photo.url)?.url;
+  const heroPhoto = hotelConfig.heroImageUrl || photos.find(photo => photo.category === 'outdoors')?.url || photos.find(photo => photo.category === 'pool')?.url || photos.find(photo => photo.url)?.url;
 
   return (
   <section className="relative isolate min-h-[82svh] sm:min-h-[90svh] lg:min-h-[94vh] overflow-hidden bg-gradient-to-br from-[#075e68] via-[#087f83] to-[#0b4f50] text-white flex items-center">
