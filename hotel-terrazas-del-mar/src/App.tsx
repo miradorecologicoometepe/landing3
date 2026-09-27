@@ -66,11 +66,7 @@ export default function App() {
     icon.href = hotelConfig.faviconUrl;
   }, [hotelConfig.faviconUrl]);
 
-  if (!publicContentReady && typeof window !== 'undefined' && !window.location.hostname.startsWith('admin.')) {
-    return <div className="min-h-screen bg-[#f7faf8] flex items-center justify-center" aria-label="Cargando sitio"><div className="w-8 h-8 rounded-full border-2 border-[#0f7775]/25 border-t-[#0f7775] animate-spin" /></div>;
-  }
-
-    // Dedicated Admin Route & Auth State (tipo admin.dominio.com)
+  // Dedicated Admin Route & Auth State (tipo admin.dominio.com)
   const checkIsAdminUrl = (): boolean => {
     if (typeof window === 'undefined') return false;
     const hostname = window.location.hostname || '';
