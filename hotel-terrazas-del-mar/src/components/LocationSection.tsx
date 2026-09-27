@@ -41,11 +41,11 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
   };
 
   return (
-    <section id="ubicacion" className="py-20 bg-stone-50 border-b border-stone-200">
+    <section id="ubicacion" className="py-12 sm:py-20 bg-stone-50 border-b border-stone-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#C2ECE5] border border-[#387378]/30 text-brand-teal-dark text-xs font-bold uppercase tracking-wider mb-3">
             <MapPin className="w-3.5 h-3.5 text-brand-teal" />
             Entorno Natural de Ometepe
@@ -59,12 +59,12 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
         </div>
 
         {/* Location & Map Showcase */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-12 sm:mb-20">
           
           {/* Map & Visual Showcase (7 cols) */}
-          <div className="lg:col-span-7 bg-white rounded-2xl p-6 border border-stone-200 shadow-sm flex flex-col justify-between">
+          <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-6 border border-stone-200 shadow-sm flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <div>
                   <h3 className="font-gidole font-bold text-xl text-stone-900">
                     {hotelConfig.name}
@@ -83,7 +83,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
                 <iframe
                   title={`Mapa de Google Maps: ${hotelConfig.name}`}
                   src={`https://www.google.com/maps?q=${encodeURIComponent(hotelConfig.name + ', ' + hotelConfig.address)}&output=embed`}
-                  className="w-full h-[320px] sm:h-[400px] border-0"
+                  className="w-full h-[240px] sm:h-[400px] border-0"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   allowFullScreen
@@ -103,18 +103,18 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
             </div>
 
             {/* Travel Points */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mt-5 sm:mt-6">
               {pointsOfInterest.map((pt, idx) => {
                 const Icon = pt.icon;
                 return (
-                  <div key={idx} className="p-3 rounded-xl bg-[#FAFDFB] border border-stone-200 flex items-start gap-3">
+                  <div key={idx} className="p-2.5 sm:p-3 rounded-xl bg-[#FAFDFB] border border-stone-200 flex flex-col sm:flex-row items-start gap-2 sm:gap-3">
                     <div className="p-2 rounded-lg bg-[#C2ECE5]/50 text-brand-teal shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-stone-900">{pt.name}</div>
-                      <div className="text-[11px] text-brand-terracotta font-semibold">{pt.distance}</div>
-                      <div className="text-[10px] text-stone-500 leading-tight mt-0.5">{pt.detail}</div>
+                      <div className="text-[11px] sm:text-xs font-bold text-stone-900 leading-tight">{pt.name}</div>
+                      <div className="text-[10px] sm:text-[11px] text-brand-terracotta font-semibold leading-tight mt-1">{pt.distance}</div>
+                      <div className="hidden sm:block text-[10px] text-stone-500 leading-tight mt-0.5">{pt.detail}</div>
                     </div>
                   </div>
                 );
