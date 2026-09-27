@@ -323,7 +323,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   };
 
   const handleStartCreatePhoto = () => {
-    const newId = `p-${Date.now()}`;
+    const newId = crypto.randomUUID();
     const newPhoto: PhotoItem = {
       id: newId,
       title: 'Nueva Fotografía de Galería',
