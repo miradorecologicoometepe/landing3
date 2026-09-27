@@ -62,6 +62,13 @@ export default function App() {
     return () => { active = false; };
   }, []);
 
+  useEffect(() => {
+    if (!hotelConfig.faviconUrl) return;
+    let icon = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (!icon) { icon = document.createElement('link'); icon.rel = 'icon'; document.head.appendChild(icon); }
+    icon.href = hotelConfig.faviconUrl;
+  }, [hotelConfig.faviconUrl]);
+
   // Dedicated Admin Route & Auth State (tipo admin.dominio.com)
   const checkIsAdminUrl = (): boolean => {
     if (typeof window === 'undefined') return false;
