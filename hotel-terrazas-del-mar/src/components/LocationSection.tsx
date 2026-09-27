@@ -48,13 +48,13 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#C2ECE5] border border-[#387378]/30 text-brand-teal-dark text-xs font-bold uppercase tracking-wider mb-3">
             <MapPin className="w-3.5 h-3.5 text-brand-teal" />
-            Entorno Natural de Ometepe
+            Ubicación en Altagracia, Ometepe
           </div>
           <h2 className="font-gidole text-3xl sm:text-4xl text-stone-900 font-extrabold tracking-tight mb-4">
-            Ubicación del Mirador & Preguntas Frecuentes
+            Cómo llegar a Mirador Ecológico en Ometepe
           </h2>
           <p className="text-stone-600 text-base leading-relaxed">
-            Un espacio rodeado de naturaleza donde el paisaje se abre hacia el Lago Cocibolca por un lado y hacia el volcán por el otro, a minutos de atractivos de la isla.
+            Encuéntranos en Altagracia, Isla de Ometepe. Desde el Mirador puedes disfrutar del paisaje hacia el Lago Cocibolca y el volcán, con acceso a distintos atractivos y rutas de la isla.
           </p>
         </div>
 
