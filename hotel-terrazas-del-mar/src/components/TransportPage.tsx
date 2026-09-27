@@ -30,8 +30,8 @@ export const TransportPage: React.FC<TransportPageProps> = ({
   onOpenBookingModal 
 }) => {
   const [activeTab, setActiveTab] = useState<'ferries' | 'buses' | 'taxis'>('ferries');
-  const [publishedSchedules, setPublishedSchedules] = useState<Array<{category:string;details: Record<string,string>}>>([]);
-  useEffect(() => { let active = true; if (!supabase) return; supabase.from('transport_schedules').select('category,details').then(({data,error}) => { if (active && !error && data) setPublishedSchedules(data as Array<{category:string;details: Record<string,string>}>); }); return () => {active=false;}; }, []);
+  const [publishedSchedules, setPublishedSchedules] = useState<Array<{category:string;details: Record<string,any>}>>([]);
+  useEffect(() => { let active = true; if (!supabase) return; supabase.from('transport_schedules').select('category,details').then(({data,error}) => { if (active && !error && data) setPublishedSchedules(data as Array<{category:string;details: Record<string,any>}>); }); return () => {active=false;}; }, []);
 
   const fallbackSanJorgeToMoyogalpa = [
     { time: '07:00 AM', vessel: 'Ferry Che Guevara', type: 'Ferry con Vehículos', duration: '1h 10m' },
@@ -64,9 +64,9 @@ export const TransportPage: React.FC<TransportPageProps> = ({
   ];
 
   const fallbackLocalBuses = [
-    { route: 'Moyogalpa ➔ Altagracia', frequency: 'Cada 45 - 60 minutos', timeRange: '06:00 AM - 05:30 PM', notes: 'Pasa cerca de la entrada a la finca / hotel en Altagracia' },
-    { route: 'Altagracia ➔ Moyogalpa', frequency: 'Cada 45 - 60 minutos', timeRange: '05:30 AM - 05:00 PM', notes: 'Conecta con las salidas de ferry hacia San Jorge' },
-    { route: 'Altagracia ➔ Balgüe / Santo Domingo', frequency: 'Cada 1 - 2 horas', timeRange: '07:00 AM - 04:30 PM', notes: 'Ideal para visitar playas de Santo Domingo y el volcán Maderas' },
+    { route: 'Moyogalpa ➔ Altagracia', frequency: 'Cada 45 - 60 minutos', timeRange: '06:00 AM - 05:30 PM', times: [], notes: 'Pasa cerca de la entrada a la finca / hotel en Altagracia' },
+    { route: 'Altagracia ➔ Moyogalpa', frequency: 'Cada 45 - 60 minutos', timeRange: '05:30 AM - 05:00 PM', times: [], notes: 'Conecta con las salidas de ferry hacia San Jorge' },
+    { route: 'Altagracia ➔ Balgüe / Santo Domingo', frequency: 'Cada 1 - 2 horas', timeRange: '07:00 AM - 04:30 PM', times: [], notes: 'Ideal para visitar playas de Santo Domingo y el volcán Maderas' },
   ];
 
   const ferryRows = publishedSchedules.filter(row => row.category === 'ferry').map(row => row.details);
@@ -328,16 +328,21 @@ export const TransportPage: React.FC<TransportPageProps> = ({
                     <h4 className="font-bold text-stone-900 text-sm">
                       {bus.route}
                     </h4>
-                    <div className="space-y-1.5 text-xs text-stone-600">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-teal-600" />
-                        <span>Frecuencia: {bus.frequency}</span>
+                    {Array.isArray(bus.times) && bus.times.filter(Boolean).length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {bus.times.filter(Boolean).map((time:string, timeIdx:number) => {
+                          const [h,m] = time.split(':').map(Number);
+                          const suffix = h >= 12 ? 'PM' : 'AM';
+                          const hour = h % 12 || 12;
+                          return <span key={timeIdx} className="px-2.5 py-1.5 rounded-full bg-stone-100 text-stone-900 text-[11px] font-bold">{hour}:{String(m || 0).padStart(2,'0')} {suffix}</span>;
+                        })}
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-teal-600" />
-                        <span>Horario: {bus.timeRange}</span>
+                    ) : (
+                      <div className="space-y-1.5 text-xs text-stone-600">
+                        {bus.frequency && <div className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-teal-600" /><span>Frecuencia: {bus.frequency}</span></div>}
+                        {bus.timeRange && <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-teal-600" /><span>Horario: {bus.timeRange}</span></div>}
                       </div>
-                    </div>
+                    )}
                     <p className="text-[11px] text-stone-500 border-t border-stone-200 pt-2">
                       {bus.notes}
                     </p>
