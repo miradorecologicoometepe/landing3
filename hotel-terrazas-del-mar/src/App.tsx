@@ -184,19 +184,28 @@ export default function App() {
   const [currency, setCurrency] = useState<'USD' | 'EUR' | 'MXN'>('USD');
 
   // Handlers for Admin Panel updates with localStorage synchronization
-  const handleSaveHotelConfig = (updatedConfig: HotelConfig) => {
+  const handleSaveHotelConfig = async (updatedConfig: HotelConfig) => {
     setHotelConfig(updatedConfig);
     saveHotelConfig(updatedConfig);
+    if (!supabase || !isAdminAuth) return;
+    const { error } = await supabase.from('site_content').upsert({ key: 'hotel_config', value: updatedConfig }, { onConflict: 'key' });
+    if (error) console.error('Unable to publish hotel config to Supabase', error);
   };
 
-  const handleSaveRooms = (updatedRooms: Room[]) => {
+  const handleSaveRooms = async (updatedRooms: Room[]) => {
     setRooms(updatedRooms);
     saveRooms(updatedRooms);
+    if (!supabase || !isAdminAuth) return;
+    const rows = updatedRooms.map(room => ({ id: room.id, details: room }));
+    const { error } = await supabase.from('rooms').upsert(rows, { onConflict: 'id' });
+    if (error) console.error('Unable to publish rooms to Supabase', error);
   };
 
   const handleSavePhotos = (updatedPhotos: PhotoItem[]) => {
     setPhotos(updatedPhotos);
     saveGalleryPhotos(updatedPhotos);
+    // Gallery rows and Storage files are persisted by PhotoUploader/AdminPanelModal.
+    // This callback keeps the current UI synchronized with those Supabase writes.
   };
 
   const handleResetAllData = () => {
