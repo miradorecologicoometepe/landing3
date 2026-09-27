@@ -68,6 +68,14 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [replacingPhoto, setReplacingPhoto] = useState<PhotoItem | null>(null);
   const [galleryStatus, setGalleryStatus] = useState('');
   const [gallerySection, setGallerySection] = useState<'all' | 'events'>('all');
+  const galleryCategoryLabels: Record<string,string> = { outdoors:'Volcanes & Naturaleza', rooms:'Habitaciones', pool:'Piscina & Mirador', events:'Eventos', gastronomy:'Gastronomía' };
+  const assignPhotoCategory = async (photo: PhotoItem, category: PhotoCategory) => {
+    if (!supabase) return;
+    const saved = await supabase.from('gallery_photos').update({ category }).eq('id', photo.id).select('id').maybeSingle();
+    if (saved.error || !saved.data) { setGalleryStatus(saved.error?.message || 'No se pudo asignar la categoría.'); return; }
+    onSavePhotos(currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.map(item => item.id === photo.id ? { ...item, category } : item));
+    setGalleryStatus('Categoría actualizada.');
+  };
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [adminName, setAdminName] = useState('');
   const [busRoutes, setBusRoutes] = useState<Array<{id:string; route:string; frequency:string; timeRange:string; notes:string; times:string[]}>>([]);
@@ -1303,7 +1311,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
               {gallerySection === 'events' ? (
                 <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-stone-800">
                   <h4 className="font-bold text-lg mb-1">Fotos de Eventos</h4>
-                  <p>Administra aquí únicamente las imágenes que aparecen en la sección pública de Eventos. Puedes reemplazar las existentes o agregar nuevas desde el formulario.</p>
+                  <p>Administra aquí únicamente las imágenes que aparecen en la sección pública de Eventos. Las <strong>primeras tres fotos</strong> tienen una posición fija en ese bloque; reemplázalas desde su tarjeta para cambiar exactamente esa imagen.</p><div className="mt-3 grid sm:grid-cols-3 gap-2 text-xs"><div className="rounded-xl bg-white border border-teal-100 p-3"><strong>1 · Imagen principal</strong><br/>Tarjeta grande de la izquierda.</div><div className="rounded-xl bg-white border border-teal-100 p-3"><strong>2 · Superior derecha</strong><br/>Tarjeta pequeña de arriba.</div><div className="rounded-xl bg-white border border-teal-100 p-3"><strong>3 · Inferior derecha</strong><br/>Tarjeta pequeña de abajo.</div></div>
                   <div className="mt-3 rounded-xl bg-white/80 border border-teal-100 px-3 py-2 text-xs"><strong>Publicadas:</strong> {photos.filter(photo => photo.category === 'events').length} foto(s).</div>
                 </div>
               ) : (
@@ -1321,6 +1329,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                   {photos.filter(photo => gallerySection === 'events' ? photo.category === 'events' : true).map(photo => <div key={photo.id} className="rounded-xl overflow-hidden border border-stone-200">
                     <img src={photo.url} alt={photo.title} className="w-full aspect-[4/3] object-cover" />
                     <div className="p-2 text-xs font-semibold text-stone-800">{photo.title}</div>
+                    {gallerySection === 'events' && <div className="mx-2 mb-2 rounded-lg bg-teal-50 border border-teal-100 px-2 py-1.5 text-[11px] font-bold text-teal-900">{(() => { const pos = photos.filter(p => p.category === 'events').findIndex(p => p.id === photo.id); return pos === 0 ? '1 · Imagen principal' : pos === 1 ? '2 · Superior derecha' : pos === 2 ? '3 · Inferior derecha' : 'Imagen adicional de Eventos'; })()}</div>}
+                    {(!photo.category || !galleryCategoryLabels[photo.category]) && <div className="px-2 pb-2"><label className="block text-[11px] font-bold text-amber-800 mb-1">Sin categoría · asignar:</label><select defaultValue="" onChange={e => { if (e.target.value) void assignPhotoCategory(photo, e.target.value as PhotoCategory); }} className="w-full border rounded-lg p-2 text-xs bg-white"><option value="">Seleccionar…</option><option value="outdoors">Volcanes & Naturaleza</option><option value="rooms">Habitaciones</option><option value="pool">Piscina & Mirador</option><option value="events">Eventos</option><option value="gastronomy">Gastronomía</option></select></div>}
+                    {photo.category && galleryCategoryLabels[photo.category] && gallerySection === 'all' && <div className="px-2 pb-2 text-[11px] text-stone-500">Categoría: <strong>{galleryCategoryLabels[photo.category]}</strong></div>}
                     <div className="flex gap-2 p-2 pt-0"><button type="button" onClick={() => { setReplacingPhoto(photo); setGalleryStatus(""); }} className="text-xs rounded-lg bg-teal-700 text-white px-2 py-2">Reemplazar</button><button type="button" onClick={async () => { if (!supabase || !window.confirm("¿Eliminar esta fotografía publicada?")) return; const deleted = await supabase.from("gallery_photos").delete().eq("id", photo.id).select("id").maybeSingle(); if (deleted.error || !deleted.data) { setGalleryStatus(deleted.error?.message || "No se pudo eliminar la fotografía."); return; } if (photo.roomTypeId) { const room = await supabase.from("rooms").select("details").eq("id", photo.roomTypeId).maybeSingle(); if (room.data) { const details = room.data.details as Room; await supabase.from("rooms").update({ details: { ...details, images: details.images.filter(image => image !== photo.url) } }).eq("id", photo.roomTypeId); } } onSavePhotos(currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(item => item.id !== photo.id)); setGalleryStatus("Fotografía eliminada de la galería."); }} className="text-xs rounded-lg border border-red-300 text-red-700 px-2 py-2">Eliminar</button></div>
                   </div>)}
                 </div>
