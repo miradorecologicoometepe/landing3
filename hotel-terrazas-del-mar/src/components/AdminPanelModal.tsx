@@ -319,7 +319,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       maxOccupancy: 3,
       capacity: { adults: 2, children: 1 },
       bedType: '1 Cama King Size',
-      sizeM2: 55,
+      includedGuests: 2,
+      extraGuestPrice: 0,
       view: 'Vista al Mar',
       badge: 'Nuevo',
       featured: true,
@@ -1016,24 +1017,25 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                        Tamaño (m²)
-                      </label>
-                      <input
-                        type="number"
-                        min="10"
-                        value={roomFormData.sizeM2}
-                        onChange={(e) => setRoomFormData({ ...roomFormData, sizeM2: Number(e.target.value) })}
-                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                        required
-                      />
+                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Personas incluidas en precio estándar</label>
+                      <input type="number" min="1" max="10" value={roomFormData.includedGuests ?? Math.min(roomFormData.maxOccupancy, roomFormData.capacity.adults || 1)}
+                        onChange={(e) => setRoomFormData({ ...roomFormData, includedGuests: Number(e.target.value) })}
+                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" />
+                      <p className="text-[11px] text-stone-500 mt-1">Ej.: precio estándar cubre hasta 3 personas.</p>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Persona adicional (USD / noche)</label>
+                      <input type="number" min="0" value={roomFormData.extraGuestPrice ?? 0}
+                        onChange={(e) => setRoomFormData({ ...roomFormData, extraGuestPrice: Number(e.target.value) })}
+                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none font-bold text-emerald-700" />
+                      <p className="text-[11px] text-stone-500 mt-1">0 = no se cobra suplemento adicional.</p>
                     </div>
 
                       </div>
                     </section>
 
                     <section className="rounded-2xl border border-stone-200 p-4 sm:p-5">
-                      <div className="mb-4"><h5 className="font-bold text-stone-900">3. Detalles de la estancia</h5><p className="text-xs text-stone-500">Cama, espacio, vista y descripción para ayudar al huésped a elegir.</p></div>
+                      <div className="mb-4"><h5 className="font-bold text-stone-900">3. Detalles de la estancia</h5><p className="text-xs text-stone-500">Cama, vista y descripción para ayudar al huésped a elegir.</p></div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
