@@ -58,6 +58,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [faviconFile, setFaviconFile] = useState<File | null>(null);
   const [faviconStatus, setFaviconStatus] = useState('');
   const [faviconSaving, setFaviconSaving] = useState(false);
+  const [heroFile, setHeroFile] = useState<File | null>(null);
+  const [heroStatus, setHeroStatus] = useState('');
+  const [heroSaving, setHeroSaving] = useState(false);
   const [replacingPhoto, setReplacingPhoto] = useState<PhotoItem | null>(null);
   const [galleryStatus, setGalleryStatus] = useState('');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -193,6 +196,31 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       setFaviconStatus('Favicon publicado. Puede tardar un momento en reflejarse en la pestaña por la caché del navegador.');
     } catch (error) { setFaviconStatus(error instanceof Error ? error.message : 'No se pudo publicar el favicon.'); }
     finally { setFaviconSaving(false); }
+  };
+
+  const handlePublishHero = async () => {
+    if (!supabase) { setHeroStatus('Supabase no está configurado.'); return; }
+    if (!heroFile) { setHeroStatus('Selecciona una fotografía para la portada.'); return; }
+    if (!['image/jpeg','image/png','image/webp','image/avif'].includes(heroFile.type) || heroFile.size > 10 * 1024 * 1024) { setHeroStatus('Usa JPG, PNG, WebP o AVIF de hasta 10 MB.'); return; }
+    setHeroSaving(true); setHeroStatus('');
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Tu sesión administrativa expiró.');
+      const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+      if (admin.error || !admin.data) throw new Error('Tu cuenta no tiene permisos de administrador.');
+      const ext = ({'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'} as Record<string,string>)[heroFile.type];
+      const path = `branding/hero-${crypto.randomUUID()}.${ext}`;
+      const upload = await supabase.storage.from('hotel-media').upload(path, heroFile, { contentType: heroFile.type, upsert: false });
+      if (upload.error) throw upload.error;
+      const heroImageUrl = supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl;
+      const { data: existing, error: readError } = await supabase.from('site_content').select('value').eq('key', 'hotel_config').maybeSingle();
+      if (readError) throw readError;
+      const existingValue = existing?.value && typeof existing.value === 'object' && !Array.isArray(existing.value) ? existing.value as Record<string, unknown> : {};
+      const saved = await supabase.from('site_content').upsert({ key:'hotel_config', value:{ ...existingValue, heroImageUrl } }, { onConflict:'key' }).select('key').maybeSingle();
+      if (saved.error || !saved.data) throw new Error(saved.error?.message || 'No se pudo publicar la portada.');
+      const updated = { ...configForm, heroImageUrl }; setConfigForm(updated); onSaveHotelConfig(updated); setHeroFile(null); setHeroStatus('Foto principal publicada correctamente.');
+    } catch (error) { setHeroStatus(error instanceof Error ? error.message : 'No se pudo publicar la portada.'); }
+    finally { setHeroSaving(false); }
   };
 
   // --- ROOMS HANDLERS ---
@@ -582,6 +610,14 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 {configForm.faviconUrl && <img src={configForm.faviconUrl} alt="Favicon actual" className="w-16 h-16 object-contain rounded-xl border p-2" />}
                 <button type="button" disabled={faviconSaving || !supabase || !faviconFile} onClick={handlePublishFavicon} className="px-4 py-2 rounded-xl bg-[#087f83] text-white font-semibold text-sm disabled:opacity-50">{faviconSaving ? 'Publicando…' : 'Subir / reemplazar favicon'}</button>
                 {faviconStatus && <p role="status" className="text-xs text-stone-700">{faviconStatus}</p>}
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+                <div><h4 className="font-bold text-base text-stone-900">Foto principal de la landing</h4><p className="text-xs text-stone-600 mt-1">Esta es la fotografía grande detrás del título de inicio. Puedes reemplazarla directamente desde aquí.</p></div>
+                {configForm.heroImageUrl && <img src={configForm.heroImageUrl} alt="Portada actual" className="w-full aspect-[16/7] object-cover rounded-xl border border-stone-200" />}
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={e => { setHeroFile(e.target.files?.[0] || null); setHeroStatus(''); }} className="block w-full min-w-0 text-sm border rounded-xl p-3 bg-white" />
+                <button type="button" disabled={heroSaving || !heroFile} onClick={handlePublishHero} className="px-4 py-2.5 rounded-xl bg-[#087f83] text-white font-semibold text-sm disabled:opacity-50">{heroSaving ? 'Publicando portada…' : configForm.heroImageUrl ? 'Reemplazar foto principal' : 'Subir foto principal'}</button>
+                {heroStatus && <p role="status" className="text-xs text-stone-700">{heroStatus}</p>}
               </div>
 
               {/* Box 2: WhatsApp & Direct Contact */}
