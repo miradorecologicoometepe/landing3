@@ -74,6 +74,7 @@ export interface ReviewItem {
 
 export interface HotelConfig {
   logoUrl?: string;
+  faviconUrl?: string;
   name: string;
   stars: number;
   ratingScore: number;
