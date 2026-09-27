@@ -87,4 +87,13 @@ export interface HotelConfig {
   currency: 'USD' | 'EUR' | 'MXN';
   checkInTime: string;
   checkOutTime: string;
+  dayPass?: {
+    enabled: boolean;
+    title?: string;
+    days?: string[];
+    startTime?: string;
+    endTime?: string;
+    price?: number | null;
+    notes?: string;
+  };
 }
