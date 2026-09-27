@@ -1,0 +1,17 @@
+{
+  "name": "Mirador Ecológico Admin",
+  "short_name": "Mirador Admin",
+  "start_url": "/admin?tab=general",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8faf9",
+  "theme_color": "#087f83",
+  "icons": [
+    {
+      "src": "/admin-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
