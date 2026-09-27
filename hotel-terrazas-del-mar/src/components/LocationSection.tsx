@@ -33,7 +33,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
     { name: 'Reserva Ecológica Charco Verde', distance: '15 minutos', icon: MapPin, detail: 'Reserva natural y senderos' },
     { name: 'Puerto Las Brisas, San José del Sur', distance: '20 minutos', icon: Ship, detail: 'Puerto de San José del Sur, Isla de Ometepe' },
     { name: 'Playa Mangos', distance: '25 minutos', icon: MapPin, detail: 'Playa en la Isla de Ometepe' },
-    { name: 'Volcanes Concepción & Maderas', distance: 'Vistas panorámicas directas', icon: Compass, detail: 'Paisajes volcánicos de Ometepe' },
+    { name: 'Volcanes Concepción & Maderas', distance: 'Parte del paisaje de Ometepe', icon: Compass, detail: 'Paisajes volcánicos de la isla' },
   ];
 
   const toggleFaq = (index: number) => {
@@ -74,7 +74,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
                   </p>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-[#C2ECE5] text-brand-teal-dark border border-brand-mint text-xs font-semibold">
-                  Vista Volcánica & Lago
+                  Paisaje de Lago & Volcán
                 </span>
               </div>
 
