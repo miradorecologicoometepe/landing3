@@ -77,6 +77,36 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [expandedBusId, setExpandedBusId] = useState<string | null>(null);
   const [transportSaving, setTransportSaving] = useState(false);
   const [savingBusRouteId, setSavingBusRouteId] = useState<string | null>(null);
+  const [customRoomTypes, setCustomRoomTypes] = useState<string[]>([]);
+  const [customBedTypes, setCustomBedTypes] = useState<string[]>([]);
+
+  const roomTypeOptions = Array.from(new Set([
+    'Habitación familiar',
+    'Habitación matrimonial',
+    ...rooms.map((room) => room.type).filter(Boolean),
+    ...customRoomTypes,
+  ]));
+  const bedTypeOptions = Array.from(new Set([
+    'Cama matrimonial',
+    '1 cama individual y 2 camas dobles',
+    '2 camas dobles',
+    '1 cama individual',
+    ...rooms.map((room) => room.bedType).filter(Boolean),
+    ...customBedTypes,
+  ]));
+
+  const addCustomOption = (kind: 'type' | 'bed') => {
+    const label = kind === 'type' ? 'tipo de habitación' : 'configuración de cama';
+    const value = window.prompt(`Nueva ${label}:`)?.trim();
+    if (!value || !roomFormData) return;
+    if (kind === 'type') {
+      setCustomRoomTypes((current) => Array.from(new Set([...current, value])));
+      setRoomFormData({ ...roomFormData, type: value });
+    } else {
+      setCustomBedTypes((current) => Array.from(new Set([...current, value])));
+      setRoomFormData({ ...roomFormData, bedType: value });
+    }
+  };
   useEffect(() => {
     if (!isDedicatedPage || typeof window === 'undefined') return;
     const url = new URL(window.location.href); url.searchParams.set('tab', activeTab); window.history.replaceState({}, '', url);
@@ -892,14 +922,19 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                       <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
                         Tipo de Habitación
                       </label>
-                      <input
-                        type="text"
-                        value={roomFormData.type}
-                        onChange={(e) => setRoomFormData({ ...roomFormData, type: e.target.value })}
-                        placeholder="Ej. Penthouse de Lujo, Villa, Suite"
-                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                        required
-                      />
+                      <div className="flex gap-2">
+                        <select
+                          value={roomFormData.type}
+                          onChange={(e) => setRoomFormData({ ...roomFormData, type: e.target.value })}
+                          className="min-w-0 flex-1 px-3.5 py-2 rounded-xl border border-stone-200 bg-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                          required
+                        >
+                          {roomTypeOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                        </select>
+                        <button type="button" onClick={() => addCustomOption('type')} className="shrink-0 px-3 py-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-xs font-bold text-stone-700 inline-flex items-center gap-1">
+                          <Plus className="w-3.5 h-3.5" /> Nueva
+                        </button>
+                      </div>
                     </div>
 
                     <div>
@@ -1006,14 +1041,19 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                       <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
                         Configuración de Cama
                       </label>
-                      <input
-                        type="text"
-                        value={roomFormData.bedType}
-                        onChange={(e) => setRoomFormData({ ...roomFormData, bedType: e.target.value })}
-                        placeholder="Ej. 1 Cama King Size"
-                        className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                        required
-                      />
+                      <div className="flex gap-2">
+                        <select
+                          value={roomFormData.bedType}
+                          onChange={(e) => setRoomFormData({ ...roomFormData, bedType: e.target.value })}
+                          className="min-w-0 flex-1 px-3.5 py-2 rounded-xl border border-stone-200 bg-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                          required
+                        >
+                          {bedTypeOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+                        </select>
+                        <button type="button" onClick={() => addCustomOption('bed')} className="shrink-0 px-3 py-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-xs font-bold text-stone-700 inline-flex items-center gap-1">
+                          <Plus className="w-3.5 h-3.5" /> Nueva
+                        </button>
+                      </div>
                     </div>
 
                     <div>
