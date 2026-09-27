@@ -35,6 +35,12 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
       const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
       if (admin.error || !admin.data) throw new Error('Tu usuario no tiene autorización para publicar fotografías.');
       const selectedRoomId = roomId || rooms[0]?.id || '';
+      if (!replacePhoto && sectionSlot) {
+        const existing = await supabase.from('gallery_photos').select('id,details').eq('category', category);
+        if (existing.error) throw existing.error;
+        const count = (existing.data || []).filter(row => (row.details as { sectionSlot?: string } | null)?.sectionSlot === sectionSlot).length;
+        if (count + files.length > 3) throw new Error(`Este bloque admite máximo 3 fotos. Actualmente tiene ${count}; puedes agregar ${Math.max(0, 3-count)} más.`);
+      }
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (!['image/jpeg', 'image/png', 'image/webp', 'image/avif'].includes(file.type)) throw new Error('Solo se aceptan JPG, PNG, WebP o AVIF.');
