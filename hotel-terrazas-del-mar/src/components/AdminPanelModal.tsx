@@ -3,6 +3,7 @@ import { Room, PhotoItem, HotelConfig, PhotoCategory } from '../types';
 import { supabase } from '../lib/supabase';
 import { PhotoUploader } from './PhotoUploader';
 import { FaqEditor } from './FaqEditor';
+import { ReservationsCalendar } from './ReservationsCalendar';
 import { 
   X, 
   Settings, 
@@ -27,7 +28,8 @@ import {
   ShieldCheck,
   Globe,
   LogOut,
-  ArrowLeft
+  ArrowLeft,
+  CalendarDays
 } from 'lucide-react';
 
 interface AdminPanelModalProps {
@@ -57,7 +59,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onLogout,
   isDedicatedPage = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'rooms' | 'gallery' | 'faqs' | 'domain'>('general');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'rooms' | 'gallery' | 'faqs' | 'domain'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
@@ -412,7 +414,12 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white px-3 sm:px-6 py-2.5 grid grid-cols-5 sm:flex sm:items-center gap-1.5 sm:gap-2 border-b border-stone-200 shrink-0 sm:overflow-x-auto sticky top-0 z-20">
+      <div className="bg-white px-3 sm:px-6 py-2.5 grid grid-cols-3 sm:flex sm:items-center gap-1.5 sm:gap-2 border-b border-stone-200 shrink-0 sm:overflow-x-auto sticky top-0 z-20">
+        <button type="button" onClick={() => setActiveTab('calendar')}
+          className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'calendar' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
+          <CalendarDays className="w-4 h-4 text-brand-teal" /><span>Calendario</span>
+        </button>
+
         <button
           id="tab-admin-general"
           onClick={() => setActiveTab('general')}
@@ -482,6 +489,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       {/* Scrollable Content Body */}
       <div className={`flex-1 overflow-y-auto min-w-0 p-3 sm:p-6 bg-stone-50/50 ${isDedicatedPage ? 'max-w-7xl mx-auto w-full' : ''}`}>
           
+          {activeTab === 'calendar' && <ReservationsCalendar rooms={rooms} />}
+
           {/* TAB 1: GENERAL CONFIG & WHATSAPP */}
           {activeTab === 'general' && (
             <form onSubmit={handleSaveConfig} className="max-w-3xl mx-auto space-y-6">
