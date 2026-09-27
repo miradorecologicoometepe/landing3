@@ -1,5 +1,5 @@
 import type { HotelConfig, PhotoItem, Room } from '../types';
-import { HOTEL_CONFIG } from '../data/hotelData';
+import { HOTEL_CONFIG, ROOMS_DATA } from '../data/hotelData';
 import { supabase } from './supabase';
 
 export interface PublicSiteData {
@@ -21,7 +21,11 @@ export async function loadPublicSiteData(): Promise<PublicSiteData> {
     return {};
   }
   const config = configResult.data?.value as Partial<HotelConfig> | undefined;
-  const rooms = roomsResult.data?.map(row => row.details as Room).filter(room => Boolean(room?.id));
+  const rooms = roomsResult.data?.map(row => {
+    const room = row.details as Room;
+    const fallback = ROOMS_DATA.find(item => item.id === room?.id);
+    return room ? { ...room, images: room.images?.length ? room.images : (fallback?.images || []) } : room;
+  }).filter(room => Boolean(room?.id));
   const photos = photosResult.data?.map(row => ({
     ...(row.details as Omit<PhotoItem, 'id' | 'url'>),
     id: row.id,
