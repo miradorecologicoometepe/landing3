@@ -74,13 +74,15 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-stone-200/90 flex flex-col group"
               >
                 {/* Image Carousel Container */}
-                <div className="relative aspect-[16/10] overflow-hidden bg-stone-900">
-                  <img
-                    src={room.images[currentImgIndex]}
+                <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
+                  {room.images.length > 0 ? <img
+                    src={room.images[Math.min(currentImgIndex, room.images.length - 1)]}
                     alt={room.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
                     onClick={() => onSelectRoomForDetails(room)}
-                  />
+                  /> : <button type="button" onClick={() => onSelectRoomForDetails(room)} className="w-full h-full flex flex-col items-center justify-center gap-2 text-stone-500 bg-gradient-to-br from-stone-50 to-teal-50/60"><Bed className="w-8 h-8 text-teal-700/60" /><span className="text-xs font-semibold">Fotografías próximamente</span></button>}
 
                   {/* Top Badges */}
                   <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
@@ -142,7 +144,7 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
 
                     {/* Official Bed & Capacity Specs (matching Booking.com and user rules) */}
                     <div className="space-y-2 py-3 border-y border-stone-100 mb-3 text-xs text-stone-700">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
                         <Bed className="w-4 h-4 text-brand-teal shrink-0" />
                         <span className="font-semibold text-stone-800">{room.bedType}</span>
                       </div>
