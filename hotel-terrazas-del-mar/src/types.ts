@@ -58,6 +58,7 @@ export interface PhotoItem {
   caption: string;
   aspectRatio?: 'landscape' | 'portrait' | 'square';
   roomTypeId?: string;
+  sectionSlot?: string;
 }
 
 export interface ReviewItem {
