@@ -211,9 +211,11 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     setRoomFormData(newRoom);
   };
 
-  const handleSaveRoomForm = (e: React.FormEvent) => {
+  const handleSaveRoomForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!roomFormData) return;
+    if (!roomFormData || !supabase) return;
+    const saved = await supabase.from('rooms').upsert({ id: roomFormData.id, details: roomFormData }, { onConflict: 'id' }).select('id').maybeSingle();
+    if (saved.error || !saved.data) { triggerToast(saved.error?.message || 'No se pudo publicar la habitación.'); return; }
 
     const exists = rooms.some((r) => r.id === roomFormData.id);
     let updatedRooms: Room[];
@@ -256,7 +258,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, photo];
       }
       setRoomFormData(updatedRoom);
-      onSaveRooms(rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room));
+      onSaveRooms(rooms.some(room => room.id === updatedRoom.id) ? rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room) : [updatedRoom, ...rooms]);
       onSavePhotos(currentUploadedPhotosRef.current);
       setRoomPhotoStatus(`${urls.length} fotografía(s) añadidas correctamente.`);
     } catch (error) { setRoomPhotoStatus(error instanceof Error ? error.message : 'No se pudieron subir las fotografías.'); }
@@ -270,7 +272,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     const saved = await supabase.from('rooms').upsert({ id: updatedRoom.id, details: updatedRoom }, { onConflict: 'id' });
     if (saved.error) { setRoomPhotoStatus(saved.error.message); return; }
     setRoomFormData(updatedRoom);
-    onSaveRooms(rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room));
+    onSaveRooms(rooms.some(room => room.id === updatedRoom.id) ? rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room) : [updatedRoom, ...rooms]);
     setRoomPhotoStatus('Portada de la habitación actualizada.');
   };
 
@@ -282,12 +284,18 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     const linked = currentUploadedPhotosRef.current.filter(photo => photo.roomTypeId === updatedRoom.id && photo.url === url);
     for (const photo of linked) await supabase.from('gallery_photos').delete().eq('id', photo.id);
     currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(photo => !(photo.roomTypeId === updatedRoom.id && photo.url === url));
-    setRoomFormData(updatedRoom); onSaveRooms(rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room)); onSavePhotos(currentUploadedPhotosRef.current);
+    setRoomFormData(updatedRoom); onSaveRooms(rooms.some(room => room.id === updatedRoom.id) ? rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room) : [updatedRoom, ...rooms]); onSavePhotos(currentUploadedPhotosRef.current);
     setRoomPhotoStatus('Fotografía retirada de la habitación.');
   };
 
-  const handleDeleteRoom = (roomId: string) => {
-    if (confirm('¿Seguro que deseas eliminar esta habitación del catálogo?')) {
+  const handleDeleteRoom = async (roomId: string) => {
+    if (supabase && confirm('¿Seguro que deseas eliminar esta habitación del catálogo?')) {
+      const deleted = await supabase.from('rooms').delete().eq('id', roomId);
+      if (deleted.error) { triggerToast(deleted.error.message); return; }
+      const linked = currentUploadedPhotosRef.current.filter(p => p.roomTypeId === roomId);
+      if (linked.length) await supabase.from('gallery_photos').delete().in('id', linked.map(p => p.id));
+      currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(p => p.roomTypeId !== roomId);
+      onSavePhotos(currentUploadedPhotosRef.current);
       const updated = rooms.filter((r) => r.id !== roomId);
       onSaveRooms(updated);
       if (editingRoomId === roomId) {
@@ -318,9 +326,12 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     setPhotoFormData(newPhoto);
   };
 
-  const handleSavePhotoForm = (e: React.FormEvent) => {
+  const handleSavePhotoForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!photoFormData) return;
+    if (!photoFormData || !supabase) return;
+    const row = { id: photoFormData.id, category: photoFormData.category, image_path: photoFormData.url, details: { title: photoFormData.title, caption: photoFormData.caption || '', roomTypeId: photoFormData.roomTypeId || null, aspectRatio: photoFormData.aspectRatio || 'landscape' }, sort_order: Date.now() };
+    const saved = await supabase.from('gallery_photos').upsert(row, { onConflict: 'id' }).select('id').maybeSingle();
+    if (saved.error || !saved.data) { triggerToast(saved.error?.message || 'No se pudo publicar la fotografía.'); return; }
 
     const exists = photos.some((p) => p.id === photoFormData.id);
     let updatedPhotos: PhotoItem[];
@@ -335,8 +346,10 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     triggerToast('Fotografía guardada en la galería.');
   };
 
-  const handleDeletePhoto = (photoId: string) => {
-    if (confirm('¿Eliminar esta fotografía de la galería?')) {
+  const handleDeletePhoto = async (photoId: string) => {
+    if (supabase && confirm('¿Eliminar esta fotografía de la galería?')) {
+      const deleted = await supabase.from('gallery_photos').delete().eq('id', photoId);
+      if (deleted.error) { triggerToast(deleted.error.message); return; }
       const updated = photos.filter((p) => p.id !== photoId);
       onSavePhotos(updated);
       if (editingPhotoId === photoId) {
