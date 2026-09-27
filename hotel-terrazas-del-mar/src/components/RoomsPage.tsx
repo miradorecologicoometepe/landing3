@@ -78,7 +78,9 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
         {/* Rooms Detailed Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {rooms.map((room) => {
-            const isFamilyRoom = room.id === 'habitacion-familiar-vistas-lago';
+            const tiers = Array.isArray(room.pricingTiers) ? room.pricingTiers : [];
+            const prices = tiers.map(tier => Number(tier.price)).filter(price => Number.isFinite(price));
+            const maxPrice = prices.length ? Math.max(...prices) : room.pricePerNight;
 
             return (
               <div
@@ -88,11 +90,13 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
                 <div>
                   {/* Photo Showcase */}
                   <div className="relative aspect-[16/10] overflow-hidden bg-stone-900">
-                    <img
-                      src={room.images[0] || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'}
+                    {room.images.length > 0 ? <img
+                      src={room.images[0]}
                       alt={room.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-stone-50 to-teal-50 text-stone-500"><Bed className="w-9 h-9 text-teal-700/60" /><span className="text-xs font-semibold">Fotografías próximamente</span></div>}
                     <div className="absolute top-3 left-3 flex gap-2">
                       <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-xs font-bold">
                         {room.badge || room.type}
@@ -123,7 +127,7 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
 
                     {/* Beds & Capacity */}
                     <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-2.5 text-xs text-stone-700">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
                         <Bed className="w-4 h-4 text-teal-600 shrink-0" />
                         <span className="font-semibold text-stone-900">Camas: {room.bedType}</span>
                       </div>
@@ -134,27 +138,24 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
                         </span>
                       </div>
 
-                      {/* Pricing Tier Details */}
-                      {isFamilyRoom ? (
-                        <div className="mt-2 pt-2 border-t border-stone-200 space-y-1">
-                          <div className="text-[11px] font-bold text-stone-800">Tarifas por número de personas:</div>
+                      {/* Dynamic pricing tiers from the room editor */}
+                      <div className="mt-2 pt-2 border-t border-stone-200">
+                        {tiers.length > 0 ? (
                           <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-xs">
-                            <div className="p-2 rounded-lg bg-teal-50 border border-teal-200 text-teal-950">
-                              <div className="text-[10px] text-teal-700 font-bold uppercase">1 a 3 personas</div>
-                              <div className="font-black text-base">$70 <span className="text-[10px] font-normal">USD / noche</span></div>
-                            </div>
-                            <div className="p-2 rounded-lg bg-teal-50 border border-teal-200 text-teal-950">
-                              <div className="text-[10px] text-teal-700 font-bold uppercase">4 personas</div>
-                              <div className="font-black text-base">$90 <span className="text-[10px] font-normal">USD / noche</span></div>
-                            </div>
+                            {tiers.map((tier, index) => (
+                              <div key={index} className="p-2 rounded-lg bg-teal-50 border border-teal-200 text-teal-950">
+                                <div className="text-[10px] text-teal-700 font-bold uppercase">{tier.label || `${tier.guests} huéspedes`}</div>
+                                <div className="font-black text-base">${tier.price} <span className="text-[10px] font-normal">USD / noche</span></div>
+                              </div>
+                            ))}
                           </div>
-                        </div>
-                      ) : (
-                        <div className="mt-2 pt-2 border-t border-stone-200 flex items-center justify-between">
-                          <span className="text-stone-600">Tarifa fija directa:</span>
-                          <span className="font-bold text-teal-800 text-sm">$60 USD / noche</span>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <span className="text-stone-600">Tarifa por noche:</span>
+                            <span className="font-bold text-teal-800 text-sm">${room.pricePerNight} USD</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {/* Amenities Checklist */}
@@ -181,7 +182,7 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
                       <span className="text-2xl font-black text-stone-900">
                         ${room.pricePerNight}
                       </span>
-                      {isFamilyRoom && <span className="text-base font-bold text-stone-600">- $90</span>}
+                      {maxPrice > room.pricePerNight && <span className="text-base font-bold text-stone-600">- ${maxPrice}</span>}
                       <span className="text-xs text-stone-500">USD / noche</span>
                     </div>
                   </div>
