@@ -17,8 +17,9 @@ export interface Room {
   };
   maxOccupancy: number; // Cantidad máxima de personas permitidas
   pricingTiers?: PricingTier[];
+  includedGuests?: number;
+  extraGuestPrice?: number;
   bedType: string;
-  sizeM2: number;
   view: string;
   badge?: string;
   featured?: boolean;
