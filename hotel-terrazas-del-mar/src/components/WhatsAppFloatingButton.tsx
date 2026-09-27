@@ -35,7 +35,7 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
       {/* Mobile Sticky Bottom Bar (OTA Style) */}
       <div 
         id="mobile-sticky-booking-bar"
-        className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 p-3 sm:hidden shadow-2xl flex items-center justify-between gap-3"
+        className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 px-3 pt-2.5 pb-[calc(0.65rem+env(safe-area-inset-bottom))] sm:hidden shadow-2xl flex items-center justify-between gap-2"
       >
         <div>
           <div className="text-[10px] uppercase font-bold text-stone-500">
@@ -47,7 +47,7 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
         <button
           id="btn-mobile-sticky-reserve"
           onClick={onOpenBookingModal}
-          className="flex-1 max-w-[190px] py-2.5 px-4 rounded-xl bg-[#387378] hover:bg-[#2c5b5f] text-white font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+          className="flex-1 max-w-[180px] py-2.5 px-3 rounded-xl bg-[#387378] hover:bg-[#2c5b5f] text-white font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
         >
           <MessageCircle className="w-4 h-4 fill-white" />
           <span>Consultar WhatsApp</span>
