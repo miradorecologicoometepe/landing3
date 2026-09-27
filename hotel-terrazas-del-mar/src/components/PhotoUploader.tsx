@@ -83,14 +83,15 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
   };
 
   return <form onSubmit={publish} className="bg-white border border-teal-200 rounded-2xl p-3 sm:p-5 space-y-4">
-    <h4 className="text-lg font-bold text-stone-900">{replacePhoto ? `Reemplazar: ${replacePhoto.title}` : 'Subir fotografías reales'}</h4>
-    <p className="text-sm text-stone-600">Selecciona fotos desde tu teléfono o computadora. Se publicarán en Supabase para todos los visitantes. No uses imágenes de muestra.</p>
+    <h4 className="text-lg font-bold text-stone-900">{replacePhoto ? `Reemplazar: ${replacePhoto.title}` : 'Añadir fotos a la web'}</h4>
+    <p className="text-sm text-stone-600">Elige primero dónde quieres que aparezcan. El panel se encarga de publicarlas en la sección correcta.</p>
     {!supabase && <p role="alert" className="text-red-700 text-sm">Supabase no está configurado en esta versión de la web.</p>}
     {!replacePhoto && <label className="block text-sm font-semibold text-stone-800">Ubicación de las fotografías
       <select value={category} onChange={e=>setCategory(e.target.value as PhotoCategory)} className="block w-full mt-1 border rounded-xl p-3">
-        <option value="rooms">Habitaciones</option><option value="pool">Piscina</option><option value="outdoors">Portada, jardines y exteriores</option><option value="events">Eventos y celebraciones</option><option value="gastronomy">Gastronomía</option>
+        <option value="outdoors">Inicio y exteriores — galería + entorno</option><option value="rooms">Habitaciones — ficha de habitación + galería</option><option value="pool">Piscina y mirador — galería + página de eventos</option><option value="events">Eventos y celebraciones — galería + página de eventos</option><option value="gastronomy">Gastronomía — galería</option>
       </select>
     </label>}
+    {!replacePhoto && <div className="rounded-xl bg-stone-50 border border-stone-200 p-3 text-xs text-stone-600"><strong className="text-stone-900">Destino:</strong> {category==='rooms'?'Se añadirá a la habitación seleccionada y también a la Galería pública.':category==='pool'?'Aparecerá en Piscina & Mirador dentro de la Galería y podrá usarse en Eventos.':category==='events'?'Aparecerá en Eventos y celebraciones y en la Galería pública.':category==='gastronomy'?'Aparecerá en Gastronomía dentro de la Galería pública.':'Aparecerá como foto de exteriores/naturaleza en la Galería pública.'}</div>}
     {!replacePhoto && category === 'rooms' && <label className="block text-sm font-semibold text-stone-800">Habitación
       <select value={roomId || rooms[0]?.id || ''} onChange={e=>setRoomId(e.target.value)} className="block w-full mt-1 border rounded-xl p-3">{rooms.map(room=><option key={room.id} value={room.id}>{room.name}</option>)}</select>
     </label>}
