@@ -460,6 +460,8 @@ export default function App() {
             {/* Location & Frequently Asked Questions */}
             <LocationSection
               onOpenBookingModal={() => handleOpenBookingModal()}
+              hotelConfig={hotelConfig}
+              faqs={faqs}
             />
           </div>
         )}
@@ -507,6 +509,8 @@ export default function App() {
           <div className="pt-16">
             <LocationSection
               onOpenBookingModal={() => handleOpenBookingModal()}
+              hotelConfig={hotelConfig}
+              faqs={faqs}
             />
           </div>
         )}
