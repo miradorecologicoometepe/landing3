@@ -57,7 +57,7 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
             Nuestros Tipos de Habitación
           </h2>
           <p className="text-stone-600 text-sm leading-relaxed">
-            Comodidad campestre frente al lago y los volcanes, con aire acondicionado, baño privado y atención directa por WhatsApp.
+            Comodidad campestre rodeada de naturaleza, con vistas al paisaje de Ometepe, aire acondicionado, baño privado y atención directa por WhatsApp.
           </p>
         </div>
 
