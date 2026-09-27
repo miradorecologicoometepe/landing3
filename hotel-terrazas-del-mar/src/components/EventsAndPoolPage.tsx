@@ -29,6 +29,17 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
   onOpenBookingModal 
 }) => {
   const [activeSection, setActiveSection] = useState<'all' | 'eventos' | 'piscina'>('all');
+  const [eventQuoteOpen, setEventQuoteOpen] = useState(false);
+  const [eventDate, setEventDate] = useState('');
+  const [eventType, setEventType] = useState('');
+  const [eventGuests, setEventGuests] = useState('');
+
+  const openEventWhatsApp = () => {
+    if (!eventDate || !eventType || !eventGuests) return;
+    const message = `Hola ${hotelConfig.name}, quiero consultar disponibilidad para un evento.\n\n📅 Fecha: ${eventDate}\n🎉 Tipo de evento: ${eventType}\n👥 Cantidad de personas: ${eventGuests}\n\n¿Me pueden compartir disponibilidad y opciones?`;
+    window.open(`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+    setEventQuoteOpen(false);
+  };
 
   const eventPhotos = photos.filter(photo => photo.category === 'events');
   const poolPhotos = photos.filter(photo => photo.category === 'pool');
@@ -143,15 +154,10 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                 </p>
               </div>
 
-              <a
-                href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola ${hotelConfig.name}, quiero cotizar el salón de eventos para una fecha específica. ¿Me pueden compartir disponibilidad, capacidad y opciones?`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs shadow-md shrink-0 self-start md:self-auto"
-              >
+              <button type="button" onClick={() => setEventQuoteOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs shadow-md shrink-0 self-start md:self-auto">
                 <Calendar className="w-4 h-4" />
-                <span>Cotizar salón de eventos</span>
-              </a>
+                <span>Consultar fechas de evento</span>
+              </button>
             </div>
 
             {/* Event Images Showcase */}
@@ -316,6 +322,18 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
         </div>
       </section>
+
+      {eventQuoteOpen && <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEventQuoteOpen(false)}>
+        <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl p-6 sm:p-7" onClick={e => e.stopPropagation()}>
+          <div className="flex items-start justify-between gap-4 mb-5"><div><p className="text-xs font-bold uppercase tracking-wider text-teal-700">Consulta de evento</p><h3 className="text-xl font-extrabold text-stone-900 mt-1">Cuéntanos sobre tu evento</h3><p className="text-sm text-stone-500 mt-1">Completa estos datos y continuaremos la consulta por WhatsApp.</p></div><button type="button" onClick={() => setEventQuoteOpen(false)} className="w-9 h-9 rounded-full bg-stone-100 text-stone-600 font-bold">×</button></div>
+          <div className="space-y-4">
+            <div><label className="block text-xs font-bold text-stone-700 mb-1.5">Fecha del evento</label><input type="date" value={eventDate} min={new Date().toISOString().split('T')[0]} onChange={e => setEventDate(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white text-sm" /></div>
+            <div><label className="block text-xs font-bold text-stone-700 mb-1.5">Tipo de evento</label><select value={eventType} onChange={e => setEventType(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white text-sm"><option value="">Seleccionar</option><option>Boda</option><option>Cumpleaños</option><option>Quinceaños</option><option>Aniversario</option><option>Reunión familiar</option><option>Retiro / Taller</option><option>Evento corporativo</option><option>Otro</option></select></div>
+            <div><label className="block text-xs font-bold text-stone-700 mb-1.5">Cantidad de personas</label><input type="number" min="1" inputMode="numeric" value={eventGuests} onChange={e => setEventGuests(e.target.value)} placeholder="Ej. 40" className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white text-sm" /></div>
+            <button type="button" disabled={!eventDate || !eventType || !eventGuests} onClick={openEventWhatsApp} className="w-full mt-2 px-5 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-bold text-sm flex items-center justify-center gap-2"><MessageCircle className="w-4 h-4" />Consultar disponibilidad por WhatsApp</button>
+          </div>
+        </div>
+      </div>}
     </main>
   );
 };
