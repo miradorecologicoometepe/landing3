@@ -44,7 +44,6 @@ export default function App() {
   const [photos, setPhotos] = useState<PhotoItem[]>(GALLERY_PHOTOS);
   const [faqs, setFaqs] = useState<FaqItem[]>(DEFAULT_FAQS);
   const [publicContentError, setPublicContentError] = useState('');
-  const [, setPublicContentReady] = useState(false);
 
   // Load published content for all visitors. Never block rendering if the network is slow.
   useEffect(() => {
@@ -56,8 +55,7 @@ export default function App() {
       if (data.photos) setPhotos(data.photos);
       if (data.faqs) setFaqs(data.faqs);
       setPublicContentError(data.error || '');
-      setPublicContentReady(true);
-    }).catch(error => { console.error('Unable to load published site content', error); if (active) { setPublicContentError('No se pudo cargar el contenido publicado.'); setPublicContentReady(true); } });
+    }).catch(error => { console.error('Unable to load published site content', error); if (active) setPublicContentError('No se pudo cargar el contenido publicado.'); });
     return () => { active = false; };
   }, []);
 
