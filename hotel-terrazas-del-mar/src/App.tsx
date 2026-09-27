@@ -40,13 +40,13 @@ export default function App() {
 
   // Persistent Customization State
   const [hotelConfig, setHotelConfig] = useState<HotelConfig>(HOTEL_CONFIG);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [photos, setPhotos] = useState<PhotoItem[]>([]);
+  const [rooms, setRooms] = useState<Room[]>(ROOMS_DATA);
+  const [photos, setPhotos] = useState<PhotoItem[]>(GALLERY_PHOTOS);
   const [faqs, setFaqs] = useState<FaqItem[]>(DEFAULT_FAQS);
   const [publicContentError, setPublicContentError] = useState('');
-  const [publicContentReady, setPublicContentReady] = useState(false);
+  const [, setPublicContentReady] = useState(false);
 
-  // Load published content for all visitors; preserve existing defaults until content is published.
+  // Load published content for all visitors. Never block rendering if the network is slow.
   useEffect(() => {
     let active = true;
     loadPublicSiteData().then(data => {
