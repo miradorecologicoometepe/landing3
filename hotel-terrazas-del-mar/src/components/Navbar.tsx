@@ -66,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header 
       id="main-navbar-island"
-      className="fixed top-2 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-12px)] sm:w-[95%] max-w-7xl transition-all duration-300"
+      className="fixed top-2 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-16px)] sm:w-[95%] max-w-7xl transition-all duration-300"
     >
       {/* Floating Island Pill Bar */}
       <div 
@@ -79,10 +79,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand Logo */}
         <button 
           onClick={() => handleNavClick('inicio')}
-          className="flex items-center gap-2 group cursor-pointer min-w-0 flex-1 lg:flex-none text-left focus:outline-none" 
+          className="flex items-center gap-2 group cursor-pointer min-w-0 flex-1 lg:flex-none overflow-hidden text-left focus:outline-none" 
           title={hotelConfig.name}
         >
-          <HotelLogo variant="horizontal" mode="color" height={40} logoUrl={hotelConfig.logoUrl} className="min-w-0" />
+          <HotelLogo variant="horizontal" mode="color" height={36} logoUrl={hotelConfig.logoUrl} className="min-w-0" />
         </button>
 
         {/* Desktop Minimalist Nav Links */}
