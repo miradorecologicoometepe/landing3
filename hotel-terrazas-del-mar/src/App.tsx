@@ -105,11 +105,23 @@ export default function App() {
     let revision = 0;
     const verify = async () => {
       const currentRevision = ++revision;
-      const { data: { user } } = await supabase.auth.getUser();
-      const admin = user ? await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle() : null;
-      if (active && currentRevision === revision) {
-        setIsAdminAuth(Boolean(user && admin?.data && !admin.error));
-        setAdminAuthChecking(false);
+      try {
+        const sessionResult = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise<null>(resolve => window.setTimeout(() => resolve(null), 2500)),
+        ]);
+        const user = sessionResult?.data?.session?.user ?? null;
+        let authorized = false;
+        if (user) {
+          const adminResult = await Promise.race([
+            supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle(),
+            new Promise<null>(resolve => window.setTimeout(() => resolve(null), 2500)),
+          ]);
+          authorized = Boolean(adminResult?.data && !adminResult?.error);
+        }
+        if (active && currentRevision === revision) setIsAdminAuth(authorized);
+      } finally {
+        if (active && currentRevision === revision) setAdminAuthChecking(false);
       }
     };
     void verify();
@@ -236,7 +248,12 @@ export default function App() {
   // SCENARIO 1: DEDICATED ADMIN ROUTE (admin.dominio.com / #admin)
   // ==========================================
   if (isAdminRoute) {
-    if (adminAuthChecking) return <div className="min-h-screen bg-[#0d1c1e] text-white flex items-center justify-center">Verificando acceso…</div>;
+    const authError = typeof window !== 'undefined' && (window.location.hash.includes('error=access_denied') || window.location.hash.includes('error_code=otp_expired'));
+    if (authError && adminAuthChecking) {
+      window.history.replaceState(null, '', window.location.pathname);
+      setAdminAuthChecking(false);
+    }
+    if (adminAuthChecking) return <div className="min-h-screen bg-[#0d1c1e] text-white flex items-center justify-center"><div className="text-center"><div className="w-7 h-7 mx-auto mb-3 rounded-full border-2 border-teal-300 border-t-transparent animate-spin"></div><p className="text-sm">Verificando acceso…</p></div></div>;
     if (isPasswordRecovery || !isAdminAuth) {
       return (
         <AdminLoginScreen
