@@ -60,8 +60,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'rooms' | 'gallery' | 'faqs' | 'security' | 'domain'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
-  const [logoEmail, setLogoEmail] = useState('');
-  const [logoPassword, setLogoPassword] = useState('');
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -130,14 +128,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     setLogoSaving(true);
     setLogoStatus('');
     try {
-      let { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) {
-        if (!logoEmail || !logoPassword) throw new Error('Inicia sesión con una cuenta autorizada de Supabase para publicar.');
-        const login = await supabase.auth.signInWithPassword({ email: logoEmail, password: logoPassword });
-        if (login.error) throw login.error;
-        user = login.data.user;
-      }
-      if (!user) throw new Error('No se pudo verificar tu sesión.');
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Tu sesión administrativa expiró. Cierra sesión y vuelve a ingresar.');
       const { data: admin, error: adminError } = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
       if (adminError || !admin) throw new Error('Esta cuenta no tiene permisos de administrador en Supabase.');
       const extension = logoFile.name.split('.').pop()?.toLowerCase() || 'png';
@@ -504,11 +496,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 <label htmlFor="hotel-logo-file" className="block text-xs font-semibold text-stone-700">Seleccionar logo</label>
                 <input id="hotel-logo-file" type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/svg+xml" onChange={e => { setLogoFile(e.target.files?.[0] || null); setLogoStatus(''); }} className="block w-full min-w-0 text-sm border rounded-xl p-3 bg-white" />
                 {(logoPreview || configForm.logoUrl) && <img src={logoPreview || configForm.logoUrl} alt="Vista previa del logo" className="h-24 max-w-full object-contain rounded-lg border p-2" />}
-                <p className="text-xs text-stone-500">Publica el logo con una cuenta administradora autorizada de Supabase.</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input type="email" autoComplete="username" value={logoEmail} onChange={e => setLogoEmail(e.target.value)} placeholder="Correo de administrador Supabase" aria-label="Correo de administrador Supabase" className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm" />
-                  <input type="password" autoComplete="current-password" value={logoPassword} onChange={e => setLogoPassword(e.target.value)} placeholder="Contraseña Supabase" aria-label="Contraseña Supabase" className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm" />
-                </div>
+                <p className="text-xs text-emerald-700">Tu sesión administrativa actual se utilizará para publicar el logo.</p>
                 <button type="button" disabled={logoSaving || !supabase || !logoFile} onClick={handlePublishLogo} className="px-4 py-2 rounded-xl bg-[#087f83] text-white font-semibold text-sm disabled:opacity-50">{logoSaving ? 'Subiendo y publicando…' : 'Subir / reemplazar logo'}</button>
                 {logoStatus && <p role="status" className="text-xs text-stone-700">{logoStatus}</p>}
               </div>
