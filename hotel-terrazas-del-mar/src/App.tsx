@@ -154,6 +154,50 @@ export default function App() {
   }, []);
   const [activePage, setActivePage] = useState<PageId>(getInitialPage);
 
+  // SEO metadata for each public section of the SPA.
+  useEffect(() => {
+    if (isAdminRoute || typeof document === 'undefined') return;
+    const seo: Record<PageId, { title: string; description: string }> = {
+      inicio: {
+        title: 'Hotel Mirador Ecológico | Alojamiento en Ometepe',
+        description: 'Alojamiento en Altagracia, Isla de Ometepe, con habitaciones, piscina, eventos y vistas al paisaje del lago y el volcán. Consulta por WhatsApp.',
+      },
+      habitaciones: {
+        title: 'Habitaciones en Ometepe | Hotel Mirador Ecológico',
+        description: 'Consulta habitaciones en Altagracia, Ometepe: opción matrimonial y familiar, aire acondicionado, baño privado, piscina y reserva directa por WhatsApp.',
+      },
+      'eventos-piscina': {
+        title: 'Eventos y Piscina en Ometepe | Mirador Ecológico',
+        description: 'Espacio campestre para bodas, cumpleaños y eventos en Ometepe, con piscina y un entorno natural con vistas al paisaje de la isla.',
+      },
+      transporte: {
+        title: 'Horarios de Ferries y Buses en Ometepe | Mirador Ecológico',
+        description: 'Consulta nuestra guía de ferries San Jorge–Moyogalpa, San José del Sur y rutas de buses en Ometepe. Confirma horarios con los operadores antes de viajar.',
+      },
+      galeria: {
+        title: 'Fotos de Mirador Ecológico | Ometepe, Nicaragua',
+        description: 'Conoce en imágenes las habitaciones, piscina, eventos y entorno natural de Mirador Ecológico en Altagracia, Isla de Ometepe.',
+      },
+      contacto: {
+        title: 'Contacto y Ubicación | Mirador Ecológico Ometepe',
+        description: 'Información de contacto y ubicación de Hotel Mirador Ecológico en Altagracia, Isla de Ometepe. Consulta disponibilidad directamente por WhatsApp.',
+      },
+    };
+    const current = seo[activePage];
+    document.title = current.title;
+    let description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (!description) { description = document.createElement('meta'); description.name = 'description'; document.head.appendChild(description); }
+    description.content = current.description;
+    const setProperty = (property: string, value: string) => {
+      let meta = document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`);
+      if (!meta) { meta = document.createElement('meta'); meta.setAttribute('property', property); document.head.appendChild(meta); }
+      meta.content = value;
+    };
+    setProperty('og:title', current.title);
+    setProperty('og:description', current.description);
+    setProperty('og:url', `https://miradorecologicoometepe.com/${activePage === 'inicio' ? '' : '#' + activePage}`);
+  }, [activePage, isAdminRoute]);
+
   // Listen to hash and keyboard shortcuts (Ctrl+Alt+A / Cmd+Alt+A)
   useEffect(() => {
     const handleUrlChange = () => {
@@ -414,7 +458,7 @@ export default function App() {
                         Local para Eventos & Piscina
                       </h3>
                       <p className="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
-                        Celebra tus cumpleaños, bodas frente al lago o retiros en nuestro local campestre, y disfruta de nuestra piscina panorámica con solárium.
+                        Celebra cumpleaños, bodas y encuentros en nuestro local campestre rodeado de naturaleza, y disfruta de la piscina y el paisaje de Ometepe.
                       </p>
                     </div>
 
