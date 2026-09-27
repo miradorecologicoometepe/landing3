@@ -356,27 +356,27 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     <div className={`bg-white ${isDedicatedPage ? 'min-h-[100dvh] flex flex-col min-w-0' : 'rounded-xl sm:rounded-2xl w-full max-w-5xl min-w-0 shadow-2xl border border-stone-200 flex flex-col max-h-[92vh] overflow-hidden'}`}>
       
       {/* Header Bar */}
-      <div className="bg-[#18363a] text-white px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-[#24474d] shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="bg-[#18363a] text-white px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#24474d] shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 rounded-xl bg-[#C2ECE5]/20 border border-brand-mint/40 flex items-center justify-center text-brand-mint">
             <Lock className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-gidole font-extrabold text-lg text-white">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <h3 className="font-gidole font-extrabold text-base sm:text-lg text-white truncate">
                 {hotelConfig.name} — Backoffice PMS
               </h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold bg-brand-terracotta text-white">
-                admin.dominio.com
+              <span className="hidden md:inline-flex px-2 py-0.5 rounded-full text-[10px] uppercase font-bold bg-brand-terracotta text-white">
+                Panel privado
               </span>
             </div>
-            <p className="text-xs text-[#C2ECE5]/80">
-              Panel privado de control hotelero, habitaciones, galería y reservas directas por WhatsApp.
+            <p className="text-[11px] sm:text-xs text-[#C2ECE5]/80 line-clamp-2">
+              Administración privada de contenido, habitaciones y operación del Mirador Ecológico.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
           {/* View Public Website */}
           <button
             onClick={onClose}
@@ -384,18 +384,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
             title="Ver cómo ven el hotel los huéspedes en el sitio web público"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            <span>Ver Sitio Público</span>
-          </button>
-
-          {/* Reset Defaults */}
-          <button
-            id="btn-admin-reset"
-            onClick={handleResetDefaults}
-            className="text-xs text-stone-300 hover:text-red-300 px-3 py-1.5 rounded-lg hover:bg-stone-800 transition-colors flex items-center gap-1.5 cursor-pointer"
-            title="Restaurar valores de muestra iniciales"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Restaurar</span>
+            <span>Ver sitio</span>
           </button>
 
           {/* Logout button */}
@@ -423,62 +412,62 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-stone-100 px-2 sm:px-6 pt-2 sm:pt-3 flex items-center gap-2 border-b border-stone-200 shrink-0 overflow-x-auto">
+      <div className="bg-white px-3 sm:px-6 py-2.5 grid grid-cols-5 sm:flex sm:items-center gap-1.5 sm:gap-2 border-b border-stone-200 shrink-0 sm:overflow-x-auto sticky top-0 z-20">
         <button
           id="tab-admin-general"
           onClick={() => setActiveTab('general')}
-          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+          className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all cursor-pointer min-w-0 ${
             activeTab === 'general'
-              ? 'bg-white text-stone-900 border-t-2 border-[#387378] shadow-sm'
+              ? 'bg-teal-50 text-teal-900 border border-teal-200 shadow-sm'
               : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'
           }`}
         >
           <Building2 className="w-4 h-4 text-brand-teal" />
-          <span>Datos del Hotel & WhatsApp</span>
+          <span className="truncate">Hotel</span>
         </button>
 
         <button
           id="tab-admin-rooms"
           onClick={() => setActiveTab('rooms')}
-          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+          className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all cursor-pointer min-w-0 ${
             activeTab === 'rooms'
-              ? 'bg-white text-stone-900 border-t-2 border-[#387378] shadow-sm'
+              ? 'bg-teal-50 text-teal-900 border border-teal-200 shadow-sm'
               : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'
           }`}
         >
           <Bed className="w-4 h-4 text-teal-600" />
-          <span>Habitaciones & Tarifas ({rooms.length})</span>
+          <span className="truncate">Habitaciones</span>
         </button>
 
         <button
           id="tab-admin-gallery"
           onClick={() => setActiveTab('gallery')}
-          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+          className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all cursor-pointer min-w-0 ${
             activeTab === 'gallery'
-              ? 'bg-white text-stone-900 border-t-2 border-[#387378] shadow-sm'
+              ? 'bg-teal-50 text-teal-900 border border-teal-200 shadow-sm'
               : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'
           }`}
         >
           <Image className="w-4 h-4 text-brand-teal" />
-          <span>Galería de Fotos ({photos.length})</span>
+          <span className="truncate">Galería</span>
         </button>
 
         <button type="button" onClick={() => setActiveTab('faqs')}
-          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap ${activeTab === 'faqs' ? 'bg-white text-stone-900 border-t-2 border-[#387378]' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
-          <HelpCircle className="w-4 h-4 text-brand-teal" /><span>Preguntas frecuentes</span>
+          className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'faqs' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
+          <HelpCircle className="w-4 h-4 text-brand-teal" /><span className="truncate">Preguntas</span>
         </button>
 
         <button
           id="tab-admin-domain"
           onClick={() => setActiveTab('domain')}
-          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+          className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all cursor-pointer min-w-0 ${
             activeTab === 'domain'
-              ? 'bg-white text-stone-900 border-t-2 border-[#387378] shadow-sm'
+              ? 'bg-teal-50 text-teal-900 border border-teal-200 shadow-sm'
               : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'
           }`}
         >
           <Globe className="w-4 h-4 text-brand-teal" />
-          <span>admin.dominio.com</span>
+          <span className="truncate">Acceso</span>
         </button>
       </div>
 
@@ -501,7 +490,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
                   <div className="font-bold text-amber-950 mb-0.5">Sincronización en tiempo real</div>
-                  Al guardar, los cambios se reflejan al instante en la barra de navegación, el hero, los enlaces de WhatsApp, las políticas y el pie de página.
+                  Los cambios publicados se guardan en Supabase y la landing los carga desde allí. No se usan datos locales del navegador.
                 </div>
               </div>
 
