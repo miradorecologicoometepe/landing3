@@ -172,7 +172,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
             }`}
           >
             <Car className="w-4 h-4 text-teal-600" />
-            <span>Taxis & Alquiler</span>
+            <span>Traslados & Guías</span>
           </button>
         </div>
 
@@ -355,17 +355,17 @@ export const TransportPage: React.FC<TransportPageProps> = ({
           </div>
         )}
 
-        {/* TAB 3: TAXIS & ALQUILER */}
+        {/* TAB 3: TRASLADOS & GUÍAS */}
         {activeTab === 'taxis' && (
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 space-y-6">
               <div>
                 <h3 className="font-gidole text-xl font-bold text-stone-900 mb-1 flex items-center gap-2">
                   <Car className="w-5 h-5 text-teal-600" />
-                  Traslados Privados, Taxis & Alquiler de Motos
+                  Traslados, Taxis & Guías Locales
                 </h3>
                 <p className="text-xs sm:text-sm text-stone-500">
-                  La forma más cómoda y flexible de moverte en Ometepe a tu propio ritmo.
+                  Podemos ayudarte a coordinar tu llegada al hotel y ponerte en contacto con guías locales para explorar los volcanes de Ometepe.
                 </p>
               </div>
 
@@ -376,39 +376,39 @@ export const TransportPage: React.FC<TransportPageProps> = ({
                   <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center">
                     <Car className="w-5 h-5" />
                   </div>
-                  <h4 className="font-bold text-stone-900 text-base">Taxi Privado Recomendado</h4>
+                  <h4 className="font-bold text-stone-900 text-base">Traslado al Hotel</h4>
                   <p className="text-xs text-stone-600 leading-relaxed">
-                    Podemos coordinar que un taxista local de confianza te espere a la salida de tu ferry en el puerto de Moyogalpa o San José del Sur y te traiga directo al hotel en Altagracia.
+                    Podemos ayudarte a contactar un taxi local para que te espere al llegar a Ometepe y te lleve directamente al Mirador Ecológico en Altagracia.
                   </p>
-                  <div className="text-xs font-semibold text-teal-900">
-                    Tarifa aprox. Moyogalpa ➔ Hotel: $20 - $25 USD
-                  </div>
                   <a
-                    href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola, deseo cotizar el traslado en taxi desde el puerto hacia Hotel Mirador Ecológico.`)}`}
+                    href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola, necesito ayuda para coordinar un taxi que me lleve desde mi punto de llegada en Ometepe hasta Hotel Mirador Ecológico. ¿Me pueden ayudar?`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-800"
                   >
-                    <span>Coordinar taxi por WhatsApp</span>
+                    <span>Solicitar contacto de taxi</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </a>
                 </div>
 
-                {/* Alquiler de Motos y Scooters */}
+                {/* Guías locales para volcanes */}
                 <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/60 space-y-3">
                   <div className="w-10 h-10 rounded-xl bg-stone-800 text-white flex items-center justify-center">
                     <Compass className="w-5 h-5" />
                   </div>
-                  <h4 className="font-bold text-stone-900 text-base">Alquiler de Moto o Scooter</h4>
+                  <h4 className="font-bold text-stone-900 text-base">Guías para subir los volcanes</h4>
                   <p className="text-xs text-stone-600 leading-relaxed">
-                    Alquilar una moto scooter o motocicleta es la forma favorita de explorar Ometepe: Ojo de Agua, cascada San Ramón, Charco Verde y playas de Altagracia.
+                    Si quieres hacer senderismo en el Concepción o el Maderas, podemos ayudarte a contactar un guía local para organizar la excursión según tu fecha y grupo.
                   </p>
-                  <div className="text-xs font-semibold text-stone-800">
-                    Tarifa aprox.: $18 - $25 USD / día
-                  </div>
-                  <p className="text-[11px] text-stone-500">
-                    Requisitos: Licencia de conducir vigente y uso obligatorio de casco.
-                  </p>
+                  <a
+                    href={`https://wa.me/${hotelConfig.whatsAppNumber}?text=${encodeURIComponent(`Hola, me hospedo o planeo hospedarme en Hotel Mirador Ecológico y quisiera contacto de un guía local para subir un volcán en Ometepe. ¿Me pueden ayudar?`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-800"
+                  >
+                    <span>Solicitar contacto de guía</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </a>
                 </div>
 
               </div>
