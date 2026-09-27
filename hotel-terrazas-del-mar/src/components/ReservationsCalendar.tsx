@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, Plus, Save, Trash2, X } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, Save, Trash2, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Room } from '../types';
 
@@ -14,9 +14,13 @@ export const ReservationsCalendar: React.FC<{rooms: Room[]}> = ({ rooms }) => {
   const [loading,setLoading]=useState(true);
   const [editing,setEditing]=useState<Partial<Reservation>|null>(null);
   const [status,setStatus]=useState('');
+  const [month,setMonth]=useState(()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1)});
   const load=async()=>{ if(!supabase)return; setLoading(true); const {data,error}=await supabase.from('reservations').select('*').order('check_in'); if(error)setStatus(error.message); else setItems((data||[]) as Reservation[]); setLoading(false); };
   useEffect(()=>{void load()},[]);
   const upcoming=useMemo(()=>items.filter(x=>x.status!=='cancelled'&&x.check_out>=new Date().toISOString().slice(0,10)),[items]);
+  const days=useMemo(()=>{const y=month.getFullYear(),m=month.getMonth(),first=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();return [...Array(first).fill(null),...Array.from({length:count},(_,i)=>i+1)]},[month]);
+  const monthName=month.toLocaleDateString('es-NI',{month:'long',year:'numeric'});
+  const reservationsForDay=(day:number)=>{const d=`${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;return items.filter(r=>r.status!=='cancelled'&&r.check_in<=d&&r.check_out>d)};
   const save=async()=>{ if(!supabase||!editing?.guest_name||!editing.check_in||!editing.check_out){setStatus('Completa huésped, entrada y salida.');return}
     const {data:{user}}=await supabase.auth.getUser(); if(!user){setStatus('Tu sesión expiró.');return}
     const payload={guest_name:editing.guest_name,guest_phone:editing.guest_phone||null,room_id:editing.room_id||null,check_in:editing.check_in,check_out:editing.check_out,adults:Number(editing.adults||1),children:Number(editing.children||0),status:editing.status||'inquiry',notes:editing.notes||null,created_by:user.id,updated_at:new Date().toISOString()};
@@ -27,6 +31,11 @@ export const ReservationsCalendar: React.FC<{rooms: Room[]}> = ({ rooms }) => {
   return <div className="max-w-6xl mx-auto space-y-4">
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><h3 className="text-xl font-bold text-stone-900 flex items-center gap-2"><CalendarDays className="w-5 h-5 text-teal-700"/>Calendario y reservas</h3><p className="text-sm text-stone-600">Control interno privado. Estos datos no se muestran en la landing.</p></div><button onClick={()=>setEditing({status:'inquiry',adults:1,children:0})} className="bg-teal-700 text-white rounded-xl px-4 py-3 font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4"/>Nueva reserva</button></div>
     {status&&<p className="text-sm rounded-xl bg-white border p-3">{status}</p>}
+    <div className="bg-white border rounded-2xl p-3 sm:p-5 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between mb-4"><button aria-label="Mes anterior" onClick={()=>setMonth(new Date(month.getFullYear(),month.getMonth()-1,1))} className="p-2 rounded-lg border"><ChevronLeft className="w-4 h-4"/></button><h4 className="font-bold capitalize text-stone-900">{monthName}</h4><button aria-label="Mes siguiente" onClick={()=>setMonth(new Date(month.getFullYear(),month.getMonth()+1,1))} className="p-2 rounded-lg border"><ChevronRight className="w-4 h-4"/></button></div>
+      <div className="grid grid-cols-7 text-center text-[10px] sm:text-xs font-bold text-stone-500 mb-1">{['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d=><div key={d} className="py-1">{d}</div>)}</div>
+      <div className="grid grid-cols-7 gap-1">{days.map((day,i)=>day===null?<div key={`e-${i}`} className="min-h-14 sm:min-h-24"/>:<button key={day} onClick={()=>{const date=`${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;setEditing({status:'inquiry',adults:1,children:0,check_in:date})}} className="min-h-14 sm:min-h-24 rounded-lg border p-1 sm:p-2 text-left hover:bg-teal-50 overflow-hidden"><span className="text-xs font-bold">{day}</span><div className="mt-1 space-y-1">{reservationsForDay(day).slice(0,2).map(r=><div key={r.id} className="text-[9px] sm:text-[11px] bg-teal-100 text-teal-900 rounded px-1 py-0.5 truncate">{r.guest_name}</div>)}{reservationsForDay(day).length>2&&<div className="text-[9px] text-stone-500">+{reservationsForDay(day).length-2}</div>}</div></button>)}</div>
+    </div>
     {editing&&<div className="bg-white border rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
       <div className="flex justify-between"><h4 className="font-bold">{editing.id?'Editar reserva':'Nueva reserva'}</h4><button onClick={()=>setEditing(null)}><X className="w-5 h-5"/></button></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
