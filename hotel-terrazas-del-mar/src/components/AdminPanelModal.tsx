@@ -66,7 +66,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [galleryStatus, setGalleryStatus] = useState('');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [adminName, setAdminName] = useState('');
-  const [busRoutes, setBusRoutes] = useState<Array<{id:string; route:string; frequency:string; timeRange:string; notes:string}>>([]);
+  const [busRoutes, setBusRoutes] = useState<Array<{id:string; route:string; frequency:string; timeRange:string; notes:string; times:string[]}>>([]);
+  const [ferrySchedules, setFerrySchedules] = useState<Array<{id:string; route:string; time:string; vessel:string; type:string; notes:string}>>([]);
   const [transportStatus, setTransportStatus] = useState('');
   const [transportSaving, setTransportSaving] = useState(false);
   useEffect(() => {
@@ -99,23 +100,27 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     if (!isOpen || !supabase) return;
     void supabase.from('transport_schedules').select('id,details').eq('category','bus').then(({data,error}) => {
       if (error) { setTransportStatus(error.message); return; }
-      setBusRoutes((data || []).map((row: any) => ({ id: row.id, route: row.details?.route || '', frequency: row.details?.frequency || '', timeRange: row.details?.timeRange || '', notes: row.details?.notes || '' })));
+      setBusRoutes((data || []).map((row: any) => ({ id: row.id, route: row.details?.route || '', frequency: row.details?.frequency || '', timeRange: row.details?.timeRange || '', notes: row.details?.notes || '', times: Array.isArray(row.details?.times) ? row.details.times : [] })));
+    });
+    void supabase.from('transport_schedules').select('id,details').eq('category','ferry').then(({data,error}) => {
+      if (error) { setTransportStatus(error.message); return; }
+      setFerrySchedules((data || []).map((row:any)=>({id:row.id,route:row.details?.route||'',time:row.details?.time||'',vessel:row.details?.vessel||'',type:row.details?.type||'',notes:row.details?.notes||''})));
     });
   }, [isOpen]);
 
-  const saveBusRoute = async (route: {id:string; route:string; frequency:string; timeRange:string; notes:string}) => {
+  const saveBusRoute = async (route: {id:string; route:string; frequency:string; timeRange:string; notes:string; times:string[]}) => {
     if (!supabase) return;
     setTransportSaving(true); setTransportStatus('');
     const { data: existing } = await supabase.from('transport_schedules').select('details').eq('id', route.id).maybeSingle();
     const details = existing?.details && typeof existing.details === 'object' ? existing.details as Record<string,unknown> : {};
-    const saved = await supabase.from('transport_schedules').update({ details: { ...details, route:route.route, frequency:route.frequency, timeRange:route.timeRange, notes:route.notes } }).eq('id',route.id).select('id').maybeSingle();
+    const saved = await supabase.from('transport_schedules').update({ details: { ...details, route:route.route, frequency:route.frequency, timeRange:route.timeRange, notes:route.notes, times:route.times } }).eq('id',route.id).select('id').maybeSingle();
     setTransportSaving(false); setTransportStatus(saved.error || !saved.data ? (saved.error?.message || 'No se pudo guardar la ruta.') : 'Ruta de bus publicada correctamente.');
   };
 
   const addBusRoute = async () => {
     if (!supabase) return;
     setTransportSaving(true); setTransportStatus('');
-    const details={route:'Nueva ruta',frequency:'',timeRange:'',notes:''};
+    const details={route:'Nueva ruta',frequency:'',timeRange:'',notes:'',times:[] as string[]};
     const saved=await supabase.from('transport_schedules').insert({category:'bus',details}).select('id,details').single();
     setTransportSaving(false);
     if(saved.error || !saved.data){setTransportStatus(saved.error?.message || 'No se pudo crear la ruta.');return;}
@@ -128,6 +133,14 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     if(deleted.error || !deleted.data){setTransportStatus(deleted.error?.message || 'No se pudo eliminar la ruta.');return;}
     setBusRoutes(prev=>prev.filter(row=>row.id!==id)); setTransportStatus('Ruta eliminada.');
   };
+
+  const addBusTime = (id:string) => setBusRoutes(prev=>prev.map(x=>x.id===id?{...x,times:[...x.times,'']}:x));
+  const updateBusTime = (id:string,index:number,value:string) => setBusRoutes(prev=>prev.map(x=>x.id===id?{...x,times:x.times.map((t,i)=>i===index?value:t)}:x));
+  const removeBusTime = (id:string,index:number) => setBusRoutes(prev=>prev.map(x=>x.id===id?{...x,times:x.times.filter((_,i)=>i!==index)}:x));
+
+  const saveFerrySchedule = async (item:{id:string;route:string;time:string;vessel:string;type:string;notes:string}) => { if(!supabase)return; setTransportSaving(true); const {data:existing}=await supabase.from('transport_schedules').select('details').eq('id',item.id).maybeSingle(); const details=existing?.details&&typeof existing.details==='object'?existing.details as Record<string,unknown>:{}; const saved=await supabase.from('transport_schedules').update({details:{...details,route:item.route,time:item.time,vessel:item.vessel,type:item.type,notes:item.notes}}).eq('id',item.id).select('id').maybeSingle(); setTransportSaving(false); setTransportStatus(saved.error||!saved.data?(saved.error?.message||'No se pudo guardar el horario.'):'Horario acuático publicado.'); };
+  const addFerrySchedule = async () => { if(!supabase)return; setTransportSaving(true); const details={route:'San Jorge → Moyogalpa',time:'',vessel:'',type:'',notes:''}; const saved=await supabase.from('transport_schedules').insert({category:'ferry',details}).select('id,details').single(); setTransportSaving(false); if(saved.error||!saved.data){setTransportStatus(saved.error?.message||'No se pudo crear el horario.');return;} setFerrySchedules(prev=>[...prev,{id:saved.data.id,...details}]); };
+  const deleteFerrySchedule = async(id:string)=>{if(!supabase||!window.confirm('¿Eliminar este horario acuático?'))return;const d=await supabase.from('transport_schedules').delete().eq('id',id).select('id').maybeSingle();if(d.error||!d.data){setTransportStatus(d.error?.message||'No se pudo eliminar.');return;}setFerrySchedules(prev=>prev.filter(x=>x.id!==id));};
 
   // Rooms editing state
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
@@ -1180,15 +1193,11 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
           )}
 
           {activeTab === 'transport' && (
-            <div className="max-w-4xl mx-auto space-y-5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><h3 className="text-xl font-extrabold text-stone-900">Buses locales</h3><p className="text-sm text-stone-500">Edita las rutas que aparecen en Guía → Buses Locales.</p></div><button type="button" onClick={addBusRoute} disabled={transportSaving} className="px-4 py-2.5 rounded-xl bg-teal-700 text-white font-bold text-sm flex items-center justify-center gap-2"><Plus className="w-4 h-4"/>Agregar ruta</button></div>
+            <div className="max-w-5xl mx-auto space-y-8">
               {transportStatus && <p role="status" className="text-sm rounded-xl bg-teal-50 border border-teal-100 px-4 py-3 text-stone-700">{transportStatus}</p>}
-              <div className="space-y-4">{busRoutes.map((item,index)=><div key={item.id} className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm space-y-4"><div className="flex items-center justify-between"><h4 className="font-bold text-stone-900">Ruta {index+1}</h4><button type="button" onClick={()=>deleteBusRoute(item.id)} className="p-2 rounded-lg border border-red-200 text-red-600" title="Eliminar ruta"><Trash2 className="w-4 h-4"/></button></div><div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="sm:col-span-2"><label className="block text-xs font-bold text-stone-700 mb-1">Ruta</label><input value={item.route} onChange={e=>setBusRoutes(prev=>prev.map(x=>x.id===item.id?{...x,route:e.target.value}:x))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm"/></div>
-                <div><label className="block text-xs font-bold text-stone-700 mb-1">Frecuencia</label><input value={item.frequency} onChange={e=>setBusRoutes(prev=>prev.map(x=>x.id===item.id?{...x,frequency:e.target.value}:x))} placeholder="Ej. Cada 45 - 60 minutos" className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm"/></div>
-                <div><label className="block text-xs font-bold text-stone-700 mb-1">Horario</label><input value={item.timeRange} onChange={e=>setBusRoutes(prev=>prev.map(x=>x.id===item.id?{...x,timeRange:e.target.value}:x))} placeholder="Ej. 06:00 AM - 05:30 PM" className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm"/></div>
-                <div className="sm:col-span-2"><label className="block text-xs font-bold text-stone-700 mb-1">Nota</label><textarea rows={2} value={item.notes} onChange={e=>setBusRoutes(prev=>prev.map(x=>x.id===item.id?{...x,notes:e.target.value}:x))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm"/></div>
-              </div><div className="flex justify-end"><button type="button" disabled={transportSaving} onClick={()=>saveBusRoute(item)} className="px-4 py-2.5 rounded-xl bg-[#087f83] text-white font-bold text-sm flex items-center gap-2"><Save className="w-4 h-4"/>Guardar ruta</button></div></div>)}</div>
+              <section className="space-y-4"><div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-wider text-teal-700">Transporte terrestre</p><h3 className="text-xl font-extrabold text-stone-900">Horarios de buses</h3><p className="text-sm text-stone-500">Crea rutas y agrega cada hora de salida como se muestra en la landing.</p></div><button type="button" onClick={addBusRoute} className="px-4 py-2.5 rounded-xl bg-teal-700 text-white font-bold text-sm"><Plus className="w-4 h-4 inline mr-1"/>Agregar ruta</button></div>
+              {busRoutes.map((item,index)=><div key={item.id} className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm space-y-4"><div className="flex justify-between"><h4 className="font-bold">Ruta terrestre {index+1}</h4><button type="button" onClick={()=>deleteBusRoute(item.id)} className="text-red-600"><Trash2 className="w-4 h-4"/></button></div><input value={item.route} onChange={e=>setBusRoutes(p=>p.map(x=>x.id===item.id?{...x,route:e.target.value}:x))} placeholder="Ruta" className="w-full px-3.5 py-2.5 rounded-xl border"/><div><div className="flex items-center justify-between mb-2"><label className="text-xs font-bold">Horas de salida</label><button type="button" onClick={()=>addBusTime(item.id)} className="text-xs font-bold text-teal-700">+ Agregar hora</button></div><div className="flex flex-wrap gap-2">{item.times.map((time,i)=><div key={i} className="flex items-center gap-1"><input type="time" value={time} onChange={e=>updateBusTime(item.id,i,e.target.value)} className="px-2 py-2 rounded-lg border text-sm"/><button type="button" onClick={()=>removeBusTime(item.id,i)} className="text-red-500 px-1">×</button></div>)}</div></div><div className="grid sm:grid-cols-2 gap-3"><input value={item.frequency} onChange={e=>setBusRoutes(p=>p.map(x=>x.id===item.id?{...x,frequency:e.target.value}:x))} placeholder="Frecuencia (opcional)" className="px-3.5 py-2.5 rounded-xl border"/><input value={item.timeRange} onChange={e=>setBusRoutes(p=>p.map(x=>x.id===item.id?{...x,timeRange:e.target.value}:x))} placeholder="Rango general (opcional)" className="px-3.5 py-2.5 rounded-xl border"/></div><textarea value={item.notes} onChange={e=>setBusRoutes(p=>p.map(x=>x.id===item.id?{...x,notes:e.target.value}:x))} placeholder="Nota" className="w-full px-3.5 py-2.5 rounded-xl border"/><div className="text-right"><button type="button" onClick={()=>saveBusRoute(item)} className="px-4 py-2 rounded-xl bg-[#087f83] text-white font-bold text-sm">Guardar ruta</button></div></div>)}</section>
+              <section className="space-y-4 border-t pt-7"><div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-wider text-teal-700">Transporte acuático</p><h3 className="text-xl font-extrabold text-stone-900">Horarios de ferries y barcos</h3><p className="text-sm text-stone-500">Administra cada salida, embarcación y tipo de servicio.</p></div><button type="button" onClick={addFerrySchedule} className="px-4 py-2.5 rounded-xl bg-teal-700 text-white font-bold text-sm"><Plus className="w-4 h-4 inline mr-1"/>Agregar salida</button></div><div className="grid md:grid-cols-2 gap-4">{ferrySchedules.map(item=><div key={item.id} className="bg-white border rounded-2xl p-4 space-y-3"><div className="flex justify-between"><strong className="text-sm">Salida acuática</strong><button type="button" onClick={()=>deleteFerrySchedule(item.id)} className="text-red-600"><Trash2 className="w-4 h-4"/></button></div><input value={item.route} onChange={e=>setFerrySchedules(p=>p.map(x=>x.id===item.id?{...x,route:e.target.value}:x))} placeholder="Ruta" className="w-full px-3 py-2 rounded-lg border text-sm"/><div className="grid grid-cols-2 gap-2"><input type="time" value={item.time} onChange={e=>setFerrySchedules(p=>p.map(x=>x.id===item.id?{...x,time:e.target.value}:x))} className="px-3 py-2 rounded-lg border text-sm"/><input value={item.vessel} onChange={e=>setFerrySchedules(p=>p.map(x=>x.id===item.id?{...x,vessel:e.target.value}:x))} placeholder="Barco / Ferry" className="px-3 py-2 rounded-lg border text-sm"/></div><input value={item.type} onChange={e=>setFerrySchedules(p=>p.map(x=>x.id===item.id?{...x,type:e.target.value}:x))} placeholder="Tipo: pasajeros / vehículos..." className="w-full px-3 py-2 rounded-lg border text-sm"/><textarea value={item.notes} onChange={e=>setFerrySchedules(p=>p.map(x=>x.id===item.id?{...x,notes:e.target.value}:x))} placeholder="Nota" className="w-full px-3 py-2 rounded-lg border text-sm"/><button type="button" onClick={()=>saveFerrySchedule(item)} className="w-full px-3 py-2 rounded-lg bg-[#087f83] text-white font-bold text-sm">Guardar horario</button></div>)}</div></section>
             </div>
           )}
 
