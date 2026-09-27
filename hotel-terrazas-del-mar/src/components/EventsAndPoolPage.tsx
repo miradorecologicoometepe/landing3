@@ -293,8 +293,8 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
               ))}
             </div>
 
-            {/* Day Pass CTA */}
-            <div className="bg-gradient-to-r from-teal-800 to-[#0e484d] rounded-2xl p-6 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Day Pass CTA — completely hidden while the service is disabled */}
+            {hotelConfig.dayPass?.enabled && <div className="bg-gradient-to-r from-teal-800 to-[#0e484d] rounded-2xl p-6 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <h4 className="font-bold text-base sm:text-lg">¿No te hospedas con nosotros pero quieres pasar el día?</h4>
                 <p className="text-teal-100 text-xs sm:text-sm max-w-xl">
@@ -310,7 +310,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                 <MessageCircle className="w-4 h-4 fill-white" />
                 <span>Consultar Pasadía por WhatsApp</span>
               </a>
-            </div>
+            </div>}
           </div>
         )}
 
