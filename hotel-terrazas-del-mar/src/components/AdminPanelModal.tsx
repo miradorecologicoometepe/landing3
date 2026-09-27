@@ -243,24 +243,28 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
       if (admin.error || !admin.data) throw new Error('Tu usuario no tiene permisos de administrador.');
       const urls: string[] = [];
-      for (const file of Array.from(files)) {
+      const selectedFiles = Array.from(files);
+      for (const file of selectedFiles) {
         if (!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)) throw new Error('Usa fotografías JPG, PNG, WebP o AVIF.');
         if (file.size > 10 * 1024 * 1024) throw new Error('Cada fotografía debe pesar menos de 10 MB.');
+      }
+      const uploaded = await Promise.all(selectedFiles.map(async file => {
         const ext = ({'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'} as Record<string,string>)[file.type];
         const path = `rooms/${roomFormData.id}/${crypto.randomUUID()}.${ext}`;
-        const upload = await supabase.storage.from('hotel-media').upload(path, file, { contentType: file.type, upsert: false });
-        if (upload.error) throw upload.error;
-        urls.push(supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl);
-      }
+        const result = await supabase.storage.from('hotel-media').upload(path, file, { contentType: file.type, upsert: false });
+        if (result.error) throw result.error;
+        return { path, url: supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl };
+      }));
+      urls.push(...uploaded.map(item => item.url));
       const cleanExisting = (roomFormData.images || []).filter(url => !url.includes('images.unsplash.com'));
       const updatedRoom = { ...roomFormData, images: [...cleanExisting, ...urls] };
       const saved = await supabase.from('rooms').upsert({ id: updatedRoom.id, details: updatedRoom }, { onConflict: 'id' }).select('id').maybeSingle();
       if (saved.error || !saved.data) throw new Error(saved.error?.message || 'No se pudo guardar la habitación.');
-      for (let i=0; i<urls.length; i++) {
-        const photo: PhotoItem = { id: crypto.randomUUID(), title: `${updatedRoom.name} ${cleanExisting.length+i+1}`, category: 'rooms', url: urls[i], caption: '', roomTypeId: updatedRoom.id, aspectRatio: 'landscape' };
-        await supabase.from('gallery_photos').insert({ id: photo.id, category: 'rooms', image_path: photo.url, details: { title: photo.title, caption: '', roomTypeId: updatedRoom.id, aspectRatio: 'landscape' }, sort_order: Date.now()+i });
-        currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, photo];
-      }
+      const newPhotos: PhotoItem[] = urls.map((url, i) => ({ id: crypto.randomUUID(), title: `${updatedRoom.name} ${cleanExisting.length+i+1}`, category: 'rooms', url, caption: '', roomTypeId: updatedRoom.id, aspectRatio: 'landscape' }));
+      const galleryRows = newPhotos.map((photo, i) => ({ id: photo.id, category: 'rooms', image_path: photo.url, details: { title: photo.title, caption: '', roomTypeId: updatedRoom.id, aspectRatio: 'landscape' }, sort_order: Date.now()+i }));
+      const gallerySaved = await supabase.from('gallery_photos').insert(galleryRows);
+      if (gallerySaved.error) throw new Error('Las fotos subieron, pero no se pudieron registrar en la galería: ' + gallerySaved.error.message);
+      currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, ...newPhotos];
       setRoomFormData(updatedRoom);
       onSaveRooms(rooms.some(room => room.id === updatedRoom.id) ? rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room) : [updatedRoom, ...rooms]);
       onSavePhotos(currentUploadedPhotosRef.current);
@@ -914,9 +918,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     </div>
 
                     <div className="sm:col-span-2">
-                      <div className="flex items-center justify-between gap-3 mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
                         <div><div className="text-sm font-bold text-stone-900">Fotos de esta habitación</div><p className="text-xs text-stone-600">Súbelas aquí directamente. La primera foto será la principal.</p></div>
-                        <label className="shrink-0 rounded-xl bg-teal-700 text-white font-bold text-xs px-4 py-3 cursor-pointer">
+                        <label className="w-full sm:w-auto shrink-0 rounded-xl bg-teal-700 text-white font-bold text-xs px-4 py-3 cursor-pointer text-center">
                           {roomPhotoBusy ? 'Subiendo…' : 'Añadir fotos'}
                           <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple disabled={roomPhotoBusy} onChange={e => { void handleUploadRoomPhotos(e.target.files); e.currentTarget.value=''; }} className="sr-only" />
                         </label>
