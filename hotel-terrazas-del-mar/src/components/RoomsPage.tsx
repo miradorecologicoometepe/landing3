@@ -36,15 +36,15 @@ export const RoomsPage: React.FC<RoomsPageProps> = ({
         <div className="max-w-6xl mx-auto relative z-10 text-left">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-400/20 text-teal-200 text-xs font-bold uppercase tracking-wider mb-4 border border-teal-300/30">
             <Bed className="w-3.5 h-3.5" />
-            Descubre nuestras habitaciones
+            Alojamiento en Altagracia, Ometepe
           </div>
           
           <h1 className="font-gidole text-3xl min-[375px]:text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-white">
-            Nuestras Habitaciones
+            Habitaciones en Ometepe
           </h1>
           
           <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
-            Alojamiento campestre cómodo, fresco y tranquilo en Altagracia, Ometepe. Contamos con 2 tipos de habitaciones diseñadas para parejas, familias y grupos pequeños.
+            Hospédate en Altagracia, Isla de Ometepe, en un entorno campestre rodeado de naturaleza. Contamos con habitación matrimonial y habitación familiar, con aire acondicionado, baño privado y acceso a piscina.
           </p>
         </div>
       </div>
