@@ -21,7 +21,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpen
     <div className="w-full max-w-7xl mx-auto px-4 min-[375px]:px-5 sm:px-10 lg:px-14 pt-28 pb-24 sm:pt-44 sm:pb-36">
       <div className="max-w-3xl">
         <p className="text-xs sm:text-sm tracking-[0.32em] uppercase font-semibold text-[#d7f4ee] mb-5">Hotel Mirador Ecológico · Ometepe</p>
-        <h1 className="font-serif text-[clamp(2.35rem,8.5vw,5.25rem)] leading-[1.02] tracking-[-0.035em] font-semibold max-w-3xl mb-6 sm:mb-8">Donde la <em className="text-[#d7f4ee]">naturaleza</em> se abraza con el lago y los volcanes</h1>
+        <h1 className="font-serif text-[clamp(2.35rem,8.5vw,5.25rem)] leading-[1.02] tracking-[-0.035em] font-semibold max-w-3xl mb-6 sm:mb-8">Un mirador donde la <em className="text-[#d7f4ee]">naturaleza</em>, el lago y el volcán forman parte del paisaje</h1>
         <p className="text-[15px] sm:text-lg leading-relaxed text-white/85 max-w-xl mb-8 sm:mb-10">Descubre nuestras habitaciones, espacios para eventos y el entorno natural de la Isla de Ometepe. Consulta disponibilidad y tarifas directamente con nosotros.</p>
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 max-w-2xl mb-8 sm:mb-10 text-xs">
           <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-md px-3 py-2"><Leaf className="w-4 h-4 text-[#d7f4ee]" /><span>Naturaleza y descanso</span></div>
