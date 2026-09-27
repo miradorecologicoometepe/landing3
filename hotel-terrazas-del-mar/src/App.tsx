@@ -214,9 +214,7 @@ export default function App() {
     const handleUrlChange = () => {
       const admin = checkIsAdminUrl();
       setIsAdminRoute(admin);
-      if (!admin) {
-        setActivePage(getInitialPage());
-      }
+      if (!admin) setActivePage(getInitialPage());
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -294,8 +292,8 @@ export default function App() {
 
   const handleExitAdminRoute = () => {
     setIsAdminRoute(false);
-    if (window.location.hash.includes('admin')) {
-      window.location.hash = '';
+    if (window.location.hash.includes('admin') || window.location.pathname.startsWith('/admin')) {
+      window.history.pushState({}, '', '/');
     }
   };
 
