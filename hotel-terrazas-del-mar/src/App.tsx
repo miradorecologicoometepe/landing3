@@ -86,12 +86,14 @@ export default function App() {
 
   const getInitialPage = (): PageId => {
     if (typeof window === 'undefined') return 'inicio';
+    const path = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
     const hash = window.location.hash.replace('#', '').toLowerCase();
-    if (['habitaciones', 'rooms'].includes(hash)) return 'habitaciones';
-    if (['eventos', 'piscina', 'eventos-piscina'].includes(hash)) return 'eventos-piscina';
-    if (['transporte', 'ferries', 'barcos', 'horarios'].includes(hash)) return 'transporte';
-    if (['galeria', 'fotos'].includes(hash)) return 'galeria';
-    if (['contacto', 'ubicacion'].includes(hash)) return 'contacto';
+    const route = path || hash;
+    if (['habitaciones', 'rooms'].includes(route)) return 'habitaciones';
+    if (['eventos', 'piscina', 'eventos-piscina'].includes(route)) return 'eventos-piscina';
+    if (['guia', 'transporte', 'ferries', 'barcos', 'horarios'].includes(route)) return 'transporte';
+    if (['galeria', 'fotos'].includes(route)) return 'galeria';
+    if (['contacto', 'ubicacion'].includes(route)) return 'contacto';
     return 'inicio';
   };
 
@@ -200,7 +202,11 @@ export default function App() {
     };
     setProperty('og:title', current.title);
     setProperty('og:description', current.description);
-    setProperty('og:url', `https://miradorecologicoometepe.com/${activePage === 'inicio' ? '' : '#' + activePage}`);
+    const pageUrl = `https://miradorecologicoometepe.com${publicPathForPage[activePage]}`;
+    setProperty('og:url', pageUrl);
+    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
+    canonical.href = pageUrl;
   }, [activePage, isAdminRoute]);
 
   // Listen to hash and keyboard shortcuts (Ctrl+Alt+A / Cmd+Alt+A)
@@ -239,9 +245,18 @@ export default function App() {
     };
   }, []);
 
+  const publicPathForPage: Record<PageId, string> = {
+    inicio: '/',
+    habitaciones: '/habitaciones',
+    'eventos-piscina': '/eventos',
+    transporte: '/guia',
+    galeria: '/galeria',
+    contacto: '/contacto',
+  };
+
   const handleNavigate = (page: PageId) => {
     setActivePage(page);
-    window.location.hash = page === 'inicio' ? '' : `#${page}`;
+    window.history.pushState({}, '', publicPathForPage[page]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
