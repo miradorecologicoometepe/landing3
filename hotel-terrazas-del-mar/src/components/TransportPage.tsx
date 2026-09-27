@@ -98,15 +98,15 @@ export const TransportPage: React.FC<TransportPageProps> = ({
         <div className="max-w-6xl mx-auto relative z-10 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 text-xs font-bold uppercase tracking-wider mb-4 border border-teal-400/30">
             <Compass className="w-3.5 h-3.5" />
-            Guía de Transporte a Ometepe
+            Guía de Ferries y Transporte en Ometepe
           </div>
           
           <h1 className="font-gidole text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-white">
-            Horarios de Barcos & Transporte Terrestre
+            Horarios de Ferries, Barcos y Buses en Ometepe
           </h1>
           
           <p className="text-stone-300 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
-            Te ayudamos a planificar tu viaje hacia el <strong className="text-teal-200">Hotel Mirador Ecológico</strong> en Altagracia. Consulta las salidas de ferries entre San Jorge y Ometepe, y las opciones de transporte en la isla.
+            Planifica cómo llegar a Ometepe y Altagracia. Consulta horarios de ferries y barcos en las rutas <strong className="text-teal-200">San Jorge–Moyogalpa y San Jorge–San José del Sur</strong>, además de buses locales y opciones de traslado en la isla.
           </p>
 
           {/* Direct WhatsApp Assistance Badge */}
