@@ -4,8 +4,6 @@ import { DEFAULT_FAQS, FaqItem } from '../data/faqs';
 
 export const FaqEditor: React.FC = () => {
   const [items, setItems] = useState<FaqItem[]>(DEFAULT_FAQS);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -34,14 +32,8 @@ export const FaqEditor: React.FC = () => {
     if (items.some(item => !item.q.trim() || !item.a.trim())) { setStatus('Completa las preguntas y respuestas antes de publicar.'); return; }
     setSaving(true); setStatus('');
     try {
-      let { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        if (!email || !password) throw new Error('Inicia sesión con una cuenta administradora de Supabase.');
-        const login = await supabase.auth.signInWithPassword({ email, password });
-        if (login.error) throw login.error;
-        user = login.data.user;
-      }
-      if (!user) throw new Error('No se pudo verificar la sesión.');
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Tu sesión administrativa expiró. Vuelve a iniciar sesión.');
       const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
       if (admin.error || !admin.data) throw new Error('Tu cuenta no tiene autorización para publicar contenido.');
       const result = await supabase.from('site_content').upsert({ key: 'hotel_faqs', value: items.map(item => ({ q: item.q.trim(), a: item.a.trim() })) }, { onConflict: 'key' });
@@ -52,10 +44,7 @@ export const FaqEditor: React.FC = () => {
   };
   return <div className="max-w-3xl mx-auto space-y-4">
     <div><h3 className="text-xl font-bold text-stone-900">Preguntas frecuentes</h3><p className="text-sm text-stone-600">Edita las respuestas, agrega preguntas y cambia su orden. Pulsa «Publicar cambios» para guardarlas en Supabase.</p></div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white rounded-xl p-3 border">
-      <input aria-label="Correo administrador Supabase" type="email" autoComplete="username" placeholder="Correo administrador Supabase" value={email} onChange={e=>setEmail(e.target.value)} className="w-full min-w-0 rounded-lg border p-3 text-sm"/>
-      <input aria-label="Contraseña Supabase" type="password" autoComplete="current-password" placeholder="Contraseña Supabase" value={password} onChange={e=>setPassword(e.target.value)} className="w-full min-w-0 rounded-lg border p-3 text-sm"/>
-    </div>
+    <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">Sesión administrativa activa. Puedes editar y publicar sin volver a ingresar credenciales.</div>
     {items.map((item,index)=><div key={index} className="bg-white border rounded-xl p-3 sm:p-4 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2"><span className="font-semibold text-stone-700">Pregunta {index+1}</span><div className="flex flex-wrap gap-2">
         <button type="button" disabled={index===0} onClick={()=>move(index,-1)} className="border rounded-lg px-3 py-2 text-xs disabled:opacity-40">Subir</button>
