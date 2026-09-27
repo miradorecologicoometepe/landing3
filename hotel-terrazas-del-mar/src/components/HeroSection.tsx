@@ -10,9 +10,12 @@ interface HeroSectionProps {
   photos: PhotoItem[];
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpenGallery, onOpenBookingModal, hotelConfig, photos }) => (
-  <section className="relative isolate min-h-[82svh] sm:min-h-[90svh] lg:min-h-[94vh] overflow-hidden bg-[#087f83] text-white flex items-center">
-    <img src={photos.find(photo => photo.category === "outdoors")?.url || photos.find(photo => photo.category === "pool")?.url || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85"} alt="Vista del Mirador Ecológico Ometepe" className="absolute inset-0 -z-20 h-full w-full object-cover" />
+export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpenGallery, onOpenBookingModal, hotelConfig, photos }) => {
+  const heroPhoto = photos.find(photo => photo.category === 'outdoors')?.url || photos.find(photo => photo.category === 'pool')?.url || photos.find(photo => photo.url)?.url;
+
+  return (
+  <section className="relative isolate min-h-[82svh] sm:min-h-[90svh] lg:min-h-[94vh] overflow-hidden bg-gradient-to-br from-[#075e68] via-[#087f83] to-[#0b4f50] text-white flex items-center">
+    {heroPhoto && <img src={heroPhoto} alt="Vista del Mirador Ecológico Ometepe" fetchPriority="high" decoding="async" className="absolute inset-0 -z-20 h-full w-full object-cover" />}
     <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#062f32]/90 via-[#0b4f50]/58 to-transparent" />
     <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#062f32]/65 via-transparent to-black/15" />
     <div className="w-full max-w-7xl mx-auto px-4 min-[375px]:px-5 sm:px-10 lg:px-14 pt-28 pb-24 sm:pt-44 sm:pb-36">
@@ -34,4 +37,5 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreRooms, onOpen
     </div>
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-1 text-xs tracking-widest uppercase text-white/80"><ChevronDown className="w-5 h-5" />Desplaza para explorar</div>
   </section>
-);
+  );
+};
