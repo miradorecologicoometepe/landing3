@@ -26,15 +26,15 @@ export const Footer: React.FC<FooterProps> = ({
   onNavigate,
 }) => {
   return (
-    <footer id="footer-section" className="bg-[#0c2225] text-stone-300 pt-16 pb-20 sm:pb-12 border-t border-teal-900/50">
+    <footer id="footer-section" className="bg-[#0c2225] text-stone-300 pt-10 sm:pt-16 pb-20 sm:pb-12 border-t border-teal-900/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-teal-900/40">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-8 sm:gap-10 pb-12 border-b border-teal-900/40">
           
           {/* Col 1: Brand & Philosophy */}
-          <div className="space-y-4">
-            <HotelLogo variant="horizontal" mode="white" height={48} logoUrl={hotelConfig.logoUrl} />
+          <div className="space-y-4 col-span-2 lg:col-span-1">
+            <HotelLogo variant="horizontal" mode="white" height={42} logoUrl={hotelConfig.logoUrl} />
 
             <p className="text-xs text-stone-300 leading-relaxed pt-1">
               Un espacio para descansar, descubrir Ometepe y organizar encuentros especiales en {hotelConfig.locationArea || 'Isla de Ometepe'}.
@@ -157,11 +157,11 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-stone-400">
+        <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-center sm:text-left text-stone-400">
           <div>
             © {new Date().getFullYear()} {hotelConfig.name} • Isla de Ometepe, Rivas, Nicaragua.
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-4 gap-y-2">
             <span>Aviso de Privacidad</span>
             <span>Términos de Reserva</span>
             <span>Políticas de Cancelación</span>
