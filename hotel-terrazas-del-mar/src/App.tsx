@@ -93,6 +93,7 @@ export default function App() {
 
   const [isAdminRoute, setIsAdminRoute] = useState<boolean>(checkIsAdminUrl);
   const [isAdminAuth, setIsAdminAuth] = useState(false);
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(() => typeof window !== 'undefined' && window.location.hash.includes('type=recovery'));
   const [adminAuthChecking, setAdminAuthChecking] = useState(true);
   useEffect(() => {
     if (!supabase) { setAdminAuthChecking(false); return; }
@@ -108,7 +109,15 @@ export default function App() {
       }
     };
     void verify();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => { void verify(); });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsPasswordRecovery(true);
+        setIsAdminRoute(true);
+        setAdminAuthChecking(false);
+        return;
+      }
+      void verify();
+    });
     return () => { active = false; subscription.unsubscribe(); };
   }, []);
   const [activePage, setActivePage] = useState<PageId>(getInitialPage);
@@ -230,11 +239,11 @@ export default function App() {
   // ==========================================
   if (isAdminRoute) {
     if (adminAuthChecking) return <div className="min-h-screen bg-[#0d1c1e] text-white flex items-center justify-center">Verificando acceso…</div>;
-    if (!isAdminAuth) {
+    if (isPasswordRecovery || !isAdminAuth) {
       return (
         <AdminLoginScreen
           hotelConfig={hotelConfig}
-          onLoginSuccess={() => setIsAdminAuth(true)}
+          onLoginSuccess={() => { setIsPasswordRecovery(false); setIsAdminAuth(true); }}
           onCancel={handleExitAdminRoute}
         />
       );
