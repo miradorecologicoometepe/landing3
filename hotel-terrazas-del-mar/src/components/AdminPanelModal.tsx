@@ -244,10 +244,12 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       if (admin.error || !admin.data) throw new Error('Tu usuario no tiene permisos de administrador.');
       const urls: string[] = [];
       const selectedFiles = Array.from(files);
+      setRoomPhotoStatus(`Preparando ${selectedFiles.length} foto(s)…`);
       for (const file of selectedFiles) {
         if (!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)) throw new Error('Usa fotografías JPG, PNG, WebP o AVIF.');
         if (file.size > 10 * 1024 * 1024) throw new Error('Cada fotografía debe pesar menos de 10 MB.');
       }
+      setRoomPhotoStatus('Subiendo fotografías…');
       const uploaded = await Promise.all(selectedFiles.map(async file => {
         const ext = ({'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'} as Record<string,string>)[file.type];
         const path = `rooms/${roomFormData.id}/${crypto.randomUUID()}.${ext}`;
@@ -256,6 +258,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         return { path, url: supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl };
       }));
       urls.push(...uploaded.map(item => item.url));
+      setRoomPhotoStatus('Guardando fotografías en la habitación…');
       const cleanExisting = (roomFormData.images || []).filter(url => !url.includes('images.unsplash.com'));
       const updatedRoom = { ...roomFormData, images: [...cleanExisting, ...urls] };
       const saved = await supabase.from('rooms').upsert({ id: updatedRoom.id, details: updatedRoom }, { onConflict: 'id' }).select('id').maybeSingle();
@@ -263,7 +266,10 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       const newPhotos: PhotoItem[] = urls.map((url, i) => ({ id: crypto.randomUUID(), title: `${updatedRoom.name} ${cleanExisting.length+i+1}`, category: 'rooms', url, caption: '', roomTypeId: updatedRoom.id, aspectRatio: 'landscape' }));
       const galleryRows = newPhotos.map((photo, i) => ({ id: photo.id, category: 'rooms', image_path: photo.url, details: { title: photo.title, caption: '', roomTypeId: updatedRoom.id, aspectRatio: 'landscape' }, sort_order: Date.now()+i }));
       const gallerySaved = await supabase.from('gallery_photos').insert(galleryRows);
-      if (gallerySaved.error) throw new Error('Las fotos subieron, pero no se pudieron registrar en la galería: ' + gallerySaved.error.message);
+      if (gallerySaved.error) {
+        await supabase.storage.from('hotel-media').remove(uploaded.map(item => item.path));
+        throw new Error('No se pudieron registrar las fotos: ' + gallerySaved.error.message);
+      }
       currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, ...newPhotos];
       setRoomFormData(updatedRoom);
       onSaveRooms(rooms.some(room => room.id === updatedRoom.id) ? rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room) : [updatedRoom, ...rooms]);
@@ -920,9 +926,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     <div className="sm:col-span-2">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
                         <div><div className="text-sm font-bold text-stone-900">Fotos de esta habitación</div><p className="text-xs text-stone-600">Súbelas aquí directamente. La primera foto será la principal.</p></div>
-                        <label className="w-full sm:w-auto shrink-0 rounded-xl bg-teal-700 text-white font-bold text-xs px-4 py-3 cursor-pointer text-center">
-                          {roomPhotoBusy ? 'Subiendo…' : 'Añadir fotos'}
-                          <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple disabled={roomPhotoBusy} onChange={e => { void handleUploadRoomPhotos(e.target.files); e.currentTarget.value=''; }} className="sr-only" />
+                        <label className={`w-full sm:w-auto shrink-0 rounded-xl text-white font-bold text-xs px-4 py-3 text-center ${roomPhotoBusy?'bg-stone-400 cursor-wait':'bg-teal-700 hover:bg-teal-800 cursor-pointer'}`}>
+                          {roomPhotoBusy ? 'Subiendo…' : '＋ Subir fotos'}
+                          <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple disabled={roomPhotoBusy} onChange={e => { const selected=e.currentTarget.files; if(selected?.length) void handleUploadRoomPhotos(selected); e.currentTarget.value=''; }} className="absolute w-px h-px opacity-0 overflow-hidden" />
                         </label>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
