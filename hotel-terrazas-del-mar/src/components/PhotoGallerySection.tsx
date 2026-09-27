@@ -30,7 +30,8 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
     { id: 'pool', label: 'Piscina & Mirador' },
     { id: 'rooms', label: 'Habitaciones' },
     { id: 'outdoors', label: 'Volcanes & Naturaleza' },
-    { id: 'gastronomy', label: 'Gastronomía & Eventos' },
+    { id: 'gastronomy', label: 'Gastronomía' },
+    { id: 'events', label: 'Eventos' },
   ];
 
   const filteredPhotos = photos.filter((photo) => {
@@ -122,6 +123,7 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
                 alt={photo.title}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 loading="lazy"
+                decoding="async"
               />
 
               {/* Gradient Overlay */}
