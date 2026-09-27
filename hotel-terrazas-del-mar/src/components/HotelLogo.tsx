@@ -18,7 +18,13 @@ export const HotelLogo: React.FC<HotelLogoProps> = ({
   logoUrl,
 }) => {
   if (logoUrl && /^https:\/\//i.test(logoUrl)) {
-    return <img src={logoUrl} alt="Hotel Mirador Ecológico Ometepe" className={`object-contain max-w-full ${className}`} style={{ height: height || (variant === 'horizontal' ? 44 : 120), maxWidth: variant === 'horizontal' ? 240 : 360 }} />;
+    const whiteOnDark = mode === 'white';
+    return <img
+      src={logoUrl}
+      alt="Hotel Mirador Ecológico Ometepe"
+      className={`object-contain max-w-full ${whiteOnDark ? 'brightness-0 invert' : ''} ${className}`}
+      style={{ height: height || (variant === 'horizontal' ? 44 : 120), maxWidth: variant === 'horizontal' ? 240 : 360 }}
+    />;
   }
 
   // Color configuration according to Brand Board
