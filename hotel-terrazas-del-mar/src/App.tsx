@@ -207,7 +207,42 @@ export default function App() {
     let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
     canonical.href = pageUrl;
-  }, [activePage, isAdminRoute]);
+
+    const existingStructured = document.getElementById('page-structured-data');
+    if (existingStructured) existingStructured.remove();
+    const structured = document.createElement('script');
+    structured.id = 'page-structured-data';
+    structured.type = 'application/ld+json';
+    const pageNames: Record<PageId, string> = {
+      inicio: 'Inicio',
+      habitaciones: 'Habitaciones',
+      'eventos-piscina': 'Eventos y Piscina',
+      transporte: 'Guía de Ferries y Transporte',
+      galeria: 'Galería',
+      contacto: 'Contacto y Ubicación',
+    };
+    const graph: any[] = [{
+      '@type': 'BreadcrumbList',
+      itemListElement: activePage === 'inicio' ? [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://miradorecologicoometepe.com/' }
+      ] : [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://miradorecologicoometepe.com/' },
+        { '@type': 'ListItem', position: 2, name: pageNames[activePage], item: pageUrl }
+      ]
+    }];
+    if (activePage === 'contacto' && faqs.length) {
+      graph.push({
+        '@type': 'FAQPage',
+        mainEntity: faqs.map(faq => ({
+          '@type': 'Question',
+          name: faq.q,
+          acceptedAnswer: { '@type': 'Answer', text: faq.a }
+        }))
+      });
+    }
+    structured.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+    document.head.appendChild(structured);
+  }, [activePage, isAdminRoute, faqs]);
 
   // Listen to hash and keyboard shortcuts (Ctrl+Alt+A / Cmd+Alt+A)
   useEffect(() => {
