@@ -1,0 +1,16 @@
+{
+  "name": "Hotel Mirador Ecológico",
+  "short_name": "Mirador",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#087f83",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
