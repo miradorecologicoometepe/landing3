@@ -59,7 +59,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onLogout,
   isDedicatedPage = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'rooms' | 'gallery' | 'faqs' | 'domain'>('general');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'rooms' | 'gallery' | 'faqs'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
@@ -114,10 +114,17 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     }));
   };
 
-  const handleSaveConfig = (e: React.FormEvent) => {
+  const handleSaveConfig = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!supabase) { triggerToast('Supabase no está disponible.'); return; }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { triggerToast('Tu sesión expiró. Vuelve a iniciar sesión.'); return; }
+    const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+    if (admin.error || !admin.data) { triggerToast('Tu cuenta no tiene permisos para publicar.'); return; }
+    const saved = await supabase.from('site_content').upsert({ key: 'hotel_config', value: configForm }, { onConflict: 'key' }).select('key').maybeSingle();
+    if (saved.error || !saved.data) { triggerToast(saved.error?.message || 'No se pudo publicar la información.'); return; }
     onSaveHotelConfig(configForm);
-    triggerToast('Información general guardada correctamente.');
+    triggerToast('Información publicada en Supabase.');
   };
 
   const handlePublishLogo = async () => {
@@ -427,7 +434,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white px-3 sm:px-6 py-2.5 grid grid-cols-3 sm:flex sm:items-center gap-1.5 sm:gap-2 border-b border-stone-200 shrink-0 sm:overflow-x-auto sticky top-0 z-20">
+      <div className="bg-white px-3 sm:px-6 py-2.5 grid grid-cols-5 sm:flex sm:items-center gap-1.5 sm:gap-2 border-b border-stone-200 shrink-0 sm:overflow-x-auto sticky top-0 z-20">
         <button type="button" onClick={() => setActiveTab('calendar')}
           className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'calendar' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
           <CalendarDays className="w-4 h-4 text-brand-teal" /><span>Calendario</span>
@@ -477,18 +484,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
           <HelpCircle className="w-4 h-4 text-brand-teal" /><span className="truncate">Preguntas</span>
         </button>
 
-        <button
-          id="tab-admin-domain"
-          onClick={() => setActiveTab('domain')}
-          className={`px-2 sm:px-4 py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all cursor-pointer min-w-0 ${
-            activeTab === 'domain'
-              ? 'bg-teal-50 text-teal-900 border border-teal-200 shadow-sm'
-              : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'
-          }`}
-        >
-          <Globe className="w-4 h-4 text-brand-teal" />
-          <span className="truncate">Acceso</span>
-        </button>
+
       </div>
 
       {/* Toast Alert */}
@@ -1074,78 +1070,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
 
           {activeTab === 'faqs' && <FaqEditor />}
 
-          {/* TAB 5: DOMAIN & ACCESS GUIDE */}
-          {activeTab === 'domain' && (
-            <div className="max-w-3xl mx-auto space-y-6">
-              
-              <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-5">
-                <div className="flex items-center gap-3 pb-3 border-b border-stone-100">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
-                    <Globe className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-serif-heading font-bold text-stone-900 text-base">
-                      Estructura de Acceso Privado (admin.dominio.com)
-                    </h4>
-                    <p className="text-xs text-stone-500">
-                      Cómo está configurada la separación entre la web pública para huéspedes y el backoffice privado.
-                    </p>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                      <span className="font-bold text-xs text-stone-800">Sitio Web Público (Huéspedes)</span>
-                    </div>
-                    <code className="block bg-white p-2 rounded border border-stone-200 text-stone-700 text-xs font-mono">
-                      https://tudominio.com
-                    </code>
-                    <p className="text-[11px] text-stone-500 leading-relaxed">
-                      Limpio, elegante y sin ningún botón visible de administración en el menú principal ni en el móvil. Los visitantes disfrutan de la experiencia de lujo boutique sin distracciones técnicas.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-stone-900 text-white space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                      <span className="font-bold text-xs text-amber-300">Backoffice Privado (Staff & Gerencia)</span>
-                    </div>
-                    <code className="block bg-stone-950 p-2 rounded border border-stone-800 text-amber-400 text-xs font-mono">
-                      https://admin.tudominio.com
-                    </code>
-                    <p className="text-[11px] text-stone-400 leading-relaxed">
-                      Requiere PIN de seguridad para ingresar. Permite gestionar tarifas por noche, añadir suites, renovar fotografías y cambiar el número de WhatsApp.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
-                  <div className="font-bold flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-amber-600" />
-                    <span>Métodos rápidos para abrir el panel en cualquier momento:</span>
-                  </div>
-                  <ul className="list-disc list-inside space-y-1.5 text-[11px] text-amber-800">
-                    <li>
-                      <strong>Subdominio directo:</strong> Accede a <code className="bg-amber-100/80 px-1.5 py-0.5 rounded font-mono font-bold">admin.tudominio.com</code>
-                    </li>
-                    <li>
-                      <strong>Ruta web o hash:</strong> Escribe <code className="bg-amber-100/80 px-1.5 py-0.5 rounded font-mono font-bold">/admin</code> o <code className="bg-amber-100/80 px-1.5 py-0.5 rounded font-mono font-bold">#admin</code> en la barra de direcciones.
-                    </li>
-                    <li>
-                      <strong>Atajo de teclado:</strong> Presiona <kbd className="bg-white px-2 py-0.5 rounded border border-amber-300 font-mono text-[10px] font-bold">Ctrl + Alt + A</kbd> (o <kbd className="bg-white px-2 py-0.5 rounded border border-amber-300 font-mono text-[10px] font-bold">Cmd + Alt + A</kbd> en Mac) en cualquier parte de la web.
-                    </li>
-                    <li>
-                      <strong>Enlace discreto de pie de página:</strong> Haz clic en <span className="underline font-semibold">Gestión</span> con candado al fondo de la página, junto a los términos de servicio.
-                    </li>
-                  </ul>
-                </div>
-
-              </div>
-
-            </div>
-          )}
 
         </div>
 
@@ -1153,14 +1078,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         <div className="bg-stone-100 px-3 sm:px-6 py-3 border-t border-stone-200 flex items-center justify-between text-xs text-stone-500 shrink-0">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>Los cambios se guardan localmente en tu navegador y actualizan todo el sitio al instante.</span>
+            <span>Contenido conectado a Supabase. La landing carga la información publicada desde la base de datos.</span>
           </div>
-          <button
-            onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs cursor-pointer"
-          >
-            Listo / Ver Sitio Web
-          </button>
+          <span className="hidden sm:inline font-semibold">Panel privado</span>
         </div>
 
       </div>
