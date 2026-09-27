@@ -13,22 +13,14 @@ import {
   Plus, 
   Trash2, 
   Edit3, 
-  RotateCcw, 
   Check, 
   Sparkles, 
   ExternalLink,
   MessageCircle,
-  Eye,
-  AlertCircle,
   HelpCircle,
   Save,
-  Layers,
   Lock,
-  Key,
-  ShieldCheck,
-  Globe,
   LogOut,
-  ArrowLeft,
   CalendarDays
 } from 'lucide-react';
 
@@ -41,7 +33,6 @@ interface AdminPanelModalProps {
   onSaveRooms: (rooms: Room[]) => void;
   photos: PhotoItem[];
   onSavePhotos: (photos: PhotoItem[]) => void;
-  onResetAllData: () => void;
   onLogout?: () => void;
   isDedicatedPage?: boolean;
 }
@@ -55,7 +46,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onSaveRooms,
   photos,
   onSavePhotos,
-  onResetAllData,
   onLogout,
   isDedicatedPage = false,
 }) => {
@@ -380,13 +370,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         setPhotoFormData(null);
       }
       triggerToast('Foto eliminada.');
-    }
-  };
-
-  const handleResetDefaults = () => {
-    if (confirm('¿Restablecer todos los datos a la configuración original de fábrica? Perderás los cambios no guardados externamente.')) {
-      onResetAllData();
-      onClose();
     }
   };
 
