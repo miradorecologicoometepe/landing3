@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PhotoItem, PhotoCategory } from '../types';
 import { 
   Camera, 
@@ -23,6 +23,12 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<PhotoCategory>('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const scrollGallery = (direction: 'left' | 'right') => {
+    const el = carouselRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction === 'right' ? el.clientWidth * 0.85 : -el.clientWidth * 0.85, behavior: 'smooth' });
+  };
 
   const categories: { id: PhotoCategory; label: string }[] = [
     { id: 'all', label: 'Todas las Fotos' },
@@ -95,7 +101,7 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
               <button
                 key={cat.id}
                 id={`gallery-filter-${cat.id}`}
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => { setSelectedCategory(cat.id); setLightboxIndex(null); if (carouselRef.current) carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' }); }}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                   selectedCategory === cat.id
                     ? 'bg-[#0d9488] text-white shadow-lg shadow-black/40 border border-teal-300'
@@ -110,51 +116,41 @@ export const PhotoGallerySection: React.FC<PhotoGallerySectionProps> = ({
 
         {filteredPhotos.length === 0 && <div className="mb-8 rounded-2xl border border-stone-700 bg-stone-800/60 px-5 py-10 text-center text-sm text-stone-300">Aún no hay fotografías publicadas en esta categoría.</div>}
 
-        {/* Mosaic Photo Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredPhotos.map((photo, index) => (
-            <div
-              key={photo.id}
-              id={`gallery-item-${photo.id}`}
-              onClick={() => handleOpenLightbox(index)}
-              className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-stone-800 cursor-pointer shadow-md hover:shadow-2xl transition-all duration-300 border border-stone-800 hover:border-amber-500/50"
-            >
-              <img
-                src={photo.url}
-                alt={photo.title}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                loading="lazy"
-                decoding="async"
-              />
-
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
-
-              {/* Bottom Caption Overlay */}
-              <div className="absolute inset-0 p-5 flex flex-col justify-end transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#387378] text-white backdrop-blur-xs">
-                    {categories.find(category => category.id === photo.category)?.label || photo.category}
-                  </span>
-                  <span className="text-[10px] text-stone-300">
-                    Click para ampliar
-                  </span>
-                </div>
-                <h3 className="font-gidole text-lg font-bold text-white group-hover:text-brand-sun transition-colors">
-                  {photo.title}
-                </h3>
-                <p className="text-xs text-stone-300 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {photo.caption}
-                </p>
-              </div>
-
-              {/* Top Zoom Icon */}
-              <div className="absolute top-3 right-3 p-2 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
-                <Maximize2 className="w-4 h-4 text-brand-sun" />
-              </div>
+        {/* Filtered Photo Carousel */}
+        {filteredPhotos.length > 0 && (
+          <div className="relative">
+            <div ref={carouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {filteredPhotos.map((photo, index) => (
+                <button
+                  type="button"
+                  key={photo.id}
+                  id={`gallery-item-${photo.id}`}
+                  onClick={() => handleOpenLightbox(index)}
+                  className="group relative shrink-0 w-[88%] sm:w-[48%] lg:w-[32%] aspect-[4/3] rounded-xl overflow-hidden bg-stone-800 cursor-pointer shadow-md hover:shadow-2xl transition-all duration-300 border border-stone-800 hover:border-amber-500/50 snap-start text-left"
+                >
+                  <img src={photo.url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 p-5 flex flex-col justify-end">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#387378] text-white">{categories.find(category => category.id === photo.category)?.label || photo.category}</span>
+                    </div>
+                    <h3 className="font-gidole text-lg font-bold text-white">{photo.title}</h3>
+                  </div>
+                  <div className="absolute top-3 right-3 p-2 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"><Maximize2 className="w-4 h-4 text-brand-sun" /></div>
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
+            {filteredPhotos.length > 1 && (
+              <div className="flex items-center justify-between mt-3">
+                <span className="text-xs text-stone-400">Desliza para ver más · {filteredPhotos.length} foto(s)</span>
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => scrollGallery('left')} aria-label="Fotos anteriores" className="w-10 h-10 rounded-full border border-[#2c585e] bg-[#1b373b] hover:bg-[#254c51] flex items-center justify-center"><ChevronLeft className="w-5 h-5" /></button>
+                  <button type="button" onClick={() => scrollGallery('right')} aria-label="Más fotos" className="w-10 h-10 rounded-full border border-[#2c585e] bg-[#1b373b] hover:bg-[#254c51] flex items-center justify-center"><ChevronRight className="w-5 h-5" /></button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Lightbox Modal */}
         {currentPhoto && lightboxIndex !== null && (
