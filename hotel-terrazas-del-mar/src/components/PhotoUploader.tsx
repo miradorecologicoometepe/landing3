@@ -14,6 +14,7 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
   const [status, setStatus] = useState('');
   const [progress, setProgress] = useState(0);
   const [previews, setPreviews] = useState<string[]>([]);
+  const storagePathFromUrl = (url?: string) => { if (!url) return null; const marker = '/storage/v1/object/public/hotel-media/'; const at = url.indexOf(marker); return at >= 0 ? decodeURIComponent(url.slice(at + marker.length).split('?')[0]) : null; };
   useEffect(() => { const urls = files.map(file => URL.createObjectURL(file)); setPreviews(urls); return () => urls.forEach(url => URL.revokeObjectURL(url)); }, [files]);
 
   const publish = async (event: React.FormEvent) => {
@@ -56,6 +57,8 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
             const updated = await supabase.from('rooms').update({ details: { ...details, images: (details.images || []).map((image: string) => image === replacePhoto.url ? url : image) } }).eq('id', replacePhoto.roomTypeId).select('id').maybeSingle();
             if (updated.error || !updated.data) throw new Error('La foto se reemplazó, pero no se pudo actualizar la habitación: ' + (updated.error?.message || 'No se encontró la habitación vinculada.'));
           }
+          const oldPath = storagePathFromUrl(replacePhoto.url);
+          if (oldPath) await supabase.storage.from('hotel-media').remove([oldPath]);
           onReplaced?.(photo);
         } else {
           const saved = await supabase.from('gallery_photos').insert({ id, category, image_path: url, details: { title: photo.title, caption: '', roomTypeId: photo.roomTypeId, aspectRatio: 'landscape' }, sort_order: Date.now() + i });
@@ -79,7 +82,7 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
     finally { setBusy(false); }
   };
 
-  return <form onSubmit={publish} className="bg-white border border-teal-200 rounded-2xl p-5 space-y-4">
+  return <form onSubmit={publish} className="bg-white border border-teal-200 rounded-2xl p-3 sm:p-5 space-y-4">
     <h4 className="text-lg font-bold text-stone-900">{replacePhoto ? `Reemplazar: ${replacePhoto.title}` : 'Subir fotografías reales'}</h4>
     <p className="text-sm text-stone-600">Selecciona fotos desde tu teléfono o computadora. Se publicarán en Supabase para todos los visitantes. No uses imágenes de muestra.</p>
     {!supabase && <p role="alert" className="text-red-700 text-sm">Supabase no está configurado en esta versión de la web.</p>}
@@ -100,8 +103,8 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
     </label>
     {previews.length > 0 && <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">{previews.map((url, index) => <img key={url} src={url} alt={`Vista previa ${index + 1}`} className="h-28 w-full rounded-xl object-cover border" />)}</div>}
     {files.length > 0 && <p className="text-sm text-stone-600">{files.length} archivo(s) seleccionado(s)</p>}
-    <button type="submit" disabled={busy || !supabase || !files.length} className="rounded-xl bg-teal-700 text-white font-bold px-5 py-3 disabled:opacity-50">{busy ? `Publicando ${progress}/${files.length}…` : replacePhoto ? 'Reemplazar fotografía' : 'Subir y publicar fotos'}</button>
-    {replacePhoto && <button type="button" onClick={onCancelReplace} className="ml-3 rounded-xl border px-4 py-3 text-sm">Cancelar reemplazo</button>}
+    <div className="flex flex-col sm:flex-row gap-2"><button type="submit" disabled={busy || !supabase || !files.length} className="w-full sm:w-auto rounded-xl bg-teal-700 text-white font-bold px-5 py-3 disabled:opacity-50">{busy ? `Publicando ${progress}/${files.length}…` : replacePhoto ? 'Reemplazar fotografía' : 'Subir y publicar fotos'}</button>
+    {replacePhoto && <button type="button" onClick={onCancelReplace} className="w-full sm:w-auto rounded-xl border px-4 py-3 text-sm">Cancelar reemplazo</button>}</div>
     {status && <p role="status" className="text-sm text-stone-700">{status}</p>}
   </form>;
 };
