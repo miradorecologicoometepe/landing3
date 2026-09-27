@@ -67,6 +67,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [heroSaving, setHeroSaving] = useState(false);
   const [replacingPhoto, setReplacingPhoto] = useState<PhotoItem | null>(null);
   const [galleryStatus, setGalleryStatus] = useState('');
+  const [gallerySection, setGallerySection] = useState<'all' | 'events'>('all');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [adminName, setAdminName] = useState('');
   const [busRoutes, setBusRoutes] = useState<Array<{id:string; route:string; frequency:string; timeRange:string; notes:string; times:string[]}>>([]);
@@ -1295,7 +1296,19 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
           {/* Galería: únicamente carga de archivos; las URL se generan automáticamente en Supabase. */}
           {activeTab === 'gallery' && (
             <div className="space-y-6">
-              <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-stone-800"><h4 className="font-bold mb-2">Fotos que aparecen en la landing</h4><p>Para las <strong>3 imágenes de la sección Eventos</strong>, selecciona abajo <strong>«Eventos y celebraciones»</strong> y sube al menos 3 fotografías. La primera ocupará la tarjeta grande y la segunda y tercera las dos tarjetas laterales. Para cambiarlas después, usa <strong>«Reemplazar»</strong> en las fotos publicadas. Piscina utiliza «Piscina y mirador»; habitaciones utiliza «Habitaciones» y la habitación correspondiente.</p><div className="mt-3 rounded-xl bg-white/80 border border-teal-100 px-3 py-2 text-xs"><strong>Eventos publicados:</strong> {photos.filter(photo => photo.category === 'events').length} foto(s). {photos.filter(photo => photo.category === 'events').length < 3 ? 'Sube 3 para completar las tarjetas de Eventos.' : 'La sección Eventos ya tiene suficientes imágenes.'}</div></div>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" onClick={() => { setGallerySection('all'); setReplacingPhoto(null); }} className={`px-4 py-2.5 rounded-xl text-sm font-bold border ${gallerySection === 'all' ? 'bg-teal-700 text-white border-teal-700' : 'bg-white text-stone-700 border-stone-200'}`}>Todas las fotos</button>
+                <button type="button" onClick={() => { setGallerySection('events'); setReplacingPhoto(null); }} className={`px-4 py-2.5 rounded-xl text-sm font-bold border ${gallerySection === 'events' ? 'bg-teal-700 text-white border-teal-700' : 'bg-white text-stone-700 border-stone-200'}`}>Eventos</button>
+              </div>
+              {gallerySection === 'events' ? (
+                <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-stone-800">
+                  <h4 className="font-bold text-lg mb-1">Fotos de Eventos</h4>
+                  <p>Administra aquí únicamente las imágenes que aparecen en la sección pública de Eventos. Puedes reemplazar las existentes o agregar nuevas desde el formulario.</p>
+                  <div className="mt-3 rounded-xl bg-white/80 border border-teal-100 px-3 py-2 text-xs"><strong>Publicadas:</strong> {photos.filter(photo => photo.category === 'events').length} foto(s).</div>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-stone-800"><h4 className="font-bold mb-2">Fotos que aparecen en la landing</h4><p>Selecciona la categoría en el formulario para publicar fotografías en habitaciones, piscina, eventos, exteriores o gastronomía.</p></div>
+              )}
               <PhotoUploader key={replacingPhoto?.id || 'new'} rooms={rooms} replacePhoto={replacingPhoto} onCancelReplace={() => setReplacingPhoto(null)} onReplaced={photo => { onSavePhotos(currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.map(item => item.id === photo.id ? photo : item)); setReplacingPhoto(null); setGalleryStatus('Fotografía reemplazada correctamente.'); }} onUploaded={(photo, roomId) => {
                 onSavePhotos(currentUploadedPhotosRef.current = [...currentUploadedPhotosRef.current, photo]);
                 if (roomId) onSaveRooms(rooms.map(room => room.id === roomId ? { ...room, images: [...room.images.filter(url => !url.includes('images.unsplash.com')), photo.url] } : room));
@@ -1305,7 +1318,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 {galleryStatus && <p role="status" className="text-sm mb-3">{galleryStatus}</p>}
                 <p className="text-xs text-stone-600 mb-4">Las fotos publicadas se muestran en la landing y en su categoría. Para añadir fotos nuevas utiliza el formulario de subida de arriba.</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {photos.map(photo => <div key={photo.id} className="rounded-xl overflow-hidden border border-stone-200">
+                  {photos.filter(photo => gallerySection === 'events' ? photo.category === 'events' : true).map(photo => <div key={photo.id} className="rounded-xl overflow-hidden border border-stone-200">
                     <img src={photo.url} alt={photo.title} className="w-full aspect-[4/3] object-cover" />
                     <div className="p-2 text-xs font-semibold text-stone-800">{photo.title}</div>
                     <div className="flex gap-2 p-2 pt-0"><button type="button" onClick={() => { setReplacingPhoto(photo); setGalleryStatus(""); }} className="text-xs rounded-lg bg-teal-700 text-white px-2 py-2">Reemplazar</button><button type="button" onClick={async () => { if (!supabase || !window.confirm("¿Eliminar esta fotografía publicada?")) return; const deleted = await supabase.from("gallery_photos").delete().eq("id", photo.id).select("id").maybeSingle(); if (deleted.error || !deleted.data) { setGalleryStatus(deleted.error?.message || "No se pudo eliminar la fotografía."); return; } if (photo.roomTypeId) { const room = await supabase.from("rooms").select("details").eq("id", photo.roomTypeId).maybeSingle(); if (room.data) { const details = room.data.details as Room; await supabase.from("rooms").update({ details: { ...details, images: details.images.filter(image => image !== photo.url) } }).eq("id", photo.roomTypeId); } } onSavePhotos(currentUploadedPhotosRef.current = currentUploadedPhotosRef.current.filter(item => item.id !== photo.id)); setGalleryStatus("Fotografía eliminada de la galería."); }} className="text-xs rounded-lg border border-red-300 text-red-700 px-2 py-2">Eliminar</button></div>
