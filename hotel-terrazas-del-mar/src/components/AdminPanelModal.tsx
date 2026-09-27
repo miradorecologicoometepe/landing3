@@ -22,7 +22,8 @@ import {
   Lock,
   LogOut,
   CalendarDays,
-  Waves
+  Waves,
+  Bus
 } from 'lucide-react';
 
 interface AdminPanelModalProps {
@@ -50,7 +51,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onLogout,
   isDedicatedPage = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'services' | 'rooms' | 'gallery' | 'faqs'>('general');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'services' | 'transport' | 'rooms' | 'gallery' | 'faqs'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
@@ -65,6 +66,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [galleryStatus, setGalleryStatus] = useState('');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [adminName, setAdminName] = useState('');
+  const [busRoutes, setBusRoutes] = useState<Array<{id:string; route:string; frequency:string; timeRange:string; notes:string}>>([]);
+  const [transportStatus, setTransportStatus] = useState('');
+  const [transportSaving, setTransportSaving] = useState(false);
   useEffect(() => {
     if (!logoFile) { setLogoPreview(null); return; }
     const url = URL.createObjectURL(logoFile);
@@ -90,6 +94,40 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       if (rawName) setAdminName(rawName.charAt(0).toUpperCase() + rawName.slice(1));
     });
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !supabase) return;
+    void supabase.from('transport_schedules').select('id,details').eq('category','bus').then(({data,error}) => {
+      if (error) { setTransportStatus(error.message); return; }
+      setBusRoutes((data || []).map((row: any) => ({ id: row.id, route: row.details?.route || '', frequency: row.details?.frequency || '', timeRange: row.details?.timeRange || '', notes: row.details?.notes || '' })));
+    });
+  }, [isOpen]);
+
+  const saveBusRoute = async (route: {id:string; route:string; frequency:string; timeRange:string; notes:string}) => {
+    if (!supabase) return;
+    setTransportSaving(true); setTransportStatus('');
+    const { data: existing } = await supabase.from('transport_schedules').select('details').eq('id', route.id).maybeSingle();
+    const details = existing?.details && typeof existing.details === 'object' ? existing.details as Record<string,unknown> : {};
+    const saved = await supabase.from('transport_schedules').update({ details: { ...details, route:route.route, frequency:route.frequency, timeRange:route.timeRange, notes:route.notes } }).eq('id',route.id).select('id').maybeSingle();
+    setTransportSaving(false); setTransportStatus(saved.error || !saved.data ? (saved.error?.message || 'No se pudo guardar la ruta.') : 'Ruta de bus publicada correctamente.');
+  };
+
+  const addBusRoute = async () => {
+    if (!supabase) return;
+    setTransportSaving(true); setTransportStatus('');
+    const details={route:'Nueva ruta',frequency:'',timeRange:'',notes:''};
+    const saved=await supabase.from('transport_schedules').insert({category:'bus',details}).select('id,details').single();
+    setTransportSaving(false);
+    if(saved.error || !saved.data){setTransportStatus(saved.error?.message || 'No se pudo crear la ruta.');return;}
+    setBusRoutes(prev=>[...prev,{id:saved.data.id, ...details}]); setTransportStatus('Nueva ruta creada. Completa los datos y guarda.');
+  };
+
+  const deleteBusRoute = async (id:string) => {
+    if (!supabase || !window.confirm('¿Eliminar esta ruta de bus de la guía?')) return;
+    const deleted=await supabase.from('transport_schedules').delete().eq('id',id).select('id').maybeSingle();
+    if(deleted.error || !deleted.data){setTransportStatus(deleted.error?.message || 'No se pudo eliminar la ruta.');return;}
+    setBusRoutes(prev=>prev.filter(row=>row.id!==id)); setTransportStatus('Ruta eliminada.');
+  };
 
   // Rooms editing state
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
@@ -484,7 +522,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       </div>
 
       {/* Tab Navigation */}
-      <div className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 z-50 bg-white px-1.5 sm:px-6 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:py-2.5 grid grid-cols-6 sm:flex sm:items-center gap-0.5 sm:gap-2 border-t sm:border-t-0 sm:border-b border-stone-200 shrink-0 sm:overflow-x-auto shadow-[0_-6px_24px_rgba(0,0,0,0.08)] sm:shadow-sm">
+      <div className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 z-50 bg-white px-1.5 sm:px-6 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:py-2.5 grid grid-cols-7 sm:flex sm:items-center gap-0.5 sm:gap-2 border-t sm:border-t-0 sm:border-b border-stone-200 shrink-0 sm:overflow-x-auto shadow-[0_-6px_24px_rgba(0,0,0,0.08)] sm:shadow-sm">
         <button type="button" onClick={() => setActiveTab('calendar')}
           className={`px-1 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'calendar' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
           <CalendarDays className="w-4 h-4 text-brand-teal" /><span>Calendario</span>
@@ -506,6 +544,11 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         <button type="button" onClick={() => setActiveTab('services')}
           className={`px-1 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'services' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
           <Waves className="w-4 h-4 text-brand-teal" /><span className="truncate">Servicios</span>
+        </button>
+
+        <button type="button" onClick={() => setActiveTab('transport')}
+          className={`px-1 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'transport' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
+          <Bus className="w-4 h-4 text-brand-teal" /><span className="truncate">Guía</span>
         </button>
 
         <button
@@ -1131,6 +1174,19 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 </div>
               )}
 
+            </div>
+          )}
+
+          {activeTab === 'transport' && (
+            <div className="max-w-4xl mx-auto space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><h3 className="text-xl font-extrabold text-stone-900">Buses locales</h3><p className="text-sm text-stone-500">Edita las rutas que aparecen en Guía → Buses Locales.</p></div><button type="button" onClick={addBusRoute} disabled={transportSaving} className="px-4 py-2.5 rounded-xl bg-teal-700 text-white font-bold text-sm flex items-center justify-center gap-2"><Plus className="w-4 h-4"/>Agregar ruta</button></div>
+              {transportStatus && <p role="status" className="text-sm rounded-xl bg-teal-50 border border-teal-100 px-4 py-3 text-stone-700">{transportStatus}</p>}
+              <div className="space-y-4">{busRoutes.map((item,index)=><div key={item.id} className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm space-y-4"><div className="flex items-center justify-between"><h4 className="font-bold text-stone-900">Ruta {index+1}</h4><button type="button" onClick={()=>deleteBusRoute(item.id)} className="p-2 rounded-lg border border-red-200 text-red-600" title="Eliminar ruta"><Trash2 className="w-4 h-4"/></button></div><div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2"><label className="block text-xs font-bold text-stone-700 mb-1">Ruta</label><input value={item.route} onChange={e=>setBusRoutes(prev=>prev.map(x=>x.id===item.id?{...x,route:e.target.value}:x))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm"/></div>
+                <div><label className="block text-xs font-bold text-stone-700 mb-1">Frecuencia</label><input value={item.frequency} onChange={e=>setBusRoutes(prev=>prev.map(x=>x.id===item.id?{...x,frequency:e.target.value}:x))} placeholder="Ej. Cada 45 - 60 minutos" className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm"/></div>
+                <div><label className="block text-xs font-bold text-stone-700 mb-1">Horario</label><input value={item.timeRange} onChange={e=>setBusRoutes(prev=>prev.map(x=>x.id===item.id?{...x,timeRange:e.target.value}:x))} placeholder="Ej. 06:00 AM - 05:30 PM" className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm"/></div>
+                <div className="sm:col-span-2"><label className="block text-xs font-bold text-stone-700 mb-1">Nota</label><textarea rows={2} value={item.notes} onChange={e=>setBusRoutes(prev=>prev.map(x=>x.id===item.id?{...x,notes:e.target.value}:x))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm"/></div>
+              </div><div className="flex justify-end"><button type="button" disabled={transportSaving} onClick={()=>saveBusRoute(item)} className="px-4 py-2.5 rounded-xl bg-[#087f83] text-white font-bold text-sm flex items-center gap-2"><Save className="w-4 h-4"/>Guardar ruta</button></div></div>)}</div>
             </div>
           )}
 
