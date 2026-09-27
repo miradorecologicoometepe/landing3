@@ -40,10 +40,11 @@ export default function App() {
 
   // Persistent Customization State
   const [hotelConfig, setHotelConfig] = useState<HotelConfig>(HOTEL_CONFIG);
-  const [rooms, setRooms] = useState<Room[]>(ROOMS_DATA);
-  const [photos, setPhotos] = useState<PhotoItem[]>(GALLERY_PHOTOS);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [faqs, setFaqs] = useState<FaqItem[]>(DEFAULT_FAQS);
   const [publicContentError, setPublicContentError] = useState('');
+  const [publicContentReady, setPublicContentReady] = useState(false);
 
   // Load published content for all visitors; preserve existing defaults until content is published.
   useEffect(() => {
@@ -55,7 +56,8 @@ export default function App() {
       if (data.photos) setPhotos(data.photos);
       if (data.faqs) setFaqs(data.faqs);
       setPublicContentError(data.error || '');
-    }).catch(error => { console.error('Unable to load published site content', error); if (active) setPublicContentError('No se pudo cargar el contenido publicado.'); });
+      setPublicContentReady(true);
+    }).catch(error => { console.error('Unable to load published site content', error); if (active) { setPublicContentError('No se pudo cargar el contenido publicado.'); setPublicContentReady(true); } });
     return () => { active = false; };
   }, []);
 
@@ -66,7 +68,11 @@ export default function App() {
     icon.href = hotelConfig.faviconUrl;
   }, [hotelConfig.faviconUrl]);
 
-  // Dedicated Admin Route & Auth State (tipo admin.dominio.com)
+  if (!publicContentReady && typeof window !== 'undefined' && !window.location.hostname.startsWith('admin.')) {
+    return <div className="min-h-screen bg-[#f7faf8] flex items-center justify-center" aria-label="Cargando sitio"><div className="w-8 h-8 rounded-full border-2 border-[#0f7775]/25 border-t-[#0f7775] animate-spin" /></div>;
+  }
+
+    // Dedicated Admin Route & Auth State (tipo admin.dominio.com)
   const checkIsAdminUrl = (): boolean => {
     if (typeof window === 'undefined') return false;
     const hostname = window.location.hostname || '';
