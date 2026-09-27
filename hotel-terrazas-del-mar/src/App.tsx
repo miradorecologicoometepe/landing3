@@ -102,12 +102,17 @@ export default function App() {
     let icon = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
     if (isAdminRoute) {
       document.title = 'Mirador Ecológico Admin';
+      let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+      if (!robots) { robots = document.createElement('meta'); robots.name = 'robots'; document.head.appendChild(robots); }
+      robots.content = 'noindex, nofollow, noarchive';
       if (manifest) manifest.href = '/admin.webmanifest?v=2';
       if (icon) { icon.type = 'image/svg+xml'; icon.href = '/admin-icon.svg?v=2'; }
       let appleIcon = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
       if (!appleIcon) { appleIcon = document.createElement('link'); appleIcon.rel = 'apple-touch-icon'; document.head.appendChild(appleIcon); }
       appleIcon.href = '/admin-icon.svg?v=2';
     } else {
+      const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+      if (robots) robots.content = 'index, follow, max-image-preview:large';
       if (manifest) manifest.href = '/manifest.webmanifest';
       if (icon) icon.href = hotelConfig.faviconUrl || '/favicon.svg';
     }
