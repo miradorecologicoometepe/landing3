@@ -1,5 +1,4 @@
 import { BookingReservation, Room, HotelConfig } from '../types';
-import { ADDON_PRICING } from '../data/hotelData';
 
 export function calculateNights(checkInStr: string, checkOutStr: string): number {
   if (!checkInStr || !checkOutStr) return 1;
@@ -103,34 +102,12 @@ export function calculateQuote(
   const discountedSubtotal = standardSubtotal;
   const directBookingDiscount = 0;
 
-  let addonsCost = 0;
+  // Optional add-ons were removed from the current booking experience.
+  // Keep the legacy quote fields at zero for compatibility with saved reservations.
+  const addonsCost = 0;
   const addonsList: { name: string; cost: number }[] = [];
 
-  if (reservation.addons.breakfast) {
-    const cost = ADDON_PRICING.breakfast.price * totalGuests * nights;
-    addonsCost += cost;
-    addonsList.push({ name: `Desayuno (${totalGuests} pax × ${nights} d)`, cost });
-  }
-
-  if (reservation.addons.airportTransfer) {
-    const cost = ADDON_PRICING.airportTransfer.price;
-    addonsCost += cost;
-    addonsList.push({ name: 'Traslado VIP Aeropuerto R/T', cost });
-  }
-
-  if (reservation.addons.romanticPackage) {
-    const cost = ADDON_PRICING.romanticPackage.price;
-    addonsCost += cost;
-    addonsList.push({ name: 'Paquete Romance de Bienvenida', cost });
-  }
-
-  if (reservation.addons.lateCheckout) {
-    const cost = ADDON_PRICING.lateCheckout.price;
-    addonsCost += cost;
-    addonsList.push({ name: 'Late Check-out 17:00 garantizado', cost });
-  }
-
-  const total = discountedSubtotal + addonsCost;
+  const total = discountedSubtotal;
 
   return {
     nights,
