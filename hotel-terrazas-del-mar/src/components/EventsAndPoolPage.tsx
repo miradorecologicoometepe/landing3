@@ -18,6 +18,18 @@ import {
 } from 'lucide-react';
 import { HotelConfig, PhotoItem } from '../types';
 
+const MiniPhotoCarousel: React.FC<{ photos: PhotoItem[]; fallback: string; alt: string; caption: React.ReactNode; className?: string }> = ({ photos, fallback, alt, caption, className = '' }) => {
+  const [index, setIndex] = useState(0);
+  React.useEffect(() => { if (index >= photos.length) setIndex(0); }, [photos.length, index]);
+  const current = photos[index];
+  const move = (delta: number) => { if (photos.length > 1) setIndex((prev) => (prev + delta + photos.length) % photos.length); };
+  return <div className={`rounded-2xl overflow-hidden relative group ${className}`}>
+    {current ? <img src={current.url} alt={current.title || alt} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">{fallback}</div>}
+    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent flex items-end p-4">{caption}</div>
+    {photos.length > 1 && <><button type="button" onClick={() => move(-1)} aria-label="Foto anterior" className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 text-white flex items-center justify-center opacity-80 hover:opacity-100"><ChevronLeft className="w-4 h-4" /></button><button type="button" onClick={() => move(1)} aria-label="Siguiente foto" className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 text-white flex items-center justify-center opacity-80 hover:opacity-100"><ChevronRight className="w-4 h-4" /></button><div className="absolute top-3 left-1/2 -translate-x-1/2 flex gap-1">{photos.map((_, i) => <button key={i} type="button" aria-label={`Ver foto ${i+1}`} onClick={() => setIndex(i)} className={`w-1.5 h-1.5 rounded-full ${i === index ? 'bg-white' : 'bg-white/45'}`} />)}</div></>}
+  </div>;
+};
+
 interface EventsAndPoolPageProps {
   hotelConfig: HotelConfig;
   photos: PhotoItem[];
@@ -34,13 +46,6 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
   const [eventDate, setEventDate] = useState('');
   const [eventType, setEventType] = useState('');
   const [eventGuests, setEventGuests] = useState('');
-  const poolCarouselRef = React.useRef<HTMLDivElement>(null);
-  const scrollPool = (direction: 'left' | 'right') => {
-    const el = poolCarouselRef.current;
-    if (!el) return;
-    el.scrollBy({ left: direction === 'right' ? el.clientWidth * 0.8 : -el.clientWidth * 0.8, behavior: 'smooth' });
-  };
-
   const openEventWhatsApp = () => {
     if (!eventDate || !eventType || !eventGuests) return;
     const message = `Hola ${hotelConfig.name}, quiero consultar disponibilidad para un evento.\n\n📅 Fecha: ${eventDate}\n🎉 Tipo de evento: ${eventType}\n👥 Cantidad de personas: ${eventGuests}\n\n¿Me pueden compartir disponibilidad y opciones?`;
@@ -50,8 +55,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
   const eventPhotos = photos.filter(photo => photo.category === 'events');
   const poolPhotos = photos.filter(photo => photo.category === 'pool');
-  const eventImage = (index: number) => eventPhotos.length ? eventPhotos[(index - 1) % eventPhotos.length].url : '';
-  const poolImage = (index: number) => poolPhotos.length ? poolPhotos[(index - 1) % poolPhotos.length].url : '';
+  const slotPhotos = (items: PhotoItem[], slot: string, legacyIndex: number) => { const explicit = items.filter(photo => photo.sectionSlot === slot).slice(0, 3); return explicit.length ? explicit : (items.filter(photo => !photo.sectionSlot)[legacyIndex] ? [items.filter(photo => !photo.sectionSlot)[legacyIndex]] : []); };
 
   const eventFeatures = [
     { title: 'Celebraciones Sociales', desc: 'Cumpleaños, aniversarios, quinceaños y reuniones familiares en un entorno campestre fresco y privado.', icon: Heart },
@@ -167,35 +171,12 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
               </button>
             </div>
 
-            {/* Event Images Showcase */}
+            {/* Event Images Showcase: each block supports up to 3 photos */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2 rounded-2xl overflow-hidden aspect-[16/10] relative group">
-                {eventImage(1) ? <img src={eventImage(1)} alt="Espacio para eventos campestres" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de eventos próximamente</div>}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-6">
-                  <div className="text-white">
-                    <span className="px-2.5 py-1 rounded bg-teal-500 text-white text-[10px] font-bold uppercase tracking-wider">
-                      Eventos Sociales
-                    </span>
-                    <h4 className="font-bold text-lg mt-1">Celebraciones con vistas panorámicas de Ometepe</h4>
-                    <p className="text-xs text-stone-200">Bodas, cumpleaños y cenas con atardeceres mágicos</p>
-                  </div>
-                </div>
-              </div>
-
+              <MiniPhotoCarousel photos={slotPhotos(eventPhotos, 'events-main', 0)} fallback="Fotografía de eventos próximamente" alt="Espacio para eventos campestres" className="md:col-span-2 aspect-[16/10]" caption={<div className="text-white"><span className="px-2.5 py-1 rounded bg-teal-500 text-[10px] font-bold uppercase tracking-wider">Eventos Sociales</span><h4 className="font-bold text-lg mt-1">Celebraciones con vistas panorámicas de Ometepe</h4><p className="text-xs text-stone-200">Bodas, cumpleaños y cenas con atardeceres mágicos</p></div>} />
               <div className="space-y-4 flex flex-col justify-between">
-                <div className="rounded-2xl overflow-hidden aspect-[16/10] relative group">
-                  {eventImage(2) ? <img src={eventImage(2)} alt="Banquete y comida campestre" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de eventos próximamente</div>}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
-                    Catering campestre con sabores de la isla
-                  </div>
-                </div>
-
-                <div className="rounded-2xl overflow-hidden aspect-[16/10] relative group">
-                  {eventImage(3) ? <img src={eventImage(3)} alt="Retiros y grupos" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de eventos próximamente</div>}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
-                    Reuniones de grupos, retiros y talleres
-                  </div>
-                </div>
+                <MiniPhotoCarousel photos={slotPhotos(eventPhotos, 'events-top', 1)} fallback="Fotografía de eventos próximamente" alt="Banquete y comida campestre" className="aspect-[16/10]" caption={<span className="text-white text-xs font-bold">Catering campestre con sabores de la isla</span>} />
+                <MiniPhotoCarousel photos={slotPhotos(eventPhotos, 'events-bottom', 2)} fallback="Fotografía de eventos próximamente" alt="Retiros y grupos" className="aspect-[16/10]" caption={<span className="text-white text-xs font-bold">Reuniones de grupos, retiros y talleres</span>} />
               </div>
             </div>
 
@@ -269,37 +250,11 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                 </div>
               )}
 
-                        {/* Pool Images Showcase */}
-            <div className="relative">
-              {poolPhotos.length > 0 ? (
-                <>
-                  <div ref={poolCarouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    {poolPhotos.map((photo, index) => (
-                      <div key={photo.id} className="relative group shrink-0 w-[86%] sm:w-[48%] lg:w-[32%] aspect-[4/3] rounded-2xl overflow-hidden snap-start bg-stone-100">
-                        <img src={photo.url} alt={photo.title || `Piscina y entorno del Mirador ${index + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent flex items-end p-4">
-                          <span className="text-white text-xs font-bold">{photo.title || 'Piscina & Mirador Ecológico'}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {poolPhotos.length > 3 && (
-                    <div className="flex justify-end gap-2 mt-3">
-                      <button type="button" onClick={() => scrollPool('left')} aria-label="Fotos anteriores de piscina" className="w-10 h-10 rounded-full border border-teal-200 bg-white text-teal-800 hover:bg-teal-50 flex items-center justify-center shadow-sm"><ChevronLeft className="w-5 h-5" /></button>
-                      <button type="button" onClick={() => scrollPool('right')} aria-label="Más fotos de piscina" className="w-10 h-10 rounded-full border border-teal-200 bg-white text-teal-800 hover:bg-teal-50 flex items-center justify-center shadow-sm"><ChevronRight className="w-5 h-5" /></button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {['Piscina al aire libre en Altagracia','Solárium para disfrutar del atardecer','Entorno para descansar'].map(label => (
-                    <div key={label} className="rounded-2xl overflow-hidden aspect-[4/3] relative bg-gradient-to-br from-teal-50 to-stone-100">
-                      <div className="w-full h-full flex items-center justify-center text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">{label}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
+            {/* Pool image blocks: each supports up to 3 photos */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <MiniPhotoCarousel photos={slotPhotos(poolPhotos, 'pool-main', 0)} fallback="Fotografía de piscina próximamente" alt="Piscina al aire libre" className="aspect-[4/3]" caption={<span className="text-white text-xs font-bold">Piscina al aire libre en Altagracia</span>} />
+              <MiniPhotoCarousel photos={slotPhotos(poolPhotos, 'pool-solarium', 1)} fallback="Fotografía de piscina próximamente" alt="Solárium y tumbonas" className="aspect-[4/3]" caption={<span className="text-white text-xs font-bold">Solárium para disfrutar del atardecer</span>} />
+              <MiniPhotoCarousel photos={slotPhotos(poolPhotos, 'pool-relax', 2)} fallback="Fotografía de piscina próximamente" alt="Entorno para descansar" className="aspect-[4/3]" caption={<span className="text-white text-xs font-bold">Entorno para descansar</span>} />
             </div>
 
             {/* Pool Details List */}
