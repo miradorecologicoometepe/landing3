@@ -51,7 +51,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onLogout,
   isDedicatedPage = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'services' | 'transport' | 'rooms' | 'gallery' | 'faqs'>('general');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'general' | 'services' | 'transport' | 'rooms' | 'gallery'>('general');
   const [saveToast, setSaveToast] = useState<string | null>(null);
   const [logoStatus, setLogoStatus] = useState('');
   const [logoSaving, setLogoSaving] = useState(false);
@@ -522,7 +522,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       </div>
 
       {/* Tab Navigation */}
-      <div className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 z-50 bg-white px-1.5 sm:px-6 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:py-2.5 grid grid-cols-7 sm:flex sm:items-center gap-0.5 sm:gap-2 border-t sm:border-t-0 sm:border-b border-stone-200 shrink-0 sm:overflow-x-auto shadow-[0_-6px_24px_rgba(0,0,0,0.08)] sm:shadow-sm">
+      <div className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 z-50 bg-white px-1.5 sm:px-6 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:py-2.5 grid grid-cols-6 sm:flex sm:items-center gap-0.5 sm:gap-2 border-t sm:border-t-0 sm:border-b border-stone-200 shrink-0 sm:overflow-x-auto shadow-[0_-6px_24px_rgba(0,0,0,0.08)] sm:shadow-sm">
         <button type="button" onClick={() => setActiveTab('calendar')}
           className={`px-1 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'calendar' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
           <CalendarDays className="w-4 h-4 text-brand-teal" /><span>Calendario</span>
@@ -575,11 +575,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
         >
           <Image className="w-4 h-4 text-brand-teal" />
           <span className="truncate">Galería</span>
-        </button>
-
-        <button type="button" onClick={() => setActiveTab('faqs')}
-          className={`px-1 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 ${activeTab === 'faqs' ? 'bg-teal-50 text-teal-900 border border-teal-200' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'}`}>
-          <HelpCircle className="w-4 h-4 text-brand-teal" /><span className="truncate">Preguntas</span>
         </button>
 
 
@@ -792,6 +787,13 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
           )}
 
           {/* TAB 2: ROOMS & SUITES */}
+          {activeTab === 'general' && (
+            <div className="max-w-4xl mx-auto mt-6">
+              <div className="mb-3"><h4 className="font-bold text-lg text-stone-900">Preguntas frecuentes</h4><p className="text-xs text-stone-500 mt-1">Administra aquí las preguntas y respuestas que aparecen en la web.</p></div>
+              <FaqEditor />
+            </div>
+          )}
+
           {activeTab === 'rooms' && (
             <div className="space-y-6">
               
@@ -1232,10 +1234,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
               </div>
             </div>
           )}
-
-          {activeTab === 'faqs' && <FaqEditor />}
-
-
 
         </div>
 
