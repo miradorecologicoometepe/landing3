@@ -9,6 +9,7 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
   const [category, setCategory] = useState<PhotoCategory | ''>('');
   const [roomId, setRoomId] = useState('');
   const [title, setTitle] = useState('');
+  const [sectionSlot, setSectionSlot] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
@@ -22,6 +23,8 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
     if (!supabase) { setStatus('Falta configurar Supabase en el despliegue.'); return; }
     if (!files.length) { setStatus('Selecciona al menos una fotografía.'); return; }
     if (!replacePhoto && !category) { setStatus('Selecciona la categoría donde aparecerán las fotografías.'); return; }
+    if (!replacePhoto && (category === 'events' || category === 'pool') && !sectionSlot) { setStatus('Selecciona el bloque donde aparecerán las fotografías.'); return; }
+    if (!replacePhoto && (category === 'events' || category === 'pool') && files.length > 3) { setStatus('Puedes subir un máximo de 3 fotos por bloque.'); return; }
     if (!replacePhoto && category === 'rooms' && !(roomId || rooms[0]?.id)) { setStatus('Selecciona la habitación.'); return; }
     if (replacePhoto && files.length !== 1) { setStatus('Para reemplazar una foto selecciona exactamente un archivo.'); return; }
     setBusy(true); setStatus(''); setProgress(0);
@@ -44,7 +47,7 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
         const url = supabase.storage.from('hotel-media').getPublicUrl(path).data.publicUrl;
         const photo: PhotoItem = replacePhoto
           ? { ...replacePhoto, url }
-          : { id, title: (files.length === 1 && title.trim()) || file.name.replace(/\.[^.]+$/, ''), category, url, caption: '', roomTypeId: category === 'rooms' ? selectedRoomId : undefined, aspectRatio: 'landscape' };
+          : { id, title: (files.length === 1 && title.trim()) || file.name.replace(/\.[^.]+$/, ''), category, url, caption: '', roomTypeId: category === 'rooms' ? selectedRoomId : undefined, aspectRatio: 'landscape', sectionSlot: sectionSlot || undefined };
         if (replacePhoto) {
           const saved = await supabase.from('gallery_photos').update({ image_path: url }).eq('id', id).select('id').maybeSingle();
           if (saved.error || !saved.data) {
@@ -62,7 +65,7 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
           if (oldPath) await supabase.storage.from('hotel-media').remove([oldPath]);
           onReplaced?.(photo);
         } else {
-          const saved = await supabase.from('gallery_photos').insert({ id, category, image_path: url, details: { title: photo.title, caption: '', roomTypeId: photo.roomTypeId, aspectRatio: 'landscape' }, sort_order: Date.now() + i });
+          const saved = await supabase.from('gallery_photos').insert({ id, category, image_path: url, details: { title: photo.title, caption: '', roomTypeId: photo.roomTypeId, aspectRatio: 'landscape', sectionSlot: photo.sectionSlot || null }, sort_order: Date.now() + i });
           if (saved.error) { await supabase.storage.from('hotel-media').remove([path]); throw saved.error; }
           if (category === 'rooms') {
             const room = await supabase.from('rooms').select('details').eq('id', selectedRoomId).maybeSingle();
@@ -95,6 +98,13 @@ export const PhotoUploader: React.FC<Props> = ({ rooms, onUploaded, replacePhoto
     {!replacePhoto && <div className="rounded-xl bg-stone-50 border border-stone-200 p-3 text-xs text-stone-600"><strong className="text-stone-900">Destino:</strong> {category==='rooms'?'Se añadirá a la habitación seleccionada y también a la Galería pública.':category==='pool'?'Aparecerá en Piscina & Mirador dentro de la Galería y podrá usarse en Eventos.':category==='events'?'Aparecerá en Eventos y celebraciones y en la Galería pública.':category==='gastronomy'?'Aparecerá en Gastronomía dentro de la Galería pública.':'Aparecerá como foto de exteriores/naturaleza en la Galería pública.'}</div>}
     {!replacePhoto && category === 'rooms' && <label className="block text-sm font-semibold text-stone-800">Habitación
       <select value={roomId || rooms[0]?.id || ''} onChange={e=>setRoomId(e.target.value)} className="block w-full mt-1 border rounded-xl p-3">{rooms.map(room=><option key={room.id} value={room.id}>{room.name}</option>)}</select>
+    </label>}
+    {!replacePhoto && (category === 'events' || category === 'pool') && <label className="block text-sm font-semibold text-stone-800">Bloque donde aparecerán
+      <select required value={sectionSlot} onChange={e=>setSectionSlot(e.target.value)} className="block w-full mt-1 border rounded-xl p-3">
+        <option value="">Seleccionar bloque…</option>
+        {category === 'events' ? <><option value="events-main">1 · Imagen principal</option><option value="events-top">2 · Superior derecha</option><option value="events-bottom">3 · Inferior derecha</option></> : <><option value="pool-main">1 · Piscina al Aire Libre</option><option value="pool-solarium">2 · Solárium & Tumbonas</option><option value="pool-relax">3 · Entorno para descansar</option></>}
+      </select>
+      <span className="block mt-1 text-xs text-stone-500">Puedes seleccionar hasta 3 fotos para este bloque. Se mostrarán como carrusel.</span>
     </label>}
     {!replacePhoto && <label className="block text-sm font-semibold text-stone-800">Título (opcional para una sola foto)
       <input value={title} onChange={e=>setTitle(e.target.value)} className="block w-full mt-1 border rounded-xl p-3" placeholder="Ej. Piscina al atardecer" />
