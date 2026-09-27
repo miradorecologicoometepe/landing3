@@ -71,8 +71,18 @@ export const TransportPage: React.FC<TransportPageProps> = ({
 
   const ferryRows = publishedSchedules.filter(row => row.category === 'ferry').map(row => row.details);
   const busRows = publishedSchedules.filter(row => row.category === 'bus').map(row => row.details);
-  const sanJorgeToMoyogalpa = ferryRows.length ? ferryRows.filter(row => row.route === 'San Jorge → Moyogalpa').sort((a, b) => new Date('2000-01-01 ' + a.time).getTime() - new Date('2000-01-01 ' + b.time).getTime()) : fallbackSanJorgeToMoyogalpa;
-  const moyogalpaToSanJorge = ferryRows.length ? ferryRows.filter(row => row.route === 'Moyogalpa → San Jorge') : fallbackMoyogalpaToSanJorge;
+  const routeOrder = ['San Jorge → Moyogalpa', 'Moyogalpa → San Jorge', 'San Jorge → San José del Sur', 'San José del Sur → San Jorge'];
+  const fallbackFerries = [
+    ...fallbackSanJorgeToMoyogalpa.map(item => ({ ...item, route: 'San Jorge → Moyogalpa' })),
+    ...fallbackMoyogalpaToSanJorge.map(item => ({ ...item, route: 'Moyogalpa → San Jorge' })),
+  ];
+  const displayedFerryRows = ferryRows.length ? ferryRows : fallbackFerries;
+  const ferryRoutes = routeOrder
+    .map(route => ({
+      route,
+      items: displayedFerryRows.filter(row => row.route === route).sort((a, b) => String(a.time).localeCompare(String(b.time))),
+    }))
+    .filter(group => group.items.length > 0);
   const localBuses = busRows.length ? busRows : fallbackLocalBuses;
 
   const whatsappTransportMessage = encodeURIComponent(
@@ -180,98 +190,44 @@ export const TransportPage: React.FC<TransportPageProps> = ({
         {activeTab === 'ferries' && (
           <div className="space-y-8 animate-in fade-in duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* San Jorge -> Moyogalpa */}
-              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden flex flex-col">
-                <div className="p-4 bg-[#0d474b] text-white flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <Ship className="w-5 h-5 text-teal-300" />
-                    <div>
-                      <h3 className="font-bold text-sm sm:text-base">San Jorge ➔ Moyogalpa</h3>
-                      <p className="text-[11px] text-teal-200">Desde Rivas hacia la Isla de Ometepe</p>
+              {ferryRoutes.map(({ route, items }) => {
+                const toIsland = route.startsWith('San Jorge');
+                return (
+                  <div key={route} className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden flex flex-col">
+                    <div className="p-4 bg-[#0d474b] text-white flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <Ship className="w-5 h-5 text-teal-300" />
+                        <div>
+                          <h3 className="font-bold text-sm sm:text-base">{route.replace(' → ', ' ➔ ')}</h3>
+                          <p className="text-[11px] text-teal-200">{toIsland ? 'Desde San Jorge hacia la Isla de Ometepe' : 'Desde Ometepe hacia San Jorge'}</p>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-1 rounded-full bg-teal-400/20 text-teal-200 text-[10px] font-bold border border-teal-300/30">
+                        {items.length} salidas
+                      </span>
+                    </div>
+                    <div className="flex-1 overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-stone-50 text-stone-500 font-bold uppercase text-[10px]">
+                          <tr><th className="px-4 py-2.5">Horario</th><th className="px-3 py-2.5">Embarcación</th><th className="px-3 py-2.5">Modalidad</th></tr>
+                        </thead>
+                        <tbody className="divide-y divide-stone-100 text-stone-700">
+                          {items.map((item, idx) => (
+                            <tr key={idx} className="hover:bg-teal-50/50 transition-colors">
+                              <td className="px-4 py-2.5 font-bold text-teal-900"><span className="inline-flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-teal-600 shrink-0" />{item.time}</span></td>
+                              <td className="px-3 py-2.5 font-medium">{item.vessel}</td>
+                              <td className="px-3 py-2.5 text-stone-500 text-[11px]">{item.type || 'Consultar con operador'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-teal-400/20 text-teal-200 text-[10px] font-bold border border-teal-300/30">
-                    Frecuente
-                  </span>
-                </div>
-
-                <div className="divide-y divide-stone-100 flex-1 overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-stone-50 text-stone-500 font-bold uppercase text-[10px]">
-                      <tr>
-                        <th className="px-4 py-2.5">Horario</th>
-                        <th className="px-3 py-2.5">Embarcación</th>
-                        <th className="px-3 py-2.5">Modalidad</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-100 text-stone-700">
-                      {sanJorgeToMoyogalpa.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-teal-50/50 transition-colors">
-                          <td className="px-4 py-2.5 font-bold text-teal-900 flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                            {item.time}
-                          </td>
-                          <td className="px-3 py-2.5 font-medium">{item.vessel}</td>
-                          <td className="px-3 py-2.5 text-stone-500 text-[11px]">{item.type}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="p-3 bg-stone-50 border-t border-stone-200 text-center text-[11px] text-stone-500">
-                  Tarifa estimada de pasajero: ~50 - 70 C$ (Córdobas) / ~$1.5 - $2 USD
-                </div>
-              </div>
-
-              {/* Moyogalpa -> San Jorge */}
-              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden flex flex-col">
-                <div className="p-4 bg-[#0d474b] text-white flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <Ship className="w-5 h-5 text-teal-300" />
-                    <div>
-                      <h3 className="font-bold text-sm sm:text-base">Moyogalpa ➔ San Jorge</h3>
-                      <p className="text-[11px] text-teal-200">Retorno desde la isla hacia tierra firme</p>
-                    </div>
-                  </div>
-                  <span className="px-2.5 py-1 rounded-full bg-teal-400/20 text-teal-200 text-[10px] font-bold border border-teal-300/30">
-                    Regreso
-                  </span>
-                </div>
-
-                <div className="divide-y divide-stone-100 flex-1 overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-stone-50 text-stone-500 font-bold uppercase text-[10px]">
-                      <tr>
-                        <th className="px-4 py-2.5">Horario</th>
-                        <th className="px-3 py-2.5">Embarcación</th>
-                        <th className="px-3 py-2.5">Modalidad</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-100 text-stone-700">
-                      {moyogalpaToSanJorge.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-teal-50/50 transition-colors">
-                          <td className="px-4 py-2.5 font-bold text-teal-900 flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                            {item.time}
-                          </td>
-                          <td className="px-3 py-2.5 font-medium">{item.vessel}</td>
-                          <td className="px-3 py-2.5 text-stone-500 text-[11px]">{item.type}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="p-3 bg-stone-50 border-t border-stone-200 text-center text-[11px] text-stone-500">
-                  Tarifa estimada de pasajero: ~50 - 70 C$ (Córdobas) / ~$1.5 - $2 USD
-                </div>
-              </div>
-
+                );
+              })}
             </div>
 
-            <p className="text-xs text-stone-600">Salidas San Jorge → Moyogalpa tomadas como referencia de <a href="https://reservaometepe.com/horario-barcos/" target="_blank" rel="noopener noreferrer" className="text-teal-700 underline font-semibold">Reserva Ometepe</a> (consulta del 23 de septiembre de 2026). Los horarios de regreso todavía son provisionales; confirma cada salida y el embarque de vehículos con la naviera.</p>
+            <p className="text-xs text-stone-600">Horarios orientativos publicados en nuestra guía. Confirma la salida y disponibilidad para vehículos directamente con el operador antes de viajar.</p>
             {/* Travel Tips for Ferry */}
             <div className="bg-teal-50/70 border border-teal-200/80 rounded-2xl p-6 space-y-4">
               <h4 className="font-bold text-teal-950 text-base flex items-center gap-2">
