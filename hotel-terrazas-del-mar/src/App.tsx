@@ -180,7 +180,7 @@ export default function App() {
   const [detailedRoom, setDetailedRoom] = useState<Room | null>(null);
   const [currency, setCurrency] = useState<'USD' | 'EUR' | 'MXN'>('USD');
 
-  // Handlers for Admin Panel updates with localStorage synchronization
+  // Admin panel state synchronization after successful Supabase writes
   const handleSaveHotelConfig = async (updatedConfig: HotelConfig) => {
     setHotelConfig(updatedConfig);
     if (!supabase || !isAdminAuth) return;
@@ -200,15 +200,6 @@ export default function App() {
     setPhotos(updatedPhotos);
     // Gallery rows and Storage files are persisted by PhotoUploader/AdminPanelModal.
     // This callback keeps the current UI synchronized with those Supabase writes.
-  };
-
-  const handleResetAllData = async () => {
-    setHotelConfig(HOTEL_CONFIG);
-    setRooms(ROOMS_DATA);
-    setPhotos(GALLERY_PHOTOS);
-    if (!supabase || !isAdminAuth) return;
-    await supabase.from('site_content').upsert({ key: 'hotel_config', value: HOTEL_CONFIG }, { onConflict: 'key' });
-    await supabase.from('rooms').upsert(ROOMS_DATA.map(room => ({ id: room.id, details: room })), { onConflict: 'id' });
   };
 
   const handleExitAdminRoute = () => {
@@ -270,7 +261,6 @@ export default function App() {
         onSaveRooms={handleSaveRooms}
         photos={photos}
         onSavePhotos={handleSavePhotos}
-        onResetAllData={handleResetAllData}
       />
     );
   }
