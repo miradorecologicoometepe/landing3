@@ -32,8 +32,8 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
   const eventPhotos = photos.filter(photo => photo.category === 'events');
   const poolPhotos = photos.filter(photo => photo.category === 'pool');
-  const eventImage = (index: number, fallback: string) => eventPhotos.length ? eventPhotos[(index - 1) % eventPhotos.length].url : fallback;
-  const poolImage = (index: number, fallback: string) => poolPhotos.length ? poolPhotos[(index - 1) % poolPhotos.length].url : fallback;
+  const eventImage = (index: number) => eventPhotos.length ? eventPhotos[(index - 1) % eventPhotos.length].url : '';
+  const poolImage = (index: number) => poolPhotos.length ? poolPhotos[(index - 1) % poolPhotos.length].url : '';
 
   const eventFeatures = [
     { title: 'Celebraciones Sociales', desc: 'Cumpleaños, aniversarios, quinceaños y reuniones familiares en un entorno campestre fresco y privado.', icon: Heart },
@@ -160,11 +160,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
             {/* Event Images Showcase */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2 rounded-2xl overflow-hidden aspect-[16/10] relative group">
-                <img
-                  src={eventImage(1, "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85")}
-                  alt="Espacio para eventos campestres"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {eventImage(1) ? <img src={eventImage(1)} alt="Espacio para eventos campestres" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de eventos próximamente</div>}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-6">
                   <div className="text-white">
                     <span className="px-2.5 py-1 rounded bg-teal-500 text-white text-[10px] font-bold uppercase tracking-wider">
@@ -178,22 +174,14 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
 
               <div className="space-y-4 flex flex-col justify-between">
                 <div className="rounded-2xl overflow-hidden aspect-[16/10] relative group">
-                  <img
-                    src={eventImage(2, "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80")}
-                    alt="Banquete y comida campestre"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  {eventImage(2) ? <img src={eventImage(2)} alt="Banquete y comida campestre" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de eventos próximamente</div>}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
                     Catering campestre con sabores de la isla
                   </div>
                 </div>
 
                 <div className="rounded-2xl overflow-hidden aspect-[16/10] relative group">
-                  <img
-                    src={eventImage(3, "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80")}
-                    alt="Retiros y grupos"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  {eventImage(3) ? <img src={eventImage(3)} alt="Retiros y grupos" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de eventos próximamente</div>}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
                     Reuniones de grupos, retiros y talleres
                   </div>
@@ -266,33 +254,21 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
             {/* Pool Images Showcase */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
-                <img
-                  src={poolImage(1, "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80")}
-                  alt="Piscina con vistas"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {poolImage(1) ? <img src={poolImage(1)} alt="Piscina con vistas" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
                   Piscina al aire libre en Altagracia
                 </div>
               </div>
 
               <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
-                <img
-                  src={poolImage(2, "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80")}
-                  alt="Agua cristalina y descanso"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {poolImage(2) ? <img src={poolImage(2)} alt="Agua cristalina y descanso" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
                   Solárium para disfrutar del atardecer
                 </div>
               </div>
 
               <div className="rounded-2xl overflow-hidden aspect-[4/3] relative group">
-                <img
-                  src={poolImage(3, "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=800&q=80")}
-                  alt="Bebidas refrescantes"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {poolImage(3) ? <img src={poolImage(3)} alt="Bebidas refrescantes" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-stone-100 text-teal-800 text-xs font-semibold">Fotografía de piscina próximamente</div>}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 text-white text-xs font-bold">
                   Bebidas tropicales y descanso total
                 </div>
