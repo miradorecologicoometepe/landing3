@@ -77,7 +77,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
           </h1>
           
           <p className="text-teal-100/90 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
-            Celebra tus momentos especiales en nuestro salón campestre, ubicado en un mirador con vistas panorámicas hacia el lago y el paisaje volcánico de Ometepe.
+            Celebra tus momentos especiales en nuestro salón campestre, en un entorno natural con vistas panorámicas hacia el lago y el paisaje volcánico de Ometepe.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center justify-start gap-4">
@@ -150,7 +150,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
                   Local para Eventos & Celebraciones
                 </h2>
                 <p className="text-stone-600 text-xs sm:text-sm max-w-2xl mt-1">
-                  Un entorno campestre en altura, con vistas abiertas hacia el lago por un lado y el volcán por el otro, ideal para celebrar con tranquilidad.
+                  Un entorno campestre rodeado de naturaleza, con vistas hacia el lago por un lado y el volcán por el otro, ideal para celebrar con tranquilidad.
                 </p>
               </div>
 
