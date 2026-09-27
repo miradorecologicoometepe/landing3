@@ -8,7 +8,7 @@ export const HOTEL_CONFIG: HotelConfig = {
   whatsAppNumber: '50557642833', // Direct WhatsApp E.164 without '+'
   displayPhone: '+505 5764 2833',
   address: 'Finca El Mirador Ecológico, Altagracia, Isla de Ometepe, Rivas, Nicaragua',
-  locationArea: 'Altagracia • Mirador Panorámico • Vista al Lago Cocibolca y Volcanes',
+  locationArea: 'Altagracia • Mirador Panorámico • Vistas al Lago Cocibolca y al Volcán',
   email: '',
   currency: 'USD',
   checkInTime: '14:00 hrs',
@@ -37,7 +37,6 @@ export const ROOMS_DATA: Room[] = [
       { guests: 2, price: 60, label: 'Hasta 2 personas: $60 USD' }
     ],
     bedType: 'Cama matrimonial',
-    sizeM2: 0,
     view: 'Jardines Tropicales y Mirador',
     badge: 'Fija: $60 USD',
     featured: true,
@@ -56,7 +55,7 @@ export const ROOMS_DATA: Room[] = [
   },
   {
     id: 'habitacion-familiar-vistas-lago',
-    name: 'Habitación Familiar con vistas al lago',
+    name: 'Habitación Familiar Panorámica',
     tagline: 'Amplia habitación con 1 cama individual y 2 camas dobles. Máximo 4 personas ($70 para 3 pers., $90 para 4 pers.).',
     type: 'Habitación Familiar Panorámica',
     pricePerNight: 70,
@@ -67,21 +66,20 @@ export const ROOMS_DATA: Room[] = [
       { guests: 4, price: 90, label: '4 personas: $90 USD' }
     ],
     bedType: '1 cama individual y 2 camas dobles',
-    sizeM2: 0,
-    view: 'Vistas al Lago de Nicaragua & Volcanes',
+    view: 'Vista panorámica desde el mirador al lago y volcán',
     badge: 'Máx. 4 personas',
     featured: true,
     amenities: [
       '1 cama individual + 2 camas dobles',
       'Capacidad máxima: 4 personas (3 pers. $70 / 4 pers. $90)',
-      'Balcón o terraza privada con vista panorámica al lago',
+      'Balcón o terraza con vista panorámica desde el mirador',
       'Baño privado completo',
       'Aire acondicionado',
       'Mobiliario rústico de madera',
       'WiFi gratuito de alta cobertura'
     ],
     images: [],
-    description: 'Habitación familiar espaciosa con 1 cama individual y 2 camas dobles, con capacidad máxima estricta para 4 personas. Su tarifa por noche es de $70 USD para 1 a 3 personas, o $90 USD para 4 personas. Dispone de un balcón privado con vistas directas al Lago Cocibolca y a los volcanes de Ometepe.',
+    description: 'Habitación familiar espaciosa con 1 cama individual y 2 camas dobles, con capacidad máxima estricta para 4 personas. Su tarifa por noche es de $70 USD para 3 personas o $90 USD para la capacidad máxima de 4 personas. Desde el mirador se disfrutan vistas panorámicas hacia el Lago Cocibolca y el paisaje volcánico de Ometepe.',
     includedServices: ['Piscina al aire libre con solárium', 'Parqueo privado seguro', 'Asistencia para tours y ferrys']
   }
 ];
