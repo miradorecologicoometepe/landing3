@@ -217,10 +217,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       badge: 'Nuevo',
       featured: true,
       amenities: ['Aire Acondicionado', 'WiFi de Alta Velocidad', 'Smart TV 55"', 'Minibar de cortesía', 'Terraza privada'],
-      images: [
-        'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=85',
-        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=85'
-      ],
+      images: [],
       description: 'Hermosa habitación recientemente renovada con acabados contemporáneos y vistas privilegiadas.',
       includedServices: []
     };
@@ -248,7 +245,10 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   };
 
   const handleUploadRoomPhotos = async (files: FileList | null) => {
-    if (!supabase || !roomFormData || !files?.length) return;
+    // Snapshot the FileList before any await/input reset. Mobile browsers can invalidate
+    // the live FileList as soon as the file input value is cleared.
+    const selectedFiles = files ? Array.from(files) : [];
+    if (!supabase || !roomFormData || !selectedFiles.length) return;
     setRoomPhotoBusy(true); setRoomPhotoStatus('');
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -256,7 +256,6 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
       const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
       if (admin.error || !admin.data) throw new Error('Tu usuario no tiene permisos de administrador.');
       const urls: string[] = [];
-      const selectedFiles = Array.from(files);
       setRoomPhotoStatus(`Preparando ${selectedFiles.length} foto(s)…`);
       for (const file of selectedFiles) {
         if (!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)) throw new Error('Usa fotografías JPG, PNG, WebP o AVIF.');
