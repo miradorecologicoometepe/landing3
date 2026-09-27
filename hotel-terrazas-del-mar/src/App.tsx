@@ -96,6 +96,19 @@ export default function App() {
   };
 
   const [isAdminRoute, setIsAdminRoute] = useState<boolean>(checkIsAdminUrl);
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    let icon = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (isAdminRoute) {
+      document.title = 'Mirador Ecológico Admin';
+      if (manifest) manifest.href = '/admin.webmanifest';
+      if (icon) icon.href = '/admin-icon.svg';
+    } else {
+      if (manifest) manifest.href = '/manifest.webmanifest';
+      if (icon) icon.href = hotelConfig.faviconUrl || '/favicon.svg';
+    }
+  }, [isAdminRoute, hotelConfig.faviconUrl]);
   const [isAdminAuth, setIsAdminAuth] = useState(false);
   const [isPasswordRecovery, setIsPasswordRecovery] = useState(() => typeof window !== 'undefined' && window.location.hash.includes('type=recovery'));
   const [adminAuthChecking, setAdminAuthChecking] = useState(true);
