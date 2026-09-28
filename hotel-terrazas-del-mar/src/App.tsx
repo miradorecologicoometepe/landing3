@@ -100,9 +100,10 @@ export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState<boolean>(checkIsAdminUrl);
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    let manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     let icon = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
     if (isAdminRoute) {
+      if (!manifest) { manifest = document.createElement('link'); manifest.rel = 'manifest'; document.head.appendChild(manifest); }
       document.title = 'Mirador Ecológico Admin';
       let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
       if (!robots) { robots = document.createElement('meta'); robots.name = 'robots'; document.head.appendChild(robots); }
@@ -115,7 +116,9 @@ export default function App() {
     } else {
       const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
       if (robots) robots.content = 'index, follow, max-image-preview:large';
-      if (manifest) manifest.href = '/manifest.webmanifest';
+      if (manifest) manifest.remove();
+      const appleIcon = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
+      if (appleIcon) appleIcon.remove();
       if (icon) icon.href = hotelConfig.faviconUrl || '/favicon.svg';
     }
   }, [isAdminRoute, hotelConfig.faviconUrl]);
