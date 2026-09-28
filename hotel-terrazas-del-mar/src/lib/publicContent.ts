@@ -32,6 +32,7 @@ export async function loadPublicSiteData(): Promise<PublicSiteData> {
   const photos = photosResult.data?.map(row => ({
     ...(row.details as Omit<PhotoItem, 'id' | 'url'>),
     id: row.id,
+    category: row.category,
     url: row.image_path,
   })).filter(photo => Boolean(photo.url));
   const faqs = Array.isArray(faqsResult.data?.value) ? (faqsResult.data.value as FaqItem[]).filter(item => typeof item.q === 'string' && typeof item.a === 'string') : undefined;
