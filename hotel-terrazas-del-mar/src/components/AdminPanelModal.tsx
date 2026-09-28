@@ -78,6 +78,9 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   };
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [adminName, setAdminName] = useState('');
+  const [passwordForm, setPasswordForm] = useState({ current: '', next: '', confirm: '' });
+  const [passwordStatus, setPasswordStatus] = useState('');
+  const [passwordSaving, setPasswordSaving] = useState(false);
   const [busRoutes, setBusRoutes] = useState<Array<{id:string; route:string; frequency:string; timeRange:string; notes:string; times:string[]}>>([]);
   const [ferrySchedules, setFerrySchedules] = useState<Array<{id:string; route:string; time:string; vessel:string; type:string; notes:string}>>([]);
   const [transportStatus, setTransportStatus] = useState('');
@@ -238,6 +241,32 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   };
 
   // --- GENERAL CONFIG HANDLERS ---
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!supabase) { setPasswordStatus('Supabase no está disponible.'); return; }
+    if (!passwordForm.current || !passwordForm.next || !passwordForm.confirm) { setPasswordStatus('Completa los tres campos.'); return; }
+    if (passwordForm.next.length < 8) { setPasswordStatus('La nueva contraseña debe tener al menos 8 caracteres.'); return; }
+    if (passwordForm.next !== passwordForm.confirm) { setPasswordStatus('La confirmación no coincide con la nueva contraseña.'); return; }
+    if (passwordForm.current === passwordForm.next) { setPasswordStatus('La nueva contraseña debe ser diferente a la actual.'); return; }
+    setPasswordSaving(true); setPasswordStatus('');
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user?.email) throw new Error('Tu sesión expiró. Vuelve a iniciar sesión.');
+      const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+      if (admin.error || !admin.data) throw new Error('Tu cuenta no tiene permisos de administrador.');
+      const verified = await supabase.auth.signInWithPassword({ email: user.email, password: passwordForm.current });
+      if (verified.error) throw new Error('La contraseña actual no es correcta.');
+      const updated = await supabase.auth.updateUser({ password: passwordForm.next });
+      if (updated.error) throw updated.error;
+      setPasswordForm({ current: '', next: '', confirm: '' });
+      setPasswordStatus('✓ Contraseña actualizada correctamente.');
+    } catch (error) {
+      setPasswordStatus(error instanceof Error ? error.message : 'No se pudo cambiar la contraseña.');
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
   const handleConfigChange = (field: keyof HotelConfig, value: any) => {
     setConfigForm((prev) => ({
       ...prev,
@@ -683,6 +712,31 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                   <div className="font-bold text-amber-950 mb-0.5">Sincronización en tiempo real</div>
                   Los cambios publicados se guardan en Supabase y la landing los carga desde allí. No se usan datos locales del navegador.
                 </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <div>
+                  <h4 className="font-bold text-base text-stone-900 flex items-center gap-2"><Lock className="w-4 h-4 text-[#087f83]" /> Seguridad de la cuenta</h4>
+                  <p className="text-xs text-stone-600 mt-1">Cambia la contraseña de tu usuario administrador. Por seguridad, debes confirmar primero tu contraseña actual.</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-stone-700 mb-1">Contraseña actual</label>
+                    <input type="password" autoComplete="current-password" value={passwordForm.current} onChange={e=>setPasswordForm(p=>({...p,current:e.target.value}))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1">Nueva contraseña</label>
+                    <input type="password" autoComplete="new-password" value={passwordForm.next} onChange={e=>setPasswordForm(p=>({...p,next:e.target.value}))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1">Confirmar nueva contraseña</label>
+                    <input type="password" autoComplete="new-password" value={passwordForm.confirm} onChange={e=>setPasswordForm(p=>({...p,confirm:e.target.value}))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                  </div>
+                </div>
+                <button type="button" onClick={handleChangePassword} disabled={passwordSaving} className="px-4 py-2.5 rounded-xl bg-[#18363a] text-white font-semibold text-sm disabled:opacity-50">
+                  {passwordSaving ? 'Actualizando…' : 'Cambiar contraseña'}
+                </button>
+                {passwordStatus && <p role="status" className={`text-xs ${passwordStatus.startsWith('✓') ? 'text-emerald-700' : 'text-red-700'}`}>{passwordStatus}</p>}
               </div>
 
               {/* Box 1: Hotel Basics */}
