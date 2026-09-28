@@ -57,7 +57,7 @@ export const EventsAndPoolPage: React.FC<EventsAndPoolPageProps> = ({
     { title: 'Celebraciones Sociales', desc: 'Cumpleaños, aniversarios, quinceaños y reuniones familiares en un entorno campestre fresco y privado.', icon: Heart },
     { title: 'Bodas & Eventos Románticos', desc: 'Ceremonias al atardecer en un entorno natural, con el lago y el paisaje volcánico de Ometepe como parte del panorama.', icon: Wine },
     { title: 'Retiros & Talleres Grupales', desc: 'Jornadas de yoga, meditación, retiros corporativos y convivencia de equipos de trabajo.', icon: Users },
-    { title: 'Catering Campestre', desc: 'Menú de comida típica nicaragüense, asados al aire libre, frutas tropicales y bebidas frescas.', icon: Coffee }
+    { title: 'Cocina & Restaurante Equipado', desc: 'El espacio cuenta con cocina y área de restaurante equipada para apoyar la organización de alimentos durante tu evento.', icon: Coffee }
   ];
 
   const poolFeatures = [
