@@ -229,8 +229,9 @@ export const TransportPage: React.FC<TransportPageProps> = ({
             <div className="rounded-2xl border border-stone-200 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-3"><Phone className="w-4 h-4 text-teal-700" /><h4 className="font-bold text-stone-900">Contactos de embarcaciones</h4></div>
               <div className="flex flex-wrap gap-3 text-xs">
-                <a href="tel:+50584454000" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Rey del Cocibolca · 8445-4000</a>
-                <a href="tel:+50589045244" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Rey del Cocibolca · 8904-5244</a>
+                <a href="tel:+50584454000" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Rey del Cocibolca · +505 8445 4000</a>
+                <a href="tel:+50589045244" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Rey del Cocibolca · +505 8904 5244</a>
+                <a href="tel:+50589039770" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Cacique Nicarao · +505 8903 9770</a>
               </div>
               <p className="mt-3 text-[11px] text-stone-500">Contactos disponibles actualmente. Confirma horarios, tarifas y espacio para vehículos directamente con el operador.</p>
             </div>
