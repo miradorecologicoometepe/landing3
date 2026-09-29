@@ -208,7 +208,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
                     <div className="flex-1 overflow-x-auto">
                       <table className="w-full text-left text-xs">
                         <thead className="bg-stone-50 text-stone-500 font-bold uppercase text-[10px]">
-                          <tr><th className="px-4 py-2.5">Horario</th><th className="px-3 py-2.5">Embarcación</th><th className="px-3 py-2.5">Modalidad</th></tr>
+                          <tr><th className="px-4 py-2.5">Horario</th><th className="px-3 py-2.5">Embarcación</th><th className="px-3 py-2.5">Modalidad</th><th className="px-3 py-2.5">Contacto</th></tr>
                         </thead>
                         <tbody className="divide-y divide-stone-100 text-stone-700">
                           {items.map((item, idx) => (
@@ -216,6 +216,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
                               <td className="px-4 py-2.5 font-bold text-teal-900"><span className="inline-flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-teal-600 shrink-0" />{item.time}</span></td>
                               <td className="px-3 py-2.5 font-medium">{item.vessel}</td>
                               <td className="px-3 py-2.5 text-stone-500 text-[11px]">{item.type || 'Consultar con operador'}</td>
+                              <td className="px-3 py-2.5 text-[11px] font-semibold text-teal-800">{String(item.notes || '').match(/Contacto:\s*([^;]+)/i)?.[1] || '—'}</td>
                             </tr>
                           ))}
                         </tbody>
