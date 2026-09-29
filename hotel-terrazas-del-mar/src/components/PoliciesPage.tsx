@@ -1,15 +1,16 @@
 import React from 'react';
-import { ShieldCheck, Wifi, Clock, Bed, Trash2, Wind, Droplets } from 'lucide-react';
+import { ShieldCheck, Users, Clock, Bed, Trash2, Wind, Droplets, ShowerHead } from 'lucide-react';
 
 export const PoliciesPage: React.FC = () => {
   const policies = [
-    { icon: Wifi, title: 'Wi-Fi', text: 'Contraseña de Wi-Fi: Gonzo280c.' },
+    { icon: Users, title: 'Capacidad de la habitación', text: 'Por seguridad y comodidad, debe respetarse la capacidad máxima de huéspedes indicada para cada tipo de habitación. No se permite alojar personas adicionales por encima del límite establecido.' },
     { icon: Clock, title: 'Horario de desayuno', text: 'El desayuno se sirve de 7:30 a. m. a 9:30 a. m. No se sirve antes ni después de este horario.' },
-    { icon: Bed, title: 'Cuidado de colchones', text: 'Mantén los colchones limpios e higiénicos durante tu estancia.' },
-    { icon: Trash2, title: 'Uso del inodoro', text: 'No introducir pañales ni toallas húmedas en el inodoro. Un bloqueo ocasionado por estos materiales tiene un costo de reparación de C$ 3,500.' },
-    { icon: ShieldCheck, title: 'Toallas y sábanas', text: 'No utilizar las toallas ni las sábanas para retirar maquillaje o pintura, ya que pueden dañarse permanentemente.' },
-    { icon: Wind, title: 'Aire acondicionado', text: 'Apaga el aire acondicionado cuando no esté en uso. Evita que los niños jueguen con el control; si se daña o desconfigura, el costo indicado es de C$ 300.' },
-    { icon: Droplets, title: 'Uso responsable del agua', text: 'Durante la temporada seca el abastecimiento de agua municipal puede ser limitado. Agradecemos utilizar el agua de manera responsable y evitar desperdiciarla.' },
+    { icon: Bed, title: 'Cuidado de la habitación', text: 'Ayúdanos a conservar en buen estado los colchones, ropa de cama, mobiliario y demás elementos de la habitación durante tu estancia.' },
+    { icon: Trash2, title: 'Uso del inodoro', text: 'No deposites pañales, toallas húmedas ni otros materiales que puedan obstruir el inodoro. Si se produce un bloqueo por el uso inadecuado, se aplicará un cargo de reparación de C$ 3,500.' },
+    { icon: ShieldCheck, title: 'Toallas y ropa de cama', text: 'Evita utilizar toallas o sábanas para retirar maquillaje, pintura u otras sustancias que puedan mancharlas o dañarlas permanentemente.' },
+    { icon: Wind, title: 'Uso del aire acondicionado', text: 'Apaga el aire acondicionado cuando no lo necesites y evita manipular innecesariamente su control. Los daños o desconfiguraciones ocasionados por uso inadecuado pueden generar un cargo de C$ 300.' },
+    { icon: Droplets, title: 'Uso responsable del agua', text: 'El abastecimiento de agua en la isla puede ser limitado, especialmente durante la temporada seca. Agradecemos utilizarla de manera responsable y evitar desperdicios.' },
+    { icon: ShowerHead, title: 'Agua caliente', text: 'Las habitaciones no cuentan con servicio de agua caliente. Te recomendamos tomarlo en cuenta al planificar tu estancia.' },
   ];
   return <div className="pt-28 pb-16 bg-stone-50 min-h-screen">
     <div className="max-w-4xl mx-auto px-4 sm:px-6">
