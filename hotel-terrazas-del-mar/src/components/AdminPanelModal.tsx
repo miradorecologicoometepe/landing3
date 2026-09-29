@@ -20,6 +20,8 @@ import {
   HelpCircle,
   Save,
   Lock,
+  Eye,
+  EyeOff,
   LogOut,
   CalendarDays,
   Waves,
@@ -81,6 +83,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [passwordForm, setPasswordForm] = useState({ current: '', next: '', confirm: '' });
   const [passwordStatus, setPasswordStatus] = useState('');
   const [passwordSaving, setPasswordSaving] = useState(false);
+  const [showPasswordFields, setShowPasswordFields] = useState({ current: false, next: false, confirm: false });
   const [busRoutes, setBusRoutes] = useState<Array<{id:string; route:string; frequency:string; timeRange:string; notes:string; times:string[]}>>([]);
   const [ferrySchedules, setFerrySchedules] = useState<Array<{id:string; route:string; time:string; vessel:string; type:string; notes:string}>>([]);
   const [transportStatus, setTransportStatus] = useState('');
@@ -722,15 +725,15 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-bold text-stone-700 mb-1">Contraseña actual</label>
-                    <input type="password" autoComplete="current-password" value={passwordForm.current} onChange={e=>setPasswordForm(p=>({...p,current:e.target.value}))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                    <div className="relative"><input type={showPasswordFields.current ? 'text' : 'password'} autoComplete="current-password" value={passwordForm.current} onChange={e=>setPasswordForm(p=>({...p,current:e.target.value}))} className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" /><button type="button" onClick={()=>setShowPasswordFields(p=>({...p,current:!p.current}))} aria-label={showPasswordFields.current ? 'Ocultar contraseña actual' : 'Mostrar contraseña actual'} className="absolute inset-y-0 right-0 px-3 text-stone-500 hover:text-teal-700">{showPasswordFields.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button></div>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-stone-700 mb-1">Nueva contraseña</label>
-                    <input type="password" autoComplete="new-password" value={passwordForm.next} onChange={e=>setPasswordForm(p=>({...p,next:e.target.value}))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                    <div className="relative"><input type={showPasswordFields.next ? 'text' : 'password'} autoComplete="new-password" value={passwordForm.next} onChange={e=>setPasswordForm(p=>({...p,next:e.target.value}))} className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" /><button type="button" onClick={()=>setShowPasswordFields(p=>({...p,next:!p.next}))} aria-label={showPasswordFields.next ? 'Ocultar nueva contraseña' : 'Mostrar nueva contraseña'} className="absolute inset-y-0 right-0 px-3 text-stone-500 hover:text-teal-700">{showPasswordFields.next ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button></div>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-stone-700 mb-1">Confirmar nueva contraseña</label>
-                    <input type="password" autoComplete="new-password" value={passwordForm.confirm} onChange={e=>setPasswordForm(p=>({...p,confirm:e.target.value}))} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                    <div className="relative"><input type={showPasswordFields.confirm ? 'text' : 'password'} autoComplete="new-password" value={passwordForm.confirm} onChange={e=>setPasswordForm(p=>({...p,confirm:e.target.value}))} className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" /><button type="button" onClick={()=>setShowPasswordFields(p=>({...p,confirm:!p.confirm}))} aria-label={showPasswordFields.confirm ? 'Ocultar confirmar nueva contraseña' : 'Mostrar confirmar nueva contraseña'} className="absolute inset-y-0 right-0 px-3 text-stone-500 hover:text-teal-700">{showPasswordFields.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button></div>
                   </div>
                 </div>
                 <button type="button" onClick={handleChangePassword} disabled={passwordSaving} className="px-4 py-2.5 rounded-xl bg-[#18363a] text-white font-semibold text-sm disabled:opacity-50">
