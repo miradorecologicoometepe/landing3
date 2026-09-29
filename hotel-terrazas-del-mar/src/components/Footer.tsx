@@ -125,6 +125,15 @@ export const Footer: React.FC<FooterProps> = ({
                 <ShieldCheck className="w-3.5 h-3.5 text-brand-mint shrink-0" />
                 <span>Atención directa por WhatsApp</span>
               </li>
+              <li>
+                <button
+                  onClick={() => onNavigate?.('politicas')}
+                  className="flex items-center gap-2 hover:text-teal-300 transition-colors text-left cursor-pointer"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-brand-mint shrink-0" />
+                  <span>Políticas de alojamiento</span>
+                </button>
+              </li>
             </ul>
           </div>
 
