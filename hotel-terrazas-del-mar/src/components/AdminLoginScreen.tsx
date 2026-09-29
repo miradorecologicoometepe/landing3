@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { HotelConfig } from '../types';
 import { supabase } from '../lib/supabase';
 import { HotelLogo } from './HotelLogo';
-import { Lock, ArrowRight, ArrowLeft, Mail, KeyRound } from 'lucide-react';
+import { Lock, ArrowRight, ArrowLeft, Mail, KeyRound, Eye, EyeOff } from 'lucide-react';
 
 interface AdminLoginScreenProps {
   hotelConfig: HotelConfig;
@@ -19,6 +19,9 @@ export const AdminLoginScreen: React.FC<AdminLoginScreenProps> = ({ hotelConfig,
   const [recoveryMode, setRecoveryMode] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (!supabase) return;
@@ -83,8 +86,8 @@ export const AdminLoginScreen: React.FC<AdminLoginScreenProps> = ({ hotelConfig,
         <KeyRound className="w-9 h-9 text-teal-200 mx-auto" />
         <h1 className="text-2xl font-bold text-center">Crear nueva contraseña</h1>
         <p className="text-sm text-stone-300 text-center">Elige una contraseña nueva para tu cuenta administradora.</p>
-        <label className="block text-sm">Nueva contraseña<input type="password" autoComplete="new-password" required minLength={8} value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-2 w-full rounded-xl bg-[#0d1c1e] border border-[#387378] p-3 text-white" /></label>
-        <label className="block text-sm">Confirmar contraseña<input type="password" autoComplete="new-password" required minLength={8} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="mt-2 w-full rounded-xl bg-[#0d1c1e] border border-[#387378] p-3 text-white" /></label>
+        <label className="block text-sm">Nueva contraseña<div className="relative mt-2"><input type={showNewPassword ? 'text' : 'password'} autoComplete="new-password" required minLength={8} value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full rounded-xl bg-[#0d1c1e] border border-[#387378] p-3 pr-12 text-white" /><button type="button" onClick={() => setShowNewPassword(v => !v)} aria-label={showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} className="absolute inset-y-0 right-0 px-4 text-teal-200 hover:text-white">{showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}</button></div></label>
+        <label className="block text-sm">Confirmar contraseña<div className="relative mt-2"><input type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" required minLength={8} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full rounded-xl bg-[#0d1c1e] border border-[#387378] p-3 pr-12 text-white" /><button type="button" onClick={() => setShowConfirmPassword(v => !v)} aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} className="absolute inset-y-0 right-0 px-4 text-teal-200 hover:text-white">{showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}</button></div></label>
         {message && <p className="text-sm text-teal-200">{message}</p>}
         {message && <p className="text-sm text-teal-200">{message}</p>}
         {error && <p role="alert" className="text-sm text-red-300">{error}</p>}
@@ -107,7 +110,7 @@ export const AdminLoginScreen: React.FC<AdminLoginScreenProps> = ({ hotelConfig,
           <input type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} className="mt-2 w-full rounded-xl bg-[#0d1c1e] border border-[#387378] p-3 text-white" />
         </label>
         <label className="block text-sm">Contraseña
-          <input type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} className="mt-2 w-full rounded-xl bg-[#0d1c1e] border border-[#387378] p-3 text-white" />
+          <div className="relative mt-2"><input type={showPassword ? 'text' : 'password'} autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} className="w-full rounded-xl bg-[#0d1c1e] border border-[#387378] p-3 pr-12 text-white" /><button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} className="absolute inset-y-0 right-0 px-4 text-teal-200 hover:text-white">{showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}</button></div>
         </label>
         {error && <p role="alert" className="text-sm text-red-300">{error}</p>}
         <div className="text-right"><button type="button" onClick={requestPasswordReset} disabled={busy || !supabase} className="text-sm text-teal-200 hover:text-white inline-flex items-center gap-1.5 disabled:opacity-50"><Mail className="w-4 h-4" /> ¿Olvidaste tu contraseña?</button></div>
