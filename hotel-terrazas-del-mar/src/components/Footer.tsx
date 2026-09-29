@@ -16,7 +16,7 @@ interface FooterProps {
   onOpenBookingModal: () => void;
   hotelConfig: HotelConfig;
   onOpenAdminPanel?: () => void;
-  onNavigate?: (page: 'inicio' | 'habitaciones' | 'eventos-piscina' | 'transporte' | 'galeria' | 'contacto') => void;
+  onNavigate?: (page: 'inicio' | 'habitaciones' | 'eventos-piscina' | 'transporte' | 'galeria' | 'contacto' | 'politicas') => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ 
@@ -163,7 +163,7 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
           <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-4 gap-y-2">
             <span>Aviso de Privacidad</span>
-            <span>Términos de Reserva</span>
+            <button onClick={() => onNavigate?.('politicas')} className="hover:text-teal-300 transition-colors">Políticas de Alojamiento</button>
             <span>Políticas de Cancelación</span>
             {onOpenAdminPanel && (
               <button
