@@ -208,7 +208,7 @@ export const TransportPage: React.FC<TransportPageProps> = ({
                     <div className="flex-1 overflow-x-auto">
                       <table className="w-full text-left text-xs">
                         <thead className="bg-stone-50 text-stone-500 font-bold uppercase text-[10px]">
-                          <tr><th className="px-4 py-2.5">Horario</th><th className="px-3 py-2.5">Embarcación</th><th className="px-3 py-2.5">Modalidad</th><th className="px-3 py-2.5">Contacto</th></tr>
+                          <tr><th className="px-4 py-2.5">Horario</th><th className="px-3 py-2.5">Embarcación</th><th className="px-3 py-2.5">Modalidad</th></tr>
                         </thead>
                         <tbody className="divide-y divide-stone-100 text-stone-700">
                           {items.map((item, idx) => (
@@ -216,7 +216,6 @@ export const TransportPage: React.FC<TransportPageProps> = ({
                               <td className="px-4 py-2.5 font-bold text-teal-900"><span className="inline-flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-teal-600 shrink-0" />{item.time}</span></td>
                               <td className="px-3 py-2.5 font-medium">{item.vessel}</td>
                               <td className="px-3 py-2.5 text-stone-500 text-[11px]">{item.type || 'Consultar con operador'}</td>
-                              <td className="px-3 py-2.5 text-[11px] font-semibold text-teal-800">{String(item.notes || '').match(/Contacto:\s*([^;]+)/i)?.[1] || '—'}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -227,6 +226,14 @@ export const TransportPage: React.FC<TransportPageProps> = ({
               })}
             </div>
 
+            <div className="rounded-2xl border border-stone-200 bg-white p-5 sm:p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-3"><Phone className="w-4 h-4 text-teal-700" /><h4 className="font-bold text-stone-900">Contactos de embarcaciones</h4></div>
+              <div className="flex flex-wrap gap-3 text-xs">
+                <a href="tel:+50584454000" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Rey del Cocibolca · 8445-4000</a>
+                <a href="tel:+50589045244" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Rey del Cocibolca · 8904-5244</a>
+              </div>
+              <p className="mt-3 text-[11px] text-stone-500">Contactos disponibles actualmente. Confirma horarios, tarifas y espacio para vehículos directamente con el operador.</p>
+            </div>
             <p className="text-xs text-stone-600">Horarios orientativos publicados en nuestra guía. Confirma la salida y disponibilidad para vehículos directamente con el operador antes de viajar.</p>
             {/* Travel Tips for Ferry */}
             <div className="bg-teal-50/70 border border-teal-200/80 rounded-2xl p-6 space-y-4">
