@@ -83,6 +83,7 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
   const [showQrModal, setShowQrModal] = useState(false);
   const [showPhoneConfig, setShowPhoneConfig] = useState(false);
   const [customPhone, setCustomPhone] = useState(hotelConfig.whatsAppNumber);
+  const [acceptedPolicies, setAcceptedPolicies] = useState(false);
 
   // Keep room in sync if initialRoomId changes
   useEffect(() => {
@@ -452,12 +453,18 @@ export const WhatsAppBookingModal: React.FC<WhatsAppBookingModalProps> = ({
 
             {/* Action Buttons */}
             <div className="space-y-2.5 pt-2">
+              <label className="flex items-start gap-2.5 p-3 rounded-xl border border-stone-200 bg-white text-xs text-stone-700 cursor-pointer">
+                <input type="checkbox" checked={acceptedPolicies} onChange={e=>setAcceptedPolicies(e.target.checked)} className="mt-0.5 w-4 h-4 accent-teal-700 shrink-0" />
+                <span>He leído y acepto las <a href="/politicas" target="_blank" rel="noopener noreferrer" className="font-bold text-teal-700 underline">políticas de alojamiento</a> de Mirador Ecológico.</span>
+              </label>
               <a
                 id="btn-send-whatsapp-reservation"
-                href={whatsAppLink}
+                href={acceptedPolicies ? whatsAppLink : undefined}
+                onClick={(e) => { if (!acceptedPolicies) e.preventDefault(); }}
+                aria-disabled={!acceptedPolicies}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-700/30 flex items-center justify-center gap-2.5 transition-all transform hover:-translate-y-0.5 cursor-pointer text-center"
+                className={`w-full py-3.5 px-6 rounded-xl text-white font-bold text-sm tracking-wide flex items-center justify-center gap-2.5 transition-all text-center ${acceptedPolicies ? 'bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 shadow-lg shadow-emerald-700/30 hover:-translate-y-0.5 cursor-pointer' : 'bg-stone-400 cursor-not-allowed'}`}
               >
                 <MessageCircle className="w-5 h-5 fill-white shrink-0" />
                 <span>Enviar Reserva por WhatsApp Ahora</span>
