@@ -13,6 +13,7 @@ import { RoomDetailsModal } from './components/RoomDetailsModal';
 import { RoomsPage } from './components/RoomsPage';
 import { EventsAndPoolPage } from './components/EventsAndPoolPage';
 import { TransportPage } from './components/TransportPage';
+import { PoliciesPage } from './components/PoliciesPage';
 import { PhotoGallerySection } from './components/PhotoGallerySection';
 import { ReviewsSection } from './components/ReviewsSection';
 import { LocationSection } from './components/LocationSection';
@@ -94,6 +95,7 @@ export default function App() {
     if (['guia', 'transporte', 'ferries', 'barcos', 'horarios'].includes(route)) return 'transporte';
     if (['galeria', 'fotos'].includes(route)) return 'galeria';
     if (['contacto', 'ubicacion'].includes(route)) return 'contacto';
+    if (['politicas', 'politicas-alojamiento'].includes(route)) return 'politicas';
     return 'inicio';
   };
 
@@ -192,6 +194,10 @@ export default function App() {
         title: 'Contacto y Ubicación | Mirador Ecológico Ometepe',
         description: 'Información de contacto y ubicación de Hotel Mirador Ecológico en Altagracia, Isla de Ometepe. Consulta disponibilidad directamente por WhatsApp.',
       },
+      politicas: {
+        title: 'Políticas de Alojamiento | Mirador Ecológico Ometepe',
+        description: 'Consulta las políticas de alojamiento y normas para huéspedes de Mirador Ecológico en Ometepe.',
+      },
     };
     const current = seo[activePage];
     document.title = current.title;
@@ -223,6 +229,7 @@ export default function App() {
       transporte: 'Guía de Ferries y Transporte',
       galeria: 'Galería',
       contacto: 'Contacto y Ubicación',
+      politicas: 'Políticas de Alojamiento',
     };
     const graph: any[] = [{
       '@type': 'BreadcrumbList',
@@ -288,6 +295,7 @@ export default function App() {
     transporte: '/guia',
     galeria: '/galeria',
     contacto: '/contacto',
+    politicas: '/politicas',
   };
 
   const handleNavigate = (page: PageId) => {
@@ -619,6 +627,8 @@ export default function App() {
             />
           </div>
         )}
+
+        {activePage === 'politicas' && <PoliciesPage />}
 
         {/* PAGE 6: UBICACIÓN Y CONTACTO DEDICATED */}
         {activePage === 'contacto' && (
