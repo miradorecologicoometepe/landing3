@@ -128,9 +128,9 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button
                   onClick={() => onNavigate?.('politicas')}
-                  className="flex items-center gap-2 hover:text-teal-300 transition-colors text-left cursor-pointer"
+                  className="flex items-center gap-2 text-teal-300 hover:text-teal-200 transition-colors text-left cursor-pointer font-semibold"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-brand-mint shrink-0" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-teal-300 shrink-0" />
                   <span>Políticas de alojamiento</span>
                 </button>
               </li>
