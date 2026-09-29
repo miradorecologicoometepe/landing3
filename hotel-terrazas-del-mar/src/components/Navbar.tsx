@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { HotelLogo } from './HotelLogo';
 
-export type PageId = 'inicio' | 'habitaciones' | 'eventos-piscina' | 'transporte' | 'galeria' | 'contacto';
+export type PageId = 'inicio' | 'habitaciones' | 'eventos-piscina' | 'transporte' | 'galeria' | 'contacto' | 'politicas';
 
 interface NavbarProps {
   activePage: PageId;
