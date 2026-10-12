@@ -36,6 +36,13 @@ export const TransportPage: React.FC<TransportPageProps> = ({
     loadGuideContacts().then(contacts => { if (active) setGuideContacts(contacts); }).catch(error => console.error('Unable to load guide contacts', error));
     return () => { active = false; };
   }, []);
+  const contactGroups = Array.from(guideContacts.reduce((groups, contact) => {
+    const key = contact.name.trim().toLocaleLowerCase();
+    const group = groups.get(key);
+    if (group) group.contacts.push(contact);
+    else groups.set(key, { name: contact.name.trim(), contacts: [contact] });
+    return groups;
+  }, new Map<string, { name: string; contacts: typeof guideContacts }>()).values());
   const [activeTab, setActiveTab] = useState<'ferries' | 'buses' | 'taxis'>('ferries');
   const [publishedSchedules, setPublishedSchedules] = useState<Array<{category:string;details: Record<string,any>}>>([]);
   useEffect(() => { let active = true; if (!supabase) return; supabase.from('transport_schedules').select('category,details').then(({data,error}) => { if (active && !error && data) setPublishedSchedules(data as Array<{category:string;details: Record<string,any>}>); }); return () => {active=false;}; }, []);
@@ -236,7 +243,10 @@ export const TransportPage: React.FC<TransportPageProps> = ({
             {guideContacts.length > 0 && <div className="rounded-2xl border border-stone-200 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-3"><Phone className="w-4 h-4 text-teal-700" /><h4 className="font-bold text-stone-900">Contactos de embarcaciones</h4></div>
               <div className="flex flex-wrap gap-3 text-xs">
-                {guideContacts.map(contact => <a key={contact.id} href={guidePhoneHref(contact.phone)} className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">{contact.name} · {contact.phone}</a>)}
+                {contactGroups.map(group => <div key={group.name} className="w-full sm:w-auto rounded-xl bg-teal-50 border border-teal-200 p-4">
+                  <h5 className="font-bold text-sm text-teal-900 mb-2">{group.name}</h5>
+                  <div className="flex flex-wrap gap-2">{group.contacts.map(contact => <a key={contact.id} href={guidePhoneHref(contact.phone)} className="rounded-lg bg-white border border-teal-200 px-3 py-2 font-semibold text-teal-800 hover:bg-teal-100">{contact.phone}</a>)}</div>
+                </div>)}
               </div>
               <p className="mt-3 text-[11px] text-stone-500">Contactos disponibles actualmente. Confirma horarios, tarifas y espacio para vehículos directamente con el operador.</p>
             </div>}
