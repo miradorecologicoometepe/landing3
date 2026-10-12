@@ -91,7 +91,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   const [busFilter, setBusFilter] = useState('');
   const normalizeVessel = (name: string) => {
     const clean = name.trim().replace(/\s+/g, ' ');
-    const key = clean.toLocaleLowerCase().replace(/^ferry\s+/, '').replace(/^el\s+/, '').replace(/^la\s+/, '');
+    const key = clean.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/^ferry\s+/, '').replace(/^el\s+/, '').replace(/^la\s+/, '');
     if (key === 'che guevara') return 'Ferry Che Guevara';
     if (key === 'gran sultana') return 'Ferry La Gran Sultana';
     if (key === 'cacique' || key === 'cacique nicarao') return 'Ferry Cacique Nicarao';
