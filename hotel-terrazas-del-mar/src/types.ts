@@ -84,6 +84,8 @@ export interface HotelConfig {
   totalReviews: number;
   whatsAppNumber: string;
   displayPhone: string;
+  claroPhone?: string;
+  tigoPhone?: string;
   address: string;
   locationArea: string;
   email: string;

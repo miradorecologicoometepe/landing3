@@ -7,6 +7,8 @@ export const HOTEL_CONFIG: HotelConfig = {
   totalReviews: 0,
   whatsAppNumber: '50557642833', // Direct WhatsApp E.164 without '+'
   displayPhone: '+505 5764 2833',
+  claroPhone: '+505 5764 2833',
+  tigoPhone: '+505 7859 8651',
   address: 'Finca El Mirador Ecológico, Altagracia, Isla de Ometepe, Rivas, Nicaragua',
   locationArea: 'Altagracia • Mirador Panorámico • Vistas al Lago Cocibolca y al Volcán',
   email: '',

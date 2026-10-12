@@ -286,9 +286,11 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
     if (!user) { triggerToast('Tu sesión expiró. Vuelve a iniciar sesión.'); return; }
     const admin = await supabase.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
     if (admin.error || !admin.data) { triggerToast('Tu cuenta no tiene permisos para publicar.'); return; }
-    const saved = await supabase.from('site_content').upsert({ key: 'hotel_config', value: configForm }, { onConflict: 'key' }).select('key').maybeSingle();
+    const publishedConfig = { ...configForm, claroPhone: (configForm.claroPhone ?? '+505 5764 2833').trim(), tigoPhone: (configForm.tigoPhone ?? '+505 7859 8651').trim() };
+    if ([publishedConfig.claroPhone, publishedConfig.tigoPhone].some(phone => !/^\+?[\d ()-]+$/.test(phone) || phone.replace(/\D/g, '').length < 8 || phone.replace(/\D/g, '').length > 15)) { triggerToast('Revisa los teléfonos Claro y Tigo: deben tener entre 8 y 15 dígitos.'); return; }
+    const saved = await supabase.from('site_content').upsert({ key: 'hotel_config', value: publishedConfig }, { onConflict: 'key' }).select('key').maybeSingle();
     if (saved.error || !saved.data) { triggerToast(saved.error?.message || 'No se pudo publicar la información.'); return; }
-    onSaveHotelConfig(configForm);
+    onSaveHotelConfig(publishedConfig);
     triggerToast('Información publicada en Supabase.');
   };
 
@@ -836,6 +838,8 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                     />
                   </div>
 
+                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Teléfono Claro · página de Contacto</label><input type="tel" required pattern="\\+?[0-9 ()-]{8,24}" value={configForm.claroPhone ?? '+505 5764 2833'} onChange={e => handleConfigChange('claroPhone', e.target.value)} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
+                  <div><label className="block text-xs font-bold text-stone-700 mb-1">Teléfono Tigo · página de Contacto</label><input type="tel" required pattern="\\+?[0-9 ()-]{8,24}" value={configForm.tigoPhone ?? '+505 7859 8651'} onChange={e => handleConfigChange('tigoPhone', e.target.value)} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm" /></div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
                       Correo Electrónico de Reservas
