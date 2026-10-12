@@ -58,6 +58,22 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           </p>
         </div>
 
+        <div className="mb-10 sm:mb-14">
+          <h3 className="text-center text-xl font-bold text-stone-900 mb-5">Llámanos para consultas y reservas</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <a href="tel:+50557642833" className="rounded-2xl border border-stone-200 bg-white p-6 sm:p-8 text-center shadow-sm hover:border-teal-500 transition-colors">
+              <span className="block text-sm font-bold uppercase tracking-widest text-stone-500 mb-3">Claro</span>
+              <span className="block text-3xl sm:text-4xl font-extrabold tracking-tight text-teal-900">+505 5764 2833</span>
+              <span className="block mt-3 text-sm font-semibold text-teal-700">Toca para llamar</span>
+            </a>
+            <a href="tel:+50578598651" className="rounded-2xl border border-stone-200 bg-white p-6 sm:p-8 text-center shadow-sm hover:border-teal-500 transition-colors">
+              <span className="block text-sm font-bold uppercase tracking-widest text-stone-500 mb-3">Tigo</span>
+              <span className="block text-3xl sm:text-4xl font-extrabold tracking-tight text-teal-900">+505 7859 8651</span>
+              <span className="block mt-3 text-sm font-semibold text-teal-700">Toca para llamar</span>
+            </a>
+          </div>
+        </div>
+
         {/* Location & Map Showcase */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-12 sm:mb-20">
           
