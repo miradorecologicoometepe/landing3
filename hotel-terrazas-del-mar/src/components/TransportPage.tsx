@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DEFAULT_GUIDE_CONTACTS, guidePhoneHref, loadGuideContacts } from '../lib/guideContacts';
 import { supabase } from '../lib/supabase';
 import { 
   Ship, 
@@ -29,6 +30,12 @@ export const TransportPage: React.FC<TransportPageProps> = ({
   hotelConfig,
   onOpenBookingModal 
 }) => {
+  const [guideContacts, setGuideContacts] = useState(DEFAULT_GUIDE_CONTACTS);
+  useEffect(() => {
+    let active = true;
+    loadGuideContacts().then(contacts => { if (active) setGuideContacts(contacts); }).catch(error => console.error('Unable to load guide contacts', error));
+    return () => { active = false; };
+  }, []);
   const [activeTab, setActiveTab] = useState<'ferries' | 'buses' | 'taxis'>('ferries');
   const [publishedSchedules, setPublishedSchedules] = useState<Array<{category:string;details: Record<string,any>}>>([]);
   useEffect(() => { let active = true; if (!supabase) return; supabase.from('transport_schedules').select('category,details').then(({data,error}) => { if (active && !error && data) setPublishedSchedules(data as Array<{category:string;details: Record<string,any>}>); }); return () => {active=false;}; }, []);
@@ -226,15 +233,13 @@ export const TransportPage: React.FC<TransportPageProps> = ({
               })}
             </div>
 
-            <div className="rounded-2xl border border-stone-200 bg-white p-5 sm:p-6 shadow-sm">
+            {guideContacts.length > 0 && <div className="rounded-2xl border border-stone-200 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-3"><Phone className="w-4 h-4 text-teal-700" /><h4 className="font-bold text-stone-900">Contactos de embarcaciones</h4></div>
               <div className="flex flex-wrap gap-3 text-xs">
-                <a href="tel:+50584454000" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Rey del Cocibolca · +505 8445 4000</a>
-                <a href="tel:+50589045244" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Rey del Cocibolca · +505 8904 5244</a>
-                <a href="tel:+50589039770" className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">Cacique Nicarao · +505 8903 9770</a>
+                {guideContacts.map(contact => <a key={contact.id} href={guidePhoneHref(contact.phone)} className="px-4 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold hover:bg-teal-100">{contact.name} · {contact.phone}</a>)}
               </div>
               <p className="mt-3 text-[11px] text-stone-500">Contactos disponibles actualmente. Confirma horarios, tarifas y espacio para vehículos directamente con el operador.</p>
-            </div>
+            </div>}
             <p className="text-xs text-stone-600">Horarios orientativos publicados en nuestra guía. Confirma la salida y disponibilidad para vehículos directamente con el operador antes de viajar.</p>
             {/* Travel Tips for Ferry */}
             <div className="bg-teal-50/70 border border-teal-200/80 rounded-2xl p-6 space-y-4">
